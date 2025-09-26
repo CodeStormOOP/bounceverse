@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.github.codestorm'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.github.almasb:fxgl:21.1'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+    implementation("com.google.guava:guava:33.5.0-jre")
+}
+
+test {
+    useJUnitPlatform()
+}
