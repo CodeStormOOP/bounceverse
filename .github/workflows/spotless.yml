@@ -21,4 +21,6 @@ jobs:
           cache: gradle
 
       - name: Run Spotless check
-        run: ./gradlew spotlessCheck
+        run: |
+          chmod +x gradlew
+          ./gradlew spotlessCheck
