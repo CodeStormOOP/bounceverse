@@ -5,6 +5,9 @@ on:
   push:
     branches: [ "*" ]
 
+permissions:
+  contents: read
+
 jobs:
   spotless:
     runs-on: ubuntu-latest
