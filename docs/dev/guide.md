@@ -2,7 +2,7 @@
 
 ## 📋 Yêu cầu
 
-* **Java SDK** (Khuyến nghị: [OpenJDK 21](https://jdk.java.net/21/))
+* **JDK** (Khuyến nghị: [OpenJDK 21](https://openjdk.org/projects/jdk/21/))
 * **[Gradle](https://gradle.org/)**
 
 ## 🚀 Setup
