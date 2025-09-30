@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h1><b>PowerUp</b></h1>
  *
- * PowerUp provide special effects and abilities to playable objects. <i>They are designed to update
- * based on events (lazy-update).</i>
+ * PowerUps provide special effects and abilities to playable objects. <i>They are designed to
+ * update based on events (lazy-update).</i>
  *
  * <p><i>You need to extend this class to create another class that can provide effects though
  * {@code apply()} and {@code doApply()} method.</i>
@@ -63,14 +63,14 @@ public abstract class PowerUp {
     /**
      * Apply PowerUp effects.
      *
-     * <p>Auto use when active power up.
+     * <p>Automatically used when power up becomes active.
      */
     protected abstract void apply();
 
     /**
      * Unapply PowerUp effects.
      *
-     * <p>Auto use when power up is ended.
+     * <p>Automatically used when power up ends.
      */
     protected abstract void unapply();
 
