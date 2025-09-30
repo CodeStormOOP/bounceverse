@@ -1,13 +1,15 @@
-package com.github.codestorm.ball;
+package com.github.codestorm.bounceverse.ball;
 
 /**
- * Abstract representation of a ball. A ball has position (x, y), velocity (vx, vy), and a radius.
- * Subclasses must implement movement and bounce behaviors.
+ *
+ *
+ * <h1><b>Ball</b></h1>
+ *
+ * Ball is a player-controlled object used to hit other objects via the Paddle. A ball has position
+ * (x, y), velocity (vx, vy), and a radius.
  *
  * <p>This class provides utility methods for resetting position, setting velocity, checking bounds,
- * and accessing attributes.
- *
- * @author minngoc1213
+ * and accessing attributes. Subclasses must implement movement and bounce behaviors.
  */
 public abstract class Ball {
     private double x;
