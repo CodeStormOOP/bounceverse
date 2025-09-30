@@ -1,4 +1,4 @@
-package com.github.codestorm.brick;
+package com.github.codestorm.bounceverse.brick;
 
 public class Brick {
     private int x, y, width, height;

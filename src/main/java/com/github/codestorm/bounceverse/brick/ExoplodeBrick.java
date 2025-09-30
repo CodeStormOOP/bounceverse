@@ -1,14 +1,14 @@
-package com.github.codestorm.brick;
+package com.github.codestorm.bounceverse.brick;
 
 public class ExoplodeBrick extends Brick {
-    private static final int radius = 1;
+    private static final int explodeRadius = 1;
 
-    public ExoplodeBrick(int x, int y, int width, int height, int hp, int radius) {
+    public ExoplodeBrick(int x, int y, int width, int height, int hp) {
         super(x, y, width, height, hp);
     }
 
     public int getRadius() {
-        return radius;
+        return explodeRadius;
     }
 
     /**

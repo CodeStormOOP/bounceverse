@@ -1,4 +1,4 @@
-package com.github.codestorm.brick;
+package com.github.codestorm.bounceverse.brick;
 
 public class ProtectedBrick extends Brick {
     private String shieldSide;
