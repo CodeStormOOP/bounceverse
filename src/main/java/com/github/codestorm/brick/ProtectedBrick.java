@@ -8,14 +8,15 @@ public class ProtectedBrick extends Brick {
         this.shieldSide = shieldSide;
     }
 
-    public String getShieldSide(){
+    public String getShieldSide() {
         return shieldSide;
     }
 
-    public void setShieldSide(String shieldSide){
+    public void setShieldSide(String shieldSide) {
         this.shieldSide = shieldSide;
     }
 
+    /** Handles a hit on this protected brick from a given direction. */
     public void hit(String direction) {
         if (!isDestroyed()) {
             if (!direction.equalsIgnoreCase(shieldSide)) {
@@ -24,4 +25,8 @@ public class ProtectedBrick extends Brick {
         }
     }
 
+    // Score from protected brick have more than 20 points.
+    public int getScore() {
+        return super.getScore() + 20;
+    }
 }

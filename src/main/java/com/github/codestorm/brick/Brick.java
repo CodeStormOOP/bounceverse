@@ -48,11 +48,11 @@ public class Brick {
         this.height = height;
     }
 
-    public int getHp(){
+    public int getHp() {
         return hp;
     }
 
-    public void setHp(int hp){
+    public void setHp(int hp) {
         this.hp = hp;
     }
 
@@ -64,16 +64,22 @@ public class Brick {
         this.destroyed = destroyed;
     }
 
+    /**
+     * Reduces the brick's hit points by one when hit.
+     *
+     * <p>If hit points reach zero, the brick is marked as destroyed.
+     */
     public void hit() {
-        if(!destroyed && hp >0){
+        if (!destroyed && hp > 0) {
             hp--;
-            if(hp == 0){
+            if (hp == 0) {
                 this.destroyed = true;
             }
         }
     }
 
+    // Calculates the score awarded for destroying this brick.
     public int getScore() {
-        return initialHp*10;
+        return initialHp * 10;
     }
 }

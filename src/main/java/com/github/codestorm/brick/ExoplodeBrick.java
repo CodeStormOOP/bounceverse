@@ -7,17 +7,28 @@ public class ExoplodeBrick extends Brick {
         super(x, y, width, height, hp);
     }
 
-    public int getRadius(){
+    public int getRadius() {
         return radius;
     }
 
+    /**
+     * Handles a hit on this brick.
+     *
+     * <p>Decreases hit points using the parent logic. If the brick is destroyed after the hit, it
+     * triggers an explosion.
+     */
     @Override
     public void hit() {
         super.hit();
-        if(isDestroyed()){
+        if (isDestroyed()) {
             explode();
         }
     }
 
+    /**
+     * Triggers the explosion effect of this brick.
+     *
+     * <p>This method can be extended to apply damage to surrounding bricks
+     */
     private void explode() {}
 }
