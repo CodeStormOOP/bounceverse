@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'org.openjfx.javafxplugin' version '0.1.0'
 	id 'com.diffplug.spotless' version "8.0.0"
 }
 
@@ -24,9 +25,12 @@ test {
 	useJUnitPlatform()
 }
 
-spotless {
-	ratchetFrom 'origin/main'
+javafx {
+	version = "25"
+	modules = [ 'javafx.base' ]
+}
 
+spotless {
 	format 'misc', {
 		target '*.gradle', '.gitattributes', '.gitignore'
 
