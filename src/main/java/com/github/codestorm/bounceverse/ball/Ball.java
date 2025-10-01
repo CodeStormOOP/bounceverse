@@ -5,8 +5,9 @@ package com.github.codestorm.bounceverse.ball;
  *
  * <h1><b>Ball</b></h1>
  *
- * Ball is a player-controlled object used to hit other objects via the Paddle. A ball has position
- * (x, y), velocity (vx, vy), and a radius.
+ * Ball is a player-controlled object used to hit other objects via the {@link
+ * com.github.codestorm.bounceverse.paddle.Paddle}. A ball has position (x, y), velocity (vx, vy),
+ * and a radius.
  *
  * <p>This class provides utility methods for resetting position, setting velocity, checking bounds,
  * and accessing attributes. Subclasses must implement movement and bounce behaviors.
