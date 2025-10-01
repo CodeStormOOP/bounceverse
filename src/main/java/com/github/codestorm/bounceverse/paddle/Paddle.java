@@ -1,10 +1,14 @@
 package com.github.codestorm.bounceverse.paddle;
 
 /**
- * Represents the paddle controlled by the player in the game.
  *
- * <p>The paddle can move horizontally, reset its position, and is the base class for other paddle
- * variants (expand, shrink, laser, etc.).
+ *
+ * <h1><b>Paddle</b></h1>
+ *
+ * {@link Paddle} is an object directly controlled by the player, used to interact with {@link
+ * com.github.codestorm.bounceverse.ball.Ball}.
+ *
+ * <p>The paddle can move horizontally and reset its position.
  */
 public class Paddle {
     private int x;
@@ -21,7 +25,6 @@ public class Paddle {
         this.speed = speed;
     }
 
-    // getter & setter.
     public int getX() {
         return x;
     }
@@ -62,13 +65,13 @@ public class Paddle {
         this.speed = speed;
     }
 
-    // Move the paddle left.
+    /** Move Paddle to left. */
     public void moveLeft() {}
 
-    // Move the paddle right.
+    /** Move Paddle to right. */
     public void moveRight() {}
 
-    // Reset the paddle to a specific position.
+    /** Reset paddle to a specific position. */
     public void resetPosition(int startX, int startY) {
         this.x = startX;
         this.y = startY;

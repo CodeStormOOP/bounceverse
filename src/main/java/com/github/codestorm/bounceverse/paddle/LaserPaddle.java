@@ -1,29 +1,19 @@
 package com.github.codestorm.bounceverse.paddle;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
+ *
+ *
+ * <h1><b>LaserPaddle</b></h1>
+ *
  * A special type of {@link Paddle} that can shoot bullets upward to destroy bricks. This is usually
- * activated by a power-up.
+ * activated by a {@link com.github.codestorm.bounceverse.powerup.PowerUp} (not available).
  */
 public class LaserPaddle extends Paddle {
-    /** List of bullets currently fired by the paddle. */
-    private List<LaserPaddle> bullets;
-
-    // Create a new LaserPaddle instance
+    /** Create a new LaserPaddle instance. */
     public LaserPaddle(int x, int y, int width, int height, double speed) {
         super(x, y, width, height, speed);
-        this.bullets = new ArrayList<>();
     }
 
-    // Shoots bullet from paddle.
+    /** Shoots bullet from paddle. */
     public void shoot() {}
-
-    /** Updates all bullets when them get off-screen or hit the brick. */
-    public void updateBullets() {}
-
-    public List<LaserPaddle> getBullets() {
-        return bullets;
-    }
 }
