@@ -1,8 +1,11 @@
 package com.github.codestorm.bounceverse.brick;
 
-public class PowerBrick extends Brick {
-    public PowerBrick(int x, int y, int width, int height, int hp) {
-        super(x, y, width, height, hp);
+import javafx.scene.paint.Color;
+
+public class PowerBrick extends BrickComponent {
+
+    public PowerBrick(int width, int height, int hp, Color baseColor) {
+        super(width, height, hp, baseColor);
     }
 
     /**
