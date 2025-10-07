@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.powerup;
+package com.github.codestorm.bounceverse.components.powerup;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.time.TimerAction;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * update based on events (lazy-update).</i>
  *
  * <p><i>You need to extend this class to create another class that can provide effects though
- * {@code apply()} and {@code doApply()} method.</i>
+ * {@link #apply()} and {@link #unapply()} method.</i>
  */
 public abstract class PowerUp {
     private TimerAction waitAction;
@@ -22,7 +22,7 @@ public abstract class PowerUp {
     private double startAt;
     private double endAt;
 
-    /** Update {@code waitAction} when {@code startAt} is changed. */
+    /** Update {@link #waitAction} when {@link #startAt} is changed. */
     private void updateWaitAction() {
         final var gameTimer = FXGL.getGameTimer();
         final var currentTime = gameTimer.getNow();
@@ -36,7 +36,7 @@ public abstract class PowerUp {
         }
     }
 
-    /** Update {@code activeAction} when {@code endAt} is changed. */
+    /** Update {@link #activeAction} when {@link #endAt} is changed. */
     private void updateActiveAction() {
         final var gameTimer = FXGL.getGameTimer();
         final var currentTime = gameTimer.getNow();
@@ -50,12 +50,12 @@ public abstract class PowerUp {
         }
     }
 
-    /** Wrapper for {@code apply()} method. */
+    /** Wrapper for {@link #apply()} method. */
     protected void doApply() {
         apply();
     }
 
-    /** Wrapper for {@code unapply()} method. */
+    /** Wrapper for {@link #unapply()} method. */
     protected void doUnapply() {
         unapply();
     }

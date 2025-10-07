@@ -1,12 +1,10 @@
 package com.github.codestorm.bounceverse.brick;
 
-import javafx.scene.paint.Color;
-
-public class ProtectedBrick extends BrickComponent {
+public class ProtectedBrick extends Brick {
     private String shieldSide;
 
-    public ProtectedBrick(int width, int height, int hp, Color baseColor, String shieldSide) {
-        super(width, height, hp, baseColor);
+    public ProtectedBrick(int x, int y, int width, int height, int hp, String shieldSide) {
+        super(x, y, width, height, hp);
         this.shieldSide = shieldSide;
     }
 
@@ -28,7 +26,6 @@ public class ProtectedBrick extends BrickComponent {
     }
 
     // Score from protected brick have more than 20 points.
-    @Override
     public int getScore() {
         return super.getScore() + 20;
     }
