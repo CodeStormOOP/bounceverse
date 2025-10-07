@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.ball;
+package com.github.codestorm.bounceverse.components.ball;
 
 /**
  *

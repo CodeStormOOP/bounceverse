@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.powerup;
+package com.github.codestorm.bounceverse.components.powerup;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.time.TimerAction;
