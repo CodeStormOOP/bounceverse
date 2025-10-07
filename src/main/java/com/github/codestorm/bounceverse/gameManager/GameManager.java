@@ -2,20 +2,21 @@ package com.github.codestorm.bounceverse.gameManager;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.github.codestorm.bounceverse.ball.Ball;
 import com.github.codestorm.bounceverse.brick.BrickComponent;
-import com.github.codestorm.bounceverse.brick.BrickFactory;
-import com.github.codestorm.bounceverse.paddle.Paddle;
+import com.github.codestorm.bounceverse.paddle.PaddleComponent;
 import com.github.codestorm.bounceverse.powerup.PowerUp;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages the main game logic of BounceVerse, including the paddle, ball, bricks, power-ups, score,
+ * Manages the main game logic of BounceVerse, including the paddle, ball,
+ * bricks, power-ups, score,
  * and level state.
  */
 public class GameManager {
-    private Paddle paddle;
+    private PaddleComponent paddle;
     private Ball ball;
     private List<Entity> bricks = new ArrayList<>();
     private List<PowerUp> powerups;
@@ -34,38 +35,37 @@ public class GameManager {
 
         // Row 1: Normal Bricks
         for (int i = 0; i < 8; i++) {
-            Entity brick = BrickFactory.newBrick(startX + i * offsetX, startY);
-            FXGL.getGameWorld().addEntity(brick);
+            Entity brick = FXGL.spawn("normalBrick", startX + i * offsetX, startY);
             bricks.add(brick);
         }
 
-        // Row 2: Strong Brick
+        // Row 2: Strong Bricks
         for (int i = 0; i < 8; i++) {
-            Entity brick = BrickFactory.newStrongBrick(startX + i * offsetX, startY + offsetY);
-            FXGL.getGameWorld().addEntity(brick);
+            Entity brick = FXGL.spawn("strongBrick", startX + i * offsetX, startY + offsetY);
             bricks.add(brick);
         }
 
-        // Row 3: Explode Brick
+        // Row 3: Explode Bricks
         for (int i = 0; i < 8; i++) {
-            Entity brick = BrickFactory.newExplodeBrick(startX + i * offsetX, startY + offsetY * 2);
-            FXGL.getGameWorld().addEntity(brick);
+            Entity brick = FXGL.spawn("explodeBrick", startX + i * offsetX, startY + offsetY * 2);
             bricks.add(brick);
         }
 
-        // Row 4: Protected Bricks (with directional shields)
-        String[] shields = {"top", "left", "right", "bottom"};
+        // Row 4: Protected Bricks
+        String[] shields = { "top", "left", "right", "bottom" };
         for (int i = 0; i < 8; i++) {
             String shieldSide = shields[i % shields.length];
-            Entity brick =
-                    BrickFactory.newProtectedBrick(
-                            startX + i * offsetX, startY + offsetY * 3, shieldSide);
-            FXGL.getGameWorld().addEntity(brick);
+            Entity brick = FXGL.spawn("protectedBrick",
+                    new SpawnData(startX + i * offsetX, startY + offsetY * 3)
+                            .put("shieldSide", shieldSide));
             bricks.add(brick);
         }
     }
 
-    /** Removes all existing bricks from the game world and clears the internal brick list. */
+    /**
+     * Removes all existing bricks from the game world and clears the internal brick
+     * list.
+     */
     public void clearBricks() {
         bricks.forEach(Entity::removeFromWorld);
         bricks.clear();
@@ -78,7 +78,8 @@ public class GameManager {
     /** Update the player's score based on destroyed bricks. */
     public void updateScore() {
         for (Entity brickEntity : bricks) {
-            if (!brickEntity.hasComponent(BrickComponent.class)) continue;
+            if (!brickEntity.hasComponent(BrickComponent.class))
+                continue;
 
             BrickComponent brick = brickEntity.getComponent(BrickComponent.class);
             if (brick.isDestroyed()) {
