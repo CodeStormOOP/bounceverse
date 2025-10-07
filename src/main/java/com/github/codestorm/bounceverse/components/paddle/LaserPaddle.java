@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.paddle;
+package com.github.codestorm.bounceverse.components.paddle;
 
 import java.util.ArrayList;
 import java.util.List;

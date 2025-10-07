@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.paddle;
+package com.github.codestorm.bounceverse.components.paddle;
 
 /**
  * Represents the paddle controlled by the player in the game.

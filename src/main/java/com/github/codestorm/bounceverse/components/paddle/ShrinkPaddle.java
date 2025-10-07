@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.paddle;
+package com.github.codestorm.bounceverse.components.paddle;
 
 /** A special type of {@link Paddle} that is narrower than the normal paddle. */
 public class ShrinkPaddle extends Paddle {
