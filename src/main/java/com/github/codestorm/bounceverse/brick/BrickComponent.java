@@ -4,6 +4,11 @@ import com.almasb.fxgl.entity.component.Component;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Represents the core behavior and appearance of a brick in the game.
+ * <p>
+ * This component handles HP, color updates, and destruction logic.
+ */
 public class BrickComponent extends Component {
     private final int width;
     private final int height;
@@ -13,7 +18,6 @@ public class BrickComponent extends Component {
     private boolean destroyed;
     private Rectangle view;
 
-    /** Represents the core behavior and appearance of a brick in the game. */
     public BrickComponent(int width, int height, int hp, Color baseColor) {
         this.width = width;
         this.height = height;
@@ -23,44 +27,20 @@ public class BrickComponent extends Component {
         this.destroyed = false;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
-
-    public boolean isDestroyed() {
-        return hp <= 0;
-    }
-
-    public void setDestroyed(boolean destroyed) {
-        this.destroyed = destroyed;
-    }
-
-    /** Create a rectangular visual for brick. */
+    @Override
     public void onAdded() {
-        // Lấy view của Entity
+        // Create visual representation when added to the entity
         view = new Rectangle(width, height);
         view.setArcWidth(8);
         view.setArcHeight(8);
+        // view.setStrokeWidth(1.5);
         updateColor();
         getEntity().getViewComponent().addChild(view);
     }
 
     /**
-     * Reduces the brick's hit points by one when hit.
-     *
-     * <p>If hit points reach zero, the brick is marked as destroyed.
+     * Reduces the brick's HP by one when hit.
+     * If HP reaches zero, the brick is removed from the world.
      */
     public void hit() {
         if (!destroyed && hp > 0) {
@@ -75,12 +55,12 @@ public class BrickComponent extends Component {
     }
 
     /**
-     * Updates the brick’s color based on remaining HP.
-     *
-     * <p>The color gradually darkens as HP decreases, while keeping the base hue consistent across
-     * brick types.
+     * Updates the brick color based on remaining HP.
+     * The color becomes darker as HP decreases.
      */
     private void updateColor() {
+        if (view == null)
+            return;
         float ratio = (float) hp / initialHp;
         Color dimmed = baseColor.deriveColor(0, 1, 0.6 + 0.4 * ratio, 1);
         view.setFill(dimmed);
@@ -88,17 +68,35 @@ public class BrickComponent extends Component {
     }
 
     /**
-     * Handles destruction behavior when the brick is fully broken.
-     *
-     * <p>By default, removes the brick entity from the game world. Subclasses may override this for
-     * custom effects (e.g. explosions).
+     * Handles destruction when the brick is fully broken.
+     * Removes the brick entity from the game world.
      */
     protected void onDestroyed() {
         getEntity().removeFromWorld();
     }
 
-    // Return the score gained by destroying the brick.
+    /** Returns score gained by destroying the brick. */
     public int getScore() {
         return initialHp * 10;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
     }
 }

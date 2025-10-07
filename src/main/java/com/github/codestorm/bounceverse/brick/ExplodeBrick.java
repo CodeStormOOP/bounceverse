@@ -6,12 +6,11 @@ import java.util.List;
 import javafx.scene.paint.Color;
 
 public class ExplodeBrick extends BrickComponent {
+    private static final int EXPLODE_RADIUS = 1;
 
     public ExplodeBrick(int width, int height, int hp, Color baseColor) {
         super(width, height, hp, baseColor);
     }
-
-    private static final int EXPLODE_RADIUS = 1;
 
     public int getRadius() {
         return EXPLODE_RADIUS;
@@ -20,8 +19,9 @@ public class ExplodeBrick extends BrickComponent {
     /**
      * Handles a hit on this brick.
      *
-     * <p>Decreases hit points using the parent logic. If the brick is destroyed after the hit, it
-     * triggers an explosion.
+     * <p>
+     * Decreases hit points using the parent logic. If the brick is destroyed after
+     * the hit, it triggers an explosion.
      */
     @Override
     public void hit() {
@@ -34,7 +34,8 @@ public class ExplodeBrick extends BrickComponent {
     /**
      * Triggers the explosion effect of this brick.
      *
-     * <p>This method can be extended to apply damage to surrounding bricks
+     * <p>
+     * This method can be extended to apply damage to surrounding bricks
      */
     private void explode() {
         double cx = getEntity().getCenter().getX();
@@ -42,8 +43,10 @@ public class ExplodeBrick extends BrickComponent {
 
         List<Entity> entites = FXGL.getGameWorld().getEntities();
         for (Entity e : entites) {
-            if (e == getEntity()) continue;
-            if (!e.hasComponent(BrickComponent.class)) continue;
+            if (e == getEntity())
+                continue;
+            if (!e.hasComponent(BrickComponent.class))
+                continue;
 
             BrickComponent brick = e.getComponent(BrickComponent.class);
             if (brick.isDestroyed()) {
