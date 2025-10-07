@@ -18,7 +18,7 @@ import com.almasb.fxgl.entity.component.Component;
  * href="https://www.wikipedia.org/wiki/Entity_component_system">Entity-Component-System (ECS)</a>,
  * khi mà Entity không nên được kế thừa để phát triển thêm mà được xây dựng theo qua nguyên tắc <a
  * href="https://www.wikipedia.org/wiki/Composition_over_inheritance">composition over
- * nheritance</a>. Ngoài ra ta lại cần nhu cầu xác định kiểu của Entity một cách chặt chẽ nữa. Vậy
+ * inheritance</a>. Ngoài ra ta lại cần nhu cầu xác định kiểu của Entity một cách chặt chẽ nữa. Vậy
  * nên, một thuộc tính kiểu trong Entity như này là cần thiết.
  *
  * @see com.github.codestorm.bounceverse.tags.Optional
