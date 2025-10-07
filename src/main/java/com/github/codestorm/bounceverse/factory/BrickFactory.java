@@ -61,7 +61,6 @@ public class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    @Spawns("brick")
     public static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
             Point2D pos, int hp, OptionalBrickComponent... components) {
         return newBrick(pos, hp, new Rectangle(DEFAULT_X, DEFAULT_Y, DEFAULT_COLOR), components);
@@ -76,7 +75,6 @@ public class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    @Spawns("brick")
     public static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
             Point2D pos, OptionalBrickComponent... components) {
         return newBrick(pos, DEFAULT_HP, components);
