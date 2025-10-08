@@ -110,8 +110,9 @@ public abstract class PowerUp {
      * @param after Duration to wait before active
      */
     public PowerUp(@NotNull Duration duration, @NotNull Duration after) {
-        final var currentTime = FXGL.getGameTimer().getNow();
-        this(currentTime + after.toMillis(), currentTime + after.toMillis() + duration.toMillis());
+        this(
+                FXGL.getGameTimer().getNow() + after.toMillis(),
+                FXGL.getGameTimer().getNow() + after.toMillis() + duration.toMillis());
     }
 
     /**
