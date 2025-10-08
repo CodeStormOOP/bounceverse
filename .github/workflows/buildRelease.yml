@@ -1,0 +1,25 @@
+name: Build Release
+
+on:
+  release:
+    types:
+      - created
+      - published
+
+permissions:
+  contents: write
+
+jobs:
+  buildRelease:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: .github/workflows/setup.yml
+
+      - name: Build release
+        run: ./gradlew clean buildRelease --debug
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: release/*.jar

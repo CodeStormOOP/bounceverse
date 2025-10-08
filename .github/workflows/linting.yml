@@ -1,0 +1,20 @@
+name: Linting
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  spotlessCheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: .github/workflows/setup.yml
+
+      - name: Run Spotless check
+        run: |
+          chmod +x gradlew
+          ./gradlew spotlessCheck

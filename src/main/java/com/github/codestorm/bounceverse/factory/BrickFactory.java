@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse.factory;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.components.brick.Brick;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see EntityFactory
  */
-public class BrickFactory implements EntityFactory {
+public final class BrickFactory implements EntityFactory {
     private static final int DEFAULT_X = 80;
     private static final int DEFAULT_Y = 30;
     private static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
@@ -40,8 +41,7 @@ public class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    @Spawns("brick")
-    public static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
+    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
             Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
         return FXGL.entityBuilder()
                 .at(pos)
@@ -61,22 +61,19 @@ public class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    public static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
+    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
             Point2D pos, int hp, OptionalBrickComponent... components) {
         return newBrick(pos, hp, new Rectangle(DEFAULT_X, DEFAULT_Y, DEFAULT_COLOR), components);
     }
 
     /**
-     * Tạo mới một entity brick với khung nhìn và HP mặc định.
+     * Tạo entity Brick bình thường.
      *
      * @param pos Vị trí
-     * @param components Các components tùy chọn
      * @return Entity Brick mới tạo
-     * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
-    @NotNull @SafeVarargs
-    public static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
-            Point2D pos, OptionalBrickComponent... components) {
-        return newBrick(pos, DEFAULT_HP, components);
+    @NotNull @Spawns("normalBrick")
+    public static Entity newNormalBrick(SpawnData pos) {
+        return newBrick(new Point2D(pos.getX(), pos.getY()), DEFAULT_HP);
     }
 }
