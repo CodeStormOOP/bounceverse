@@ -10,9 +10,18 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: .github/workflows/setup.yml
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: oracle
+          java-version: 24
+          cache: gradle
 
       - name: Build
-        run: ./gradlew clean build --debug
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build
