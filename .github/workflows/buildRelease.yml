@@ -6,6 +6,9 @@ on:
       - created
       - published
 
+permissions:
+  contents: write
+
 jobs:
   buildRelease:
     runs-on: ubuntu-latest

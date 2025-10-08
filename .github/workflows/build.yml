@@ -4,12 +4,15 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses : .github/workflows/setup.yml
+      - uses: .github/workflows/setup.yml
 
       - name: Build
         run: ./gradlew clean build --debug
