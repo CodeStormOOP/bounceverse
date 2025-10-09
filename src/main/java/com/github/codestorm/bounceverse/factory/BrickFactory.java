@@ -9,6 +9,7 @@ import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
 import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
+import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -45,6 +46,7 @@ public final class BrickFactory implements EntityFactory {
             Entity newBrick(
                     Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
         return FXGL.entityBuilder()
+                .type(EntityType.BRICK)
                 .at(pos)
                 .viewWithBBox(view)
                 .with(new BrickHealth(hp))
