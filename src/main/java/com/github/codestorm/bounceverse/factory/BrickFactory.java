@@ -6,10 +6,9 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.components.brick.Brick;
-import com.github.codestorm.bounceverse.components.brick.properties.BrickHealth;
-import com.github.codestorm.bounceverse.tags.ForBrick;
-import com.github.codestorm.bounceverse.tags.Optional;
+import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
+import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
+import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -18,15 +17,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  *
  *
- * <h1><b>BrickFactory</b></h1>
+ * <h1>{@link BrickFactory}</h1>
  *
- * <p>Factory để tạo các entity Brick trong trò chơi.
+ * <p>Factory để tạo các entity loại {@link
+ * com.github.codestorm.bounceverse.data.types.EntityType#BRICK} trong trò chơi.
  *
  * @see EntityFactory
  */
 public final class BrickFactory implements EntityFactory {
-    private static final int DEFAULT_X = 80;
-    private static final int DEFAULT_Y = 30;
+    private static final int DEFAULT_WIDTH = 80;
+    private static final int DEFAULT_HEIGHT = 30;
     private static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
     private static final int DEFAULT_HP = 1;
 
@@ -41,12 +41,13 @@ public final class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
-            Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
+    private static <OptionalBrickComponent extends Component & ForBrick & OptionalTag>
+            Entity newBrick(
+                    Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
         return FXGL.entityBuilder()
                 .at(pos)
                 .viewWithBBox(view)
-                .with(new Brick(new BrickHealth(hp)))
+                .with(new BrickHealth(hp))
                 .with(components)
                 .build();
     }
@@ -61,9 +62,10 @@ public final class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
-            Point2D pos, int hp, OptionalBrickComponent... components) {
-        return newBrick(pos, hp, new Rectangle(DEFAULT_X, DEFAULT_Y, DEFAULT_COLOR), components);
+    private static <OptionalBrickComponent extends Component & ForBrick & OptionalTag>
+            Entity newBrick(Point2D pos, int hp, OptionalBrickComponent... components) {
+        return newBrick(
+                pos, hp, new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_COLOR), components);
     }
 
     /**
