@@ -6,9 +6,7 @@ import com.almasb.fxgl.entity.component.Component;
 /**
  * Represents the paddle controlled by the player in the game.
  *
- * <p>
- * The paddle can move horizontally, reset its position, and is the base class
- * for other paddle
+ * <p>The paddle can move horizontally, reset its position, and is the base class for other paddle
  * variants (expand, shrink, laser, etc.).
  */
 public class PaddleComponent extends Component {
@@ -29,11 +27,9 @@ public class PaddleComponent extends Component {
 
     /**
      * Moves the paddle to the left based on its speed and the current frame time.
-     * <p>
-     * Using {@code FXGL.tpf()} (Time Per Frame) ensures that movement is frame
-     * rate–independent,
+     *
+     * <p>Using {@code FXGL.tpf()} (Time Per Frame) ensures that movement is frame rate–independent,
      * so the paddle moves smoothly even if the FPS varies.
-     * </p>
      */
     public void moveLeft() {
         double newX = entity.getX() - speed * FXGL.tpf();
@@ -44,11 +40,9 @@ public class PaddleComponent extends Component {
 
     /**
      * Moves the paddle to the right based on its speed and the current frame time.
-     * <p>
-     * Using {@code FXGL.tpf()} (Time Per Frame) ensures that movement is frame
-     * rate–independent,
+     *
+     * <p>Using {@code FXGL.tpf()} (Time Per Frame) ensures that movement is frame rate–independent,
      * so the paddle moves smoothly even if the FPS varies.
-     * </p>
      */
     public void moveRight() {
         double newX = entity.getX() + speed * FXGL.tpf();

@@ -1,11 +1,12 @@
 plugins {
 	id 'java'
+	id 'application'
 	id 'org.openjfx.javafxplugin' version '0.1.0'
 	id 'com.diffplug.spotless' version "8.0.0"
 }
 
 group = 'com.github.codestorm'
-version = '1.0'
+version = '1.0.0'
 
 repositories {
 	mavenCentral()
@@ -18,7 +19,33 @@ dependencies {
 	implementation 'com.github.almasb:fxgl:21.1'
 	implementation 'org.slf4j:slf4j-api:2.0.17'
 	implementation 'ch.qos.logback:logback-classic:1.5.18'
-	implementation("com.google.guava:guava:33.5.0-jre")
+	implementation 'com.google.guava:guava:33.5.0-jre'
+}
+
+application {
+	mainClass = 'com.github.codestorm.bounceverse.Bounceverse'
+	applicationDefaultJvmArgs = [
+			"--enable-native-access=javafx.graphics"
+	]
+}
+
+defaultTasks('run')
+
+tasks.register('buildRelease', Jar) {
+	group = 'build'
+	description = "Test this project and assemble a release JAR file."
+
+	archiveBaseName.set(project.name)
+	archiveVersion.set(project.version)
+	destinationDirectory.set(file("./release"))
+
+	dependsOn test
+	dependsOn configurations.runtimeClasspath
+	from sourceSets.main.output
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 test {
@@ -27,10 +54,11 @@ test {
 
 javafx {
 	version = "25"
-	modules = [ 'javafx.base' ]
+	modules = ['javafx.controls', 'javafx.media']
 }
 
 spotless {
+	enforceCheck = false
 	format 'misc', {
 		target '*.gradle', '.gitattributes', '.gitignore'
 

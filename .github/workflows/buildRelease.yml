@@ -1,0 +1,34 @@
+name: Build Release
+
+on:
+  release:
+    types:
+      - created
+      - published
+
+permissions:
+  contents: write
+
+jobs:
+  buildRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: oracle
+          java-version: 24
+          cache: gradle
+
+      - name: Build release
+        run: |
+          chmod +x gradlew
+          ./gradlew clean buildRelease
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: release/*.jar
