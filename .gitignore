@@ -1,15 +1,14 @@
+### Java
 .gradle
 build/
+target/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 .kotlin
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -41,3 +40,17 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### FXGL
+.fxgl/
+system/
+save/
+log.txt
+*.sav
+*.dat
+*.bin
+**/cache/
+**/prefs/
+
+### Workspace
+/logs/

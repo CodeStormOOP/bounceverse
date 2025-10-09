@@ -7,7 +7,6 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.github.codestorm.bounceverse.gameManager.BounceverseType;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 

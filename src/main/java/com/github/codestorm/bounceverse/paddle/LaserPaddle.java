@@ -1,17 +1,15 @@
 package com.github.codestorm.bounceverse.paddle;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.github.codestorm.bounceverse.gameManager.BounceverseType;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- * A special type of {@link Paddle} that can shoot bullets upward to destroy
- * bricks. This is usually
+ * A special type of {@link Paddle} that can shoot bullets upward to destroy bricks. This is usually
  * activated by a power-up.
  */
 public class LaserPaddle extends PaddleComponent {
@@ -34,23 +32,25 @@ public class LaserPaddle extends PaddleComponent {
         double bulletLeftX = paddleX + 10;
         double bulletLeftY = paddleY - 10;
 
-        Entity bulletLeft = FXGL.entityBuilder()
-                .at(bulletLeftX, bulletLeftY)
-                .type(BounceverseType.BULLET)
-                .viewWithBBox("")
-                .with(new BulletComponent(500))
-                .buildAndAttach();
+        Entity bulletLeft =
+                FXGL.entityBuilder()
+                        .at(bulletLeftX, bulletLeftY)
+                        .type(BounceverseType.BULLET)
+                        .viewWithBBox("")
+                        .with(new BulletComponent(500))
+                        .buildAndAttach();
 
         // Create bullet gun on the right paddle.
         double bulletRightX = paddleX + width - 18;
         double bulletRightY = paddleY - 10;
 
-        Entity bulletRight = FXGL.entityBuilder()
-                .at(bulletRightX, bulletRightY)
-                .type(BounceverseType.BULLET)
-                .viewWithBBox("")
-                .with(new BulletComponent(500))
-                .buildAndAttach();
+        Entity bulletRight =
+                FXGL.entityBuilder()
+                        .at(bulletRightX, bulletRightY)
+                        .type(BounceverseType.BULLET)
+                        .viewWithBBox("")
+                        .with(new BulletComponent(500))
+                        .buildAndAttach();
 
         bullets.add(bulletLeft);
         bullets.add(bulletRight);

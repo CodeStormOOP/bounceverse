@@ -2,7 +2,7 @@
 
 ## 📋 Yêu cầu
 
-* **JDK** (Khuyến nghị: [OpenJDK 21](https://openjdk.org/projects/jdk/21/))
+* **[Oracle OpenJDK 24](https://openjdk.org/projects/jdk/24/)** (Language level: 24 Preview) 
 * **[Gradle](https://gradle.org/)**
 
 ## 🚀 Setup
