@@ -21,16 +21,40 @@ import javafx.scene.paint.Color;
  * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như vậy?</i>
  */
 public final class Bounceverse extends GameApplication {
-    private static boolean DEBUG = false;
+    private static String[] args; // launch options
+    private static boolean debug = false; // debug mode is enabled
 
+    /**
+     * Cấu hình game.
+     *
+     * <p>Sử dụng {@link Configs#loadConfigs()} để load các config.
+     */
     private static final class Configs {
         private static final String ROOT = "/configs/";
-        public static Properties DEFAULT;
-        public static Properties settings;
 
+        /** Cấu hình game bên ngoài hệ thống game. */
+        private static final class Options {
+            public static Properties DEFAULT; // Cấu hình mặc định của trò chơi
+
+            private Options() {}
+        }
+
+        /** Cấu hình game bên trong hệ thống game. */
+        private static final class System {
+            public static Properties settings;
+
+            private System() {}
+        }
+
+        /**
+         * Load game configs.
+         *
+         * @throws IOException if an error occurred when reading from the input stream.
+         */
         public static void loadConfigs() throws IOException {
-            DEFAULT = Utils.File.loadProperties(ROOT + "default.properties");
-            settings = Utils.File.loadProperties(ROOT + "system/settings.properties");
+            // TODO: Load args
+            Options.DEFAULT = Utils.File.loadProperties(ROOT + "default.properties");
+            System.settings = Utils.File.loadProperties(ROOT + "system/settings.properties");
         }
 
         private Configs() {}
@@ -38,16 +62,21 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
+        try {
+            Configs.loadConfigs();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         // Basic
-        settings.setTitle(Configs.settings.getProperty("settings.name"));
-        settings.setVersion(Configs.settings.getProperty("settings.version"));
+        settings.setTitle(Configs.System.settings.getProperty("settings.name"));
+        settings.setVersion(Configs.System.settings.getProperty("settings.version"));
         settings.setApplicationMode(
-                Boolean.parseBoolean(Configs.settings.getProperty("settings.devMode"))
+                Boolean.parseBoolean(Configs.System.settings.getProperty("settings.devMode"))
                         ? ApplicationMode.DEVELOPER
-                        : (DEBUG) ? ApplicationMode.DEBUG : ApplicationMode.RELEASE);
+                        : (debug) ? ApplicationMode.DEBUG : ApplicationMode.RELEASE);
         // Resolution
-        settings.setWidth(Integer.parseInt(Configs.DEFAULT.getProperty("width")));
-        settings.setHeight(Integer.parseInt(Configs.DEFAULT.getProperty("height")));
+        settings.setWidth(Integer.parseInt(Configs.Options.DEFAULT.getProperty("width")));
+        settings.setHeight(Integer.parseInt(Configs.Options.DEFAULT.getProperty("height")));
         settings.setPreserveResizeRatio(true);
         settings.setManualResizeEnabled(true);
         // In-game
@@ -69,11 +98,6 @@ public final class Bounceverse extends GameApplication {
     }
 
     public static void main(String[] args) {
-        try {
-            Configs.loadConfigs();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        launch(args);
+        launch(Bounceverse.args = args);
     }
 }
