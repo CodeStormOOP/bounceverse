@@ -1,9 +1,12 @@
 package com.github.codestorm.bounceverse;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.factory.BrickFactory;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.scene.paint.Color;
 
 /**
@@ -18,13 +21,38 @@ import javafx.scene.paint.Color;
  * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như vậy?</i>
  */
 public final class Bounceverse extends GameApplication {
-    public static final String name = "Bounceverse";
+    private static boolean DEBUG = false;
+
+    private static final class Configs {
+        private static final String ROOT = "/configs/";
+        public static Properties DEFAULT;
+        public static Properties settings;
+
+        public static void loadConfigs() throws IOException {
+            DEFAULT = Utils.File.loadProperties(ROOT + "default.properties");
+            settings = Utils.File.loadProperties(ROOT + "system/settings.properties");
+        }
+
+        private Configs() {}
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(900);
-        settings.setHeight(600);
-        settings.setTitle(name);
+        // Basic
+        settings.setTitle(Configs.settings.getProperty("settings.name"));
+        settings.setVersion(Configs.settings.getProperty("settings.version"));
+        settings.setApplicationMode(
+                Boolean.parseBoolean(Configs.settings.getProperty("settings.devMode"))
+                        ? ApplicationMode.DEVELOPER
+                        : (DEBUG) ? ApplicationMode.DEBUG : ApplicationMode.RELEASE);
+        // Resolution
+        settings.setWidth(Integer.parseInt(Configs.DEFAULT.getProperty("width")));
+        settings.setHeight(Integer.parseInt(Configs.DEFAULT.getProperty("height")));
+        settings.setPreserveResizeRatio(true);
+        settings.setManualResizeEnabled(true);
+        // In-game
+        settings.setMainMenuEnabled(true);
+        settings.setIntroEnabled(true); // TODO: Video cho intro
     }
 
     @Override
@@ -41,6 +69,11 @@ public final class Bounceverse extends GameApplication {
     }
 
     public static void main(String[] args) {
+        try {
+            Configs.loadConfigs();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         launch(args);
     }
 }

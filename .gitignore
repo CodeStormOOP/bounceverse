@@ -9,6 +9,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/
+!.idea/misc.xml
 *.iws
 *.iml
 *.ipr
@@ -43,9 +44,9 @@ bin/
 
 ### FXGL
 .fxgl/
-system/
-save/
-log.txt
+/save/
+/logs/
+/system/
 *.sav
 *.dat
 *.bin
@@ -53,4 +54,3 @@ log.txt
 **/prefs/
 
 ### Workspace
-/logs/
