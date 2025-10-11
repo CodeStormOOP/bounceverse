@@ -35,7 +35,7 @@ tasks.register('buildRelease', Jar) {
 
 	archiveBaseName.set(project.name)
 	archiveVersion.set(project.version)
-	destinationDirectory.set(file("./release"))
+	destinationDirectory.set(file("./out"))
 
 	dependsOn test
 	dependsOn configurations.runtimeClasspath
