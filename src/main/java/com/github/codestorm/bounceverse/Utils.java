@@ -19,7 +19,9 @@ public final class Utils {
          */
         public static Properties loadProperties(String path) throws IOException {
             InputStream fileStream = IO.class.getResourceAsStream(path);
-            assert fileStream != null : "Cannot open InputStream in " + path;
+            if (fileStream == null) {
+                throw new IOException("Cannot open InputStream in" + path);
+            }
 
             Properties prop = new Properties();
             prop.load(fileStream);

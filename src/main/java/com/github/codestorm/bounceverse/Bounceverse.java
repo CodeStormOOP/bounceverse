@@ -53,7 +53,6 @@ public final class Bounceverse extends GameApplication {
          * @throws IOException if an error occurred when reading from the input stream.
          */
         public static void loadConfigs() throws IOException {
-            // TODO: Load args
             Options.DEFAULT = Utils.IO.loadProperties(ROOT + "default.properties");
             System.settings = Utils.IO.loadProperties(ROOT + "system/settings.properties");
         }
