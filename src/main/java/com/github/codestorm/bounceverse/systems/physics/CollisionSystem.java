@@ -5,7 +5,7 @@ import com.github.codestorm.bounceverse.systems.System;
 /**
  *
  *
- * <h1>{@link Collision}</h1>
+ * <h1>{@link CollisionSystem}</h1>
  *
  * Hệ thống xử lý va chạm.
  *
@@ -13,8 +13,7 @@ import com.github.codestorm.bounceverse.systems.System;
  *
  * @see System
  */
-public final class Collision extends System {
-    // Collision
+public final class CollisionSystem extends System {
     /**
      * Lazy-loaded singleton holder.
      *
@@ -22,18 +21,18 @@ public final class Collision extends System {
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {
-        static final Collision INSTANCE = new Collision();
+        static final CollisionSystem INSTANCE = new CollisionSystem();
     }
 
-    public static Collision getInstance() {
+    public static CollisionSystem getInstance() {
         return Holder.INSTANCE;
     }
 
-    // Tạo các Group CollisionHandler ở đây (dùng composition)
+    // ? Tạo các Group CollisionHandler ở đây (dùng composition)
 
     @Override
     public void apply() {
-        // Viết các logic CollisionHandler ở đây. eg:
+        // ? Viết các logic CollisionHandler ở đây. eg:
         //        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER,
         // EntityType.COIN) {
         //            @Override
@@ -43,5 +42,5 @@ public final class Collision extends System {
         //        });
     }
 
-    private Collision() {}
+    private CollisionSystem() {}
 }

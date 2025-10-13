@@ -5,8 +5,9 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.factory.BrickFactory;
+import com.github.codestorm.bounceverse.factory.SceneFactory;
 import com.github.codestorm.bounceverse.systems.LaunchOption;
-import com.github.codestorm.bounceverse.systems.physics.Collision;
+import com.github.codestorm.bounceverse.systems.physics.CollisionSystem;
 import java.io.IOException;
 import java.util.Properties;
 import javafx.scene.paint.Color;
@@ -23,7 +24,7 @@ import javafx.scene.paint.Color;
  * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như vậy?</i>
  */
 public final class Bounceverse extends GameApplication {
-    private static LaunchOption launchOption; // launch options
+    private static LaunchOption launchOption;
 
     /**
      * Cấu hình game.
@@ -70,18 +71,23 @@ public final class Bounceverse extends GameApplication {
         // Basic
         settings.setTitle(Configs.System.settings.getProperty("settings.name"));
         settings.setVersion(Configs.System.settings.getProperty("settings.version"));
+        settings.setCredits(Utils.IO.readTextFile("credits.txt"));
         settings.setApplicationMode(
                 Boolean.parseBoolean(Configs.System.settings.getProperty("settings.devMode"))
                         ? ApplicationMode.DEVELOPER
                         : (launchOption.isDebug())
                                 ? ApplicationMode.DEBUG
                                 : ApplicationMode.RELEASE);
-        // Resolution
+
+        // Display
         settings.setWidth(Integer.parseInt(Configs.Options.DEFAULT.getProperty("width")));
         settings.setHeight(Integer.parseInt(Configs.Options.DEFAULT.getProperty("height")));
-        // In-game
+        settings.setFullScreenAllowed(true);
+
+        // In-app
+        settings.setSceneFactory(new SceneFactory());
         settings.setMainMenuEnabled(true);
-        settings.setIntroEnabled(true); // TODO: Video cho intro
+        settings.setIntroEnabled(true);
     }
 
     @Override
@@ -94,8 +100,7 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        Collision.getInstance().apply();
-        ;
+        CollisionSystem.getInstance().apply();
     }
 
     @Override

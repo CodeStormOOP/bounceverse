@@ -2,9 +2,7 @@ package com.github.codestorm.bounceverse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /** Utilities. */
 public final class Utils {
@@ -63,6 +61,22 @@ public final class Utils {
                 }
                 res.put(kv[0], kv.length < 2 ? null : kv[1]);
             }
+            return res;
+        }
+
+        /**
+         * Read text file (txt) and put all lines into {@link List}.
+         *
+         * @param path File path
+         * @return All lines in text file
+         */
+        public static List<String> readTextFile(String path) {
+            var res = new ArrayList<String>();
+            var scanner = new Scanner(path);
+            while (scanner.hasNext()) {
+                res.add(scanner.next());
+            }
+            scanner.close();
             return res;
         }
 

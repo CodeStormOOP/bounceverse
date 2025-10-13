@@ -5,7 +5,7 @@ import com.github.codestorm.bounceverse.Utils;
 /**
  *
  *
- * <h1>LaunchOption</h1>
+ * <h1>{@link LaunchOption}</h1>
  *
  * Các tùy chọn khởi động được áp dụng trong game.
  */
