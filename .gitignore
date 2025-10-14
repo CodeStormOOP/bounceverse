@@ -1,3 +1,4 @@
+### Java
 .gradle
 build/
 target/
@@ -8,6 +9,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/
+!.idea/misc.xml
 *.iws
 *.iml
 *.ipr
@@ -39,3 +41,16 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### FXGL
+.fxgl/
+/save/
+/logs/
+/system/
+*.sav
+*.dat
+*.bin
+**/cache/
+**/prefs/
+
+### Workspace
