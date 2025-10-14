@@ -1,8 +1,9 @@
 package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.entity.component.Component;
+import com.github.codestorm.bounceverse.data.tags.components.PropertyComponent;
 
-public class Width extends Component {
+public class Width extends Component implements PropertyComponent{
 
     private double originalWidth;
 
