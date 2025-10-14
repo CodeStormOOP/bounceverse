@@ -1,5 +1,7 @@
 package com.github.codestorm.bounceverse.components.behaviors.brick;
 
+import java.util.List;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
@@ -8,7 +10,6 @@ import com.github.codestorm.bounceverse.data.tags.components.BehaviorComponent;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
 import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
 import com.github.codestorm.bounceverse.data.types.EntityType;
-import java.util.List;
 
 /**
  *
@@ -50,10 +51,8 @@ public final class BrickExplode extends Component
             if (Math.hypot(dx, dy) <= explodeRadius) {
                 entity.getComponentOptional(BrickHealth.class)
                         .ifPresent(health -> {
-                            // Giảm máu
                             health.damage(1);
 
-                            // Nếu máu <= 0 thì cho nổ tiếp (chain reaction)
                             if (health.isDead() && entity.hasComponent(BrickExplode.class)) {
                                 entity.getComponent(BrickExplode.class).explode();
                             }
