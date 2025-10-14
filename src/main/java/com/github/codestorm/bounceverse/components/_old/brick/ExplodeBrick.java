@@ -1,8 +1,10 @@
-package com.github.codestorm.bounceverse.brick;
+package com.github.codestorm.bounceverse.components._old.brick;
+
+import java.util.List;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import java.util.List;
+
 import javafx.scene.paint.Color;
 
 public class ExplodeBrick extends BrickComponent {

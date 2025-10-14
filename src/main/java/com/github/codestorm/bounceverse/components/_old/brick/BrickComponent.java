@@ -1,6 +1,7 @@
-package com.github.codestorm.bounceverse.brick;
+package com.github.codestorm.bounceverse.components._old.brick;
 
 import com.almasb.fxgl.entity.component.Component;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
