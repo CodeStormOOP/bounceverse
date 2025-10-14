@@ -3,6 +3,8 @@ package com.github.codestorm.bounceverse.systems.physics;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.github.codestorm.bounceverse.components.properties.Move;
+import com.github.codestorm.bounceverse.components.properties.Wall;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import com.github.codestorm.bounceverse.systems.System;
@@ -21,6 +23,7 @@ import com.github.codestorm.bounceverse.systems.System;
  * @see System
  */
 public final class CollisionSystem extends System {
+
     /**
      * Lazy-loaded singleton holder.
      *
@@ -30,6 +33,7 @@ public final class CollisionSystem extends System {
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {
+
         static final CollisionSystem INSTANCE = new CollisionSystem();
     }
 
@@ -38,7 +42,6 @@ public final class CollisionSystem extends System {
     }
 
     // ? Tạo các Group CollisionHandler ở đây (dùng composition)
-
     @Override
     public void apply() {
         // Bullet vs Brick
@@ -52,6 +55,26 @@ public final class CollisionSystem extends System {
 
                 // Hủy viên đạn
                 bullet.removeFromWorld();
+            }
+        });
+
+        // Paddle vs Wall
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.WALL) {
+            @Override
+            protected void onCollision(Entity paddle, Entity wall) {
+                if (wall.hasComponent(Wall.class)) {
+                    var wallProp = wall.getComponent(Wall.class);
+                    var move = paddle.getComponentOptional(Move.class);
+
+                    move.ifPresent(m -> m.setDirection(0));
+
+                    switch (wallProp.getSide()) {
+                        case LEFT -> paddle.setX(wall.getRightX());
+                        case RIGHT -> paddle.setX(wall.getX() - paddle.getWidth());
+                        default -> throw new IllegalArgumentException("Unexpected value: " + wallProp.getSide());
+                        
+                    }
+                }
             }
         });
 
