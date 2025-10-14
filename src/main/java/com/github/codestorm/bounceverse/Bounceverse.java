@@ -5,6 +5,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.factory.BrickFactory;
+import com.github.codestorm.bounceverse.factory.BulletFactory;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
 import com.github.codestorm.bounceverse.systems.LaunchOption;
 import com.github.codestorm.bounceverse.systems.physics.CollisionSystem;
@@ -92,10 +93,11 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initGame() {
-        FXGL.getGameWorld().addEntityFactory(new BrickFactory());
+    FXGL.getGameWorld().addEntityFactory(new BrickFactory());
+    FXGL.getGameWorld().addEntityFactory(new BulletFactory());
 
-        var brick1 = FXGL.spawn("normalBrick", 100, 100);
-        var brick2 = FXGL.spawn("normalBrick", 200, 200);
+    FXGL.spawn("normalBrick", 100, 100);
+    FXGL.spawn("normalBrick", 200, 200);
     }
 
     @Override

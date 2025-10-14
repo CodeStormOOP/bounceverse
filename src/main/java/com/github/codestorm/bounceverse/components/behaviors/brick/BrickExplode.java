@@ -2,19 +2,12 @@ package com.github.codestorm.bounceverse.components.behaviors.brick;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-<<<<<<< HEAD:src/main/java/com/github/codestorm/bounceverse/components/brick/behaviors/BrickExplode.java
-import com.github.codestorm.bounceverse.components.base.BehaviorComponent;
-import com.github.codestorm.bounceverse.components.brick.Brick;
-import com.github.codestorm.bounceverse.components.brick.properties.BrickHealth;
-import com.github.codestorm.bounceverse.tags.ForBrick;
-import com.github.codestorm.bounceverse.tags.Optional;
-=======
 import com.almasb.fxgl.entity.component.Component;
+import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
 import com.github.codestorm.bounceverse.data.tags.components.BehaviorComponent;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
 import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
 import com.github.codestorm.bounceverse.data.types.EntityType;
->>>>>>> 7b79420144f692b2327565779d6d4140aff0f34f:src/main/java/com/github/codestorm/bounceverse/components/behaviors/brick/BrickExplode.java
 import java.util.List;
 
 /**
@@ -45,15 +38,8 @@ public final class BrickExplode extends Component
 
         List<Entity> entities = FXGL.getGameWorld().getEntities();
         for (var entity : entities) {
-<<<<<<< HEAD:src/main/java/com/github/codestorm/bounceverse/components/brick/behaviors/BrickExplode.java
-            if (entity == getEntity())
-                continue;
-            if (!entity.hasComponent(Brick.class))
-                continue;
-=======
             if (entity == getEntity()) continue;
             if (!entity.isType(EntityType.BRICK)) continue;
->>>>>>> 7b79420144f692b2327565779d6d4140aff0f34f:src/main/java/com/github/codestorm/bounceverse/components/behaviors/brick/BrickExplode.java
 
             double ex = entity.getCenter().getX();
             double ey = entity.getCenter().getY();

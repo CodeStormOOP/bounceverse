@@ -14,11 +14,11 @@ public class ExpandPaddle extends Component implements BehaviorComponent, ForPad
     private boolean expanded = false;
 
     public void active() {
-        if (!expanded) {
-            entity.getComponent(Width.class).setWidth(expandedWidth);
-            expanded = true;
-            timer = 0;
-        }
+        var width = entity.getComponent(Width.class);
+        width.resetWidth();
+        width.setWidth(expandedWidth);
+        expanded = true;
+        timer = 0;
     }
 
     @Override
@@ -31,4 +31,5 @@ public class ExpandPaddle extends Component implements BehaviorComponent, ForPad
             }
         }
     }
+
 }
