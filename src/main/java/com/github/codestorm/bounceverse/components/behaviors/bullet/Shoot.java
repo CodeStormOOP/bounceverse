@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse.components.behaviors.bullet;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
+
 import javafx.geometry.Point2D;
 
 /**
@@ -12,10 +13,13 @@ public class Shoot extends Component {
 
     private final double cooldown;
     private double cooldownTimer = 0;
+    private final double duration;
+    private double timer = 0;
     private boolean active = false;
 
-    public Shoot(double cooldown) {
+    public Shoot(double cooldown, double duration) {
         this.cooldown = cooldown;
+        this.duration = duration;
     }
 
     public void activate() {
@@ -27,6 +31,7 @@ public class Shoot extends Component {
     public void onUpdate(double tpf) {
         if (active) {
             cooldownTimer -= tpf;
+            timer += tpf;
         }
     }
 
@@ -35,9 +40,13 @@ public class Shoot extends Component {
     }
 
     public void shoot() {
-        if (!canShoot())
+        if (!canShoot()) {
             return;
-
+        }
+        if (timer >= duration) {
+            active = false;
+            timer = 0;
+        }
         var e = getEntity();
         double halfWidth = e.getWidth() / 2;
 
