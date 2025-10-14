@@ -49,8 +49,7 @@ public final class BrickFactory implements EntityFactory {
     @NotNull
     @SafeVarargs
     private static <OptionalBrickComponent extends Component & ForBrick & OptionalTag>
-            Entity newBrick(
-                    Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
+            Entity newBrick(Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
         return FXGL.entityBuilder()
                 .type(EntityType.BRICK)
                 .at(pos)

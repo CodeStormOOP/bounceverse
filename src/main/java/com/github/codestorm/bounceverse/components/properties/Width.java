@@ -16,6 +16,8 @@ public class Width extends Component {
     }
 
     public void setWidth(double width) {
+        var transform = entity.getTransformComponent();
+        transform.setAnchoredPosition(entity.getCenter());
         entity.setScaleX(width / originalWidth);
     }
 

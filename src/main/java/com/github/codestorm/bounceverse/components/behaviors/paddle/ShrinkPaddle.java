@@ -14,11 +14,11 @@ public class ShrinkPaddle extends Component implements BehaviorComponent, ForPad
     private boolean shrinked = false;
 
     public void active() {
-        if (!shrinked) {
-            entity.getComponent(Width.class).setWidth(shrinkedWidth);
-            shrinked = true;
-            timer = 0;
-        }
+        var width = entity.getComponent(Width.class);
+        width.resetWidth();
+        width.setWidth(shrinkedWidth);
+        shrinked = true;
+        timer = 0;
     }
 
     @Override

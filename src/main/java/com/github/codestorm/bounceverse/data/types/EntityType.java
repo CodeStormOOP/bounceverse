@@ -20,5 +20,6 @@ public enum EntityType {
     BRICK,
     PADDLE,
     BALL,
-    POWER_UP
+    POWER_UP,
+    BULLET
 }
