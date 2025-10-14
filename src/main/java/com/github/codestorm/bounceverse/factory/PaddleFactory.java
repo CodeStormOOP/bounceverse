@@ -6,6 +6,8 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import com.github.codestorm.bounceverse.components.properties.Move;
 import com.github.codestorm.bounceverse.components.properties.Width;
 import com.github.codestorm.bounceverse.data.types.EntityType;
@@ -19,12 +21,18 @@ public class PaddleFactory implements EntityFactory{
 
     @Spawns("paddle")
     public Entity newPaddle(SpawnData data) {
+        Rectangle view = new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        view.setArcWidth(14);
+        view.setArcHeight(14);
+        view.setFill(Color.LIGHTBLUE);
+
         return FXGL.entityBuilder(data)
                 .type(EntityType.PADDLE)
-                .viewWithBBox(new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, Color.DEEPSKYBLUE))
+                .view(view)
+                .bbox(new HitBox(BoundingShape.box(DEFAULT_WIDTH, DEFAULT_HEIGHT)))
                 .with(new CollidableComponent(true))
-                .with(new Move(400)) // speed = 400 px/s
-                .with(new Width())               // lưu kích thước gốc để expand/shrink
+                .with(new Move(400))
+                .with(new Width())
                 .build();
     }
 }

@@ -5,7 +5,7 @@ import com.github.codestorm.bounceverse.data.tags.components.PropertyComponent;
 
 public class Move extends Component implements PropertyComponent {
 
-    private double speed = 400;
+    private double speed;
     private double direction = 0;
 
     public Move(double speed) {
@@ -16,11 +16,23 @@ public class Move extends Component implements PropertyComponent {
         this.direction = direction;
     }
 
-    public double getDirection() {
-        return direction;
+    public void left() {
+        this.direction = -1;
     }
 
-    public double getSpeed() {
-        return speed;
+    public void right() {
+        this.direction = 1;
     }
+
+    public void stop() {
+        this.direction = 0;
+    }
+
+    @Override
+    public void onUpdate(double tpf) {
+        if (direction != 0) {
+            entity.translateX(direction * speed * tpf);
+        }
+    }
+
 }
