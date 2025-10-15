@@ -17,8 +17,6 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'com.github.almasb:fxgl:21.1'
-	implementation 'org.slf4j:slf4j-api:2.0.17'
-	implementation 'ch.qos.logback:logback-classic:1.5.18'
 	implementation 'com.google.guava:guava:33.5.0-jre'
 }
 
@@ -37,7 +35,7 @@ tasks.register('buildRelease', Jar) {
 
 	archiveBaseName.set(project.name)
 	archiveVersion.set(project.version)
-	destinationDirectory.set(file("./release"))
+	destinationDirectory.set(file("./out"))
 
 	dependsOn test
 	dependsOn configurations.runtimeClasspath
