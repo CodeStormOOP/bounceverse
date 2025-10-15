@@ -7,6 +7,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.factory.BallFactory;
 import com.github.codestorm.bounceverse.factory.BrickFactory;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
+import com.github.codestorm.bounceverse.factory.WallFactory;
 import com.github.codestorm.bounceverse.systems.LaunchOption;
 import com.github.codestorm.bounceverse.systems.physics.CollisionSystem;
 import java.io.IOException;
@@ -95,6 +96,9 @@ public final class Bounceverse extends GameApplication {
     protected void initGame() {
         FXGL.getGameWorld().addEntityFactory(new BrickFactory());
         FXGL.getGameWorld().addEntityFactory(new BallFactory());
+        FXGL.getGameWorld().addEntityFactory(new WallFactory());
+
+        WallFactory.spawnWalls();
 
         //        var brick1 = FXGL.spawn("normalBrick", 100, 100);
         //        var brick2 = FXGL.spawn("normalBrick", 200, 200);
@@ -109,6 +113,7 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initPhysics() {
+        FXGL.getPhysicsWorld().setGravity(0, 0);
         CollisionSystem.getInstance().apply();
     }
 

@@ -4,7 +4,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
-import com.github.codestorm.bounceverse.components._old.ball.BallComponent;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import com.github.codestorm.bounceverse.systems.System;
@@ -57,9 +56,6 @@ public final class CollisionSystem extends System {
                         // decrease hp on collision
                         var brickHealth = brick.getComponent(BrickHealth.class);
                         brickHealth.getHealth().damage(1);
-
-                        // bounce
-                        ball.getComponent(BallComponent.class).bounce();
                     }
                 });
     }

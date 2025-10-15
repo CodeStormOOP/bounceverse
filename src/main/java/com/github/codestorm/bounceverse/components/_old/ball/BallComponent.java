@@ -1,8 +1,7 @@
 package com.github.codestorm.bounceverse.components._old.ball;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.factory.BallFactory;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.Point2D;
 
 /**
@@ -22,29 +21,39 @@ import javafx.geometry.Point2D;
  * @author minngoc1213
  */
 public class BallComponent extends Component {
-    public static final int VELOCITY = 200;
+    public static final int SPEED = 500;
 
-    private Point2D velocity = new Point2D(VELOCITY, VELOCITY);
+    private PhysicsComponent physics;
+    private Point2D velocity = new Point2D(SPEED, SPEED);
 
     @Override
     public void onUpdate(double tpf) {
+        var v = physics.getLinearVelocity();
 
-        entity.translate(velocity.multiply(tpf));
+        double vx = v.getX();
+        double vy = v.getY();
 
-        // bounce if colliding horizontal wall
-        if (entity.getY() <= BallFactory.RADIUS
-                || entity.getY() >= FXGL.getAppHeight() - BallFactory.RADIUS) {
-            velocity = new Point2D(velocity.getX(), -velocity.getY());
+        // avoid ball stick to wall
+        if (Math.abs(vx) < 50) {
+            vx = (vy >= 0) ? 50 : -50;
         }
 
-        // bounce if colliding vertical wall
-        if (entity.getX() <= BallFactory.RADIUS
-                || entity.getX() >= FXGL.getAppWidth() - BallFactory.RADIUS) {
-            velocity = new Point2D(-velocity.getX(), velocity.getY());
+        // avoid ball stick to wall
+        if (Math.abs(vy) < 50) {
+            vy = (vx >= 0) ? 50 : -50;
         }
+
+        Point2D velocity = new Point2D(vx, vy);
+
+        // avoid ball spin
+        physics.setLinearVelocity(velocity.normalize().multiply(SPEED));
+        physics.setAngularVelocity(0);
+        physics.getEntity().setRotation(0);
     }
 
-    public void bounce() {
-        velocity = new Point2D(velocity.getX(), -velocity.getY());
+    @Override
+    public void onAdded() {
+        physics.setOnPhysicsInitialized(
+                () -> physics.setLinearVelocity(velocity));
     }
 }

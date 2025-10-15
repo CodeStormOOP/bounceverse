@@ -6,6 +6,9 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
 import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
@@ -26,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
  * @see EntityFactory
  */
 public final class BrickFactory implements EntityFactory {
-    private static final int DEFAULT_WIDTH = 80;
-    private static final int DEFAULT_HEIGHT = 30;
+    public static final int DEFAULT_WIDTH = 80;
+    public static final int DEFAULT_HEIGHT = 30;
     private static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
     private static final int DEFAULT_HP = 1;
 
@@ -45,11 +48,21 @@ public final class BrickFactory implements EntityFactory {
     private static <OptionalBrickComponent extends Component & ForBrick & OptionalTag>
             Entity newBrick(
                     Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
+        PhysicsComponent physics = new PhysicsComponent();
+
+        FixtureDef fixture = new FixtureDef();
+        fixture.setFriction(0f);
+        fixture.setRestitution(1f);
+
+        physics.setFixtureDef(fixture);
+        physics.setBodyType(BodyType.STATIC);
+
         return FXGL.entityBuilder()
                 .type(EntityType.BRICK)
-                .collidable()
                 .at(pos)
                 .viewWithBBox(view)
+                .collidable()
+                .with(physics)
                 .with(new BrickHealth(hp))
                 .with(components)
                 .build();
