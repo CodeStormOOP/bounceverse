@@ -47,6 +47,7 @@ public final class BrickFactory implements EntityFactory {
                     Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
         return FXGL.entityBuilder()
                 .type(EntityType.BRICK)
+                .collidable()
                 .at(pos)
                 .viewWithBBox(view)
                 .with(new BrickHealth(hp))

@@ -5,7 +5,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.github.codestorm.bounceverse.components.ball.BallComponent;
+import com.github.codestorm.bounceverse.components._old.ball.BallComponent;
+import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -27,13 +28,15 @@ import javafx.scene.shape.Circle;
  * @author minngoc1213
  */
 public class BallFactory implements EntityFactory {
-    public static final int RADIUS = 25;
+    public static final int RADIUS = 10;
 
     @Spawns("ball")
     public Entity spawnBall(SpawnData data) {
         return FXGL.entityBuilder(data)
-                .at(50, 50)
-                .view(new Circle(RADIUS, Color.RED))
+                .type(EntityType.BALL)
+                .collidable()
+                .at(400, 400)
+                .viewWithBBox(new Circle(RADIUS, Color.RED))
                 .with(new BallComponent())
                 .buildAndAttach();
     }

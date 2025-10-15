@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.components.ball;
+package com.github.codestorm.bounceverse.components._old.ball;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
@@ -42,5 +42,9 @@ public class BallComponent extends Component {
                 || entity.getX() >= FXGL.getAppWidth() - BallFactory.RADIUS) {
             velocity = new Point2D(-velocity.getX(), velocity.getY());
         }
+    }
+
+    public void bounce() {
+        velocity = new Point2D(velocity.getX(), -velocity.getY());
     }
 }
