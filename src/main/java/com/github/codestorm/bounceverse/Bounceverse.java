@@ -4,8 +4,10 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
+import com.github.codestorm.bounceverse.factory.BallFactory;
 import com.github.codestorm.bounceverse.factory.BrickFactory;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
+import com.github.codestorm.bounceverse.factory.WallFactory;
 import com.github.codestorm.bounceverse.systems.LaunchOption;
 import com.github.codestorm.bounceverse.systems.physics.CollisionSystem;
 import java.io.IOException;
@@ -93,13 +95,25 @@ public final class Bounceverse extends GameApplication {
     @Override
     protected void initGame() {
         FXGL.getGameWorld().addEntityFactory(new BrickFactory());
+        FXGL.getGameWorld().addEntityFactory(new BallFactory());
+        FXGL.getGameWorld().addEntityFactory(new WallFactory());
 
-        var brick1 = FXGL.spawn("normalBrick", 100, 100);
-        var brick2 = FXGL.spawn("normalBrick", 200, 200);
+        WallFactory.spawnWalls();
+
+        //        var brick1 = FXGL.spawn("normalBrick", 100, 100);
+        //        var brick2 = FXGL.spawn("normalBrick", 200, 200);
+
+        for (int i = 1; i <= 6; i++) {
+            for (int j = 1; j <= 10; j++) {
+                FXGL.spawn("normalBrick", 85 * j, 35 * i);
+            }
+        }
+        FXGL.spawn("ball");
     }
 
     @Override
     protected void initPhysics() {
+        FXGL.getPhysicsWorld().setGravity(0, 0);
         CollisionSystem.getInstance().apply();
     }
 
