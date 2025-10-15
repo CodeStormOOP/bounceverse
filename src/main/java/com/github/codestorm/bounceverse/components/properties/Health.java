@@ -2,7 +2,7 @@ package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.data.tags.components.PropertyComponent;
+import com.github.codestorm.bounceverse.data.tags.components.Property;
 
 /**
  *
@@ -11,7 +11,7 @@ import com.github.codestorm.bounceverse.data.tags.components.PropertyComponent;
  *
  * <p>Lớp này đại diện cho thuộc tính HP của Entity. Khi HP về 0, Entity sẽ bị xóa khỏi thế giới.
  */
-public abstract class Health extends Component implements PropertyComponent {
+public abstract class Health extends Component implements Property {
     private final HealthIntComponent health;
 
     public Health(int maxHealth) {

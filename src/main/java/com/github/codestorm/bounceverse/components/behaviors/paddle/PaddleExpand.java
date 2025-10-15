@@ -2,12 +2,11 @@ package com.github.codestorm.bounceverse.components.behaviors.paddle;
 
 import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.components.properties.Width;
-import com.github.codestorm.bounceverse.data.tags.components.BehaviorComponent;
+import com.github.codestorm.bounceverse.data.tags.components.Behavior;
 import com.github.codestorm.bounceverse.data.tags.entities.ForPaddle;
-import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
+import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
 
-public class ExpandPaddle extends Component implements BehaviorComponent, ForPaddle, OptionalTag {
-
+public class PaddleExpand extends Component implements Behavior, ForPaddle, Optional {
     private final double expandedWidth = 200;
     private final double duration = 5.0;
     private double timer = 0;
@@ -31,5 +30,4 @@ public class ExpandPaddle extends Component implements BehaviorComponent, ForPad
             }
         }
     }
-
 }

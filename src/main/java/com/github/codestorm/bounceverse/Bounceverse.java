@@ -5,7 +5,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
-import com.github.codestorm.bounceverse.components.properties.Move;
+import com.github.codestorm.bounceverse.components.properties.Velocity;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import com.github.codestorm.bounceverse.factory.BrickFactory;
 import com.github.codestorm.bounceverse.factory.BulletFactory;
@@ -16,7 +16,6 @@ import com.github.codestorm.bounceverse.systems.LaunchOption;
 import com.github.codestorm.bounceverse.systems.physics.CollisionSystem;
 import java.io.IOException;
 import java.util.Properties;
-
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
@@ -27,13 +26,9 @@ import javafx.scene.paint.Color;
  *
  * Phần Hệ thống Chương trình chính của game, nơi mà mọi thứ bắt đầu...
  *
- * <p>
- * <i>Game {@link Bounceverse} được lấy cảm hứng từ game Arkanoid nổi tiếng, nơi
- * người chơi điều
- * khiển một thanh để đỡ bóng và phá vỡ các viên gạch. Mục tiêu của game là phá
- * vỡ tất cả các viên
- * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như
- * vậy?</i>
+ * <p><i>Game {@link Bounceverse} được lấy cảm hứng từ game Arkanoid nổi tiếng, nơi người chơi điều
+ * khiển một thanh để đỡ bóng và phá vỡ các viên gạch. Mục tiêu của game là phá vỡ tất cả các viên
+ * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như vậy?</i>
  */
 public final class Bounceverse extends GameApplication {
     private static LaunchOption launchOption;
@@ -41,8 +36,7 @@ public final class Bounceverse extends GameApplication {
     /**
      * Cấu hình game.
      *
-     * <p>
-     * Sử dụng {@link #loadConfigs()} để load các config.
+     * <p>Sử dụng {@link #loadConfigs()} để load các config.
      */
     private static final class Configs {
         private static final String ROOT = "/configs/";
@@ -51,16 +45,14 @@ public final class Bounceverse extends GameApplication {
         private static final class System {
             public static Properties settings;
 
-            private System() {
-            }
+            private System() {}
         }
 
         /** Cấu hình game bên ngoài hệ thống game. */
         private static final class Options {
             public static Properties DEFAULT; // Cấu hình mặc định của trò chơi
 
-            private Options() {
-            }
+            private Options() {}
         }
 
         /**
@@ -73,8 +65,7 @@ public final class Bounceverse extends GameApplication {
             System.settings = Utils.IO.loadProperties(ROOT + "system/settings.properties");
         }
 
-        private Configs() {
-        }
+        private Configs() {}
     }
 
     @Override
@@ -129,33 +120,43 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initInput() {
-        FXGL.getInput().addAction(new UserAction("Move Left") {
-            @Override
-            protected void onActionBegin() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(e -> e.getComponent(Move.class).left());
-            }
+        FXGL.getInput()
+                .addAction(
+                        new UserAction("Move Left") {
+                            @Override
+                            protected void onActionBegin() {
+                                FXGL.getGameWorld()
+                                        .getEntitiesByType(EntityType.PADDLE)
+                                        .forEach(e -> e.getComponent(Velocity.class).left());
+                            }
 
-            @Override
-            protected void onActionEnd() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(e -> e.getComponent(Move.class).stop());
-            }
-        }, KeyCode.LEFT);
+                            @Override
+                            protected void onActionEnd() {
+                                FXGL.getGameWorld()
+                                        .getEntitiesByType(EntityType.PADDLE)
+                                        .forEach(e -> e.getComponent(Velocity.class).stop());
+                            }
+                        },
+                        KeyCode.LEFT);
 
-        FXGL.getInput().addAction(new UserAction("Move Right") {
-            @Override
-            protected void onActionBegin() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(e -> e.getComponent(Move.class).right());
-            }
+        FXGL.getInput()
+                .addAction(
+                        new UserAction("Move Right") {
+                            @Override
+                            protected void onActionBegin() {
+                                FXGL.getGameWorld()
+                                        .getEntitiesByType(EntityType.PADDLE)
+                                        .forEach(e -> e.getComponent(Velocity.class).right());
+                            }
 
-            @Override
-            protected void onActionEnd() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(e -> e.getComponent(Move.class).stop());
-            }
-        }, KeyCode.RIGHT);
+                            @Override
+                            protected void onActionEnd() {
+                                FXGL.getGameWorld()
+                                        .getEntitiesByType(EntityType.PADDLE)
+                                        .forEach(e -> e.getComponent(Velocity.class).stop());
+                            }
+                        },
+                        KeyCode.RIGHT);
     }
 
     @Override

@@ -4,18 +4,17 @@ import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.component.CoreComponent;
 import com.github.codestorm.bounceverse.components.properties.Health;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
-import com.github.codestorm.bounceverse.data.tags.requirements.RequiredTag;
+import com.github.codestorm.bounceverse.data.tags.requirements.Required;
 
 /**
  *
  *
  * <h1>{@link BrickHealth}</h1>
  *
- * <p>
- * Lớp này đại diện cho thuộc tính HP của Viên gạch.
+ * <p>Lớp này đại diện cho thuộc tính HP của Viên gạch.
  */
 @CoreComponent
-public final class BrickHealth extends Health implements ForBrick, RequiredTag {
+public final class BrickHealth extends Health implements ForBrick, Required {
     public BrickHealth(int maxHealth) {
         super(maxHealth);
     }
@@ -27,12 +26,10 @@ public final class BrickHealth extends Health implements ForBrick, RequiredTag {
     }
 
     public void damage(int amount) {
-        if (amount <= 0)
-            return;
+        if (amount <= 0) return;
         HealthIntComponent h = getHealth();
 
-        if (h.isZero())
-            return;
+        if (h.isZero()) return;
 
         h.damage(amount);
     }
