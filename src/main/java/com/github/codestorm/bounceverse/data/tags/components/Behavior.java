@@ -7,10 +7,10 @@ import com.github.codestorm.bounceverse.data.tags.ComponentTag;
 /**
  *
  *
- * <h1>{@link BehaviorComponent}</h1>
+ * <h1>{@link Behavior}</h1>
  *
  * <p>Lớp này đại diện cho một {@link Component} biểu diễn <a
  * href="https://github.com/AlmasB/FXGL/wiki/Entity-Component-%28FXGL-11%29#component-as-behavior">
  * hành vi (behavior)</a> của {@link Entity}.
  */
-public interface BehaviorComponent extends ComponentTag {}
+public interface Behavior extends ComponentTag {}

@@ -2,11 +2,11 @@ package com.github.codestorm.bounceverse.components.behaviors.paddle;
 
 import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.components.properties.Width;
-import com.github.codestorm.bounceverse.data.tags.components.BehaviorComponent;
+import com.github.codestorm.bounceverse.data.tags.components.Behavior;
 import com.github.codestorm.bounceverse.data.tags.entities.ForPaddle;
-import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
+import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
 
-public class ShrinkPaddle extends Component implements BehaviorComponent, ForPaddle, OptionalTag {
+public class ShrinkPaddle extends Component implements Behavior, ForPaddle, Optional {
 
     private final double shrinkedWidth = 60;
     private final double duration = 5.0;

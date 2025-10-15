@@ -2,7 +2,7 @@ package com.github.codestorm.bounceverse.components._old.base;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
+import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
 
 /**
  *
@@ -22,6 +22,6 @@ import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
  * inheritance</a>. Ngoài ra ta lại cần nhu cầu xác định kiểu của Entity một cách chặt chẽ nữa. Vậy
  * nên, một thuộc tính kiểu trong Entity như này là cần thiết.
  *
- * @see OptionalTag
+ * @see Optional
  */
 public abstract class EntityComponent extends Component {}
