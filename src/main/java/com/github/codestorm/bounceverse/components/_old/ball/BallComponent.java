@@ -53,7 +53,6 @@ public class BallComponent extends Component {
 
     @Override
     public void onAdded() {
-        physics.setOnPhysicsInitialized(
-                () -> physics.setLinearVelocity(velocity));
+        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
     }
 }
