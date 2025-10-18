@@ -38,9 +38,11 @@ public final class UserSetting {
         public void setHeight(int height) {
             this.height = height;
         }
+
+        private Video() {}
     }
 
-    private Video video;
+    private Video video = new Video();
 
     /**
      * Lấy tên file setting tương ứng của người chơi.
@@ -100,4 +102,6 @@ public final class UserSetting {
     public void setVideo(Video video) {
         this.video = video;
     }
+
+    private UserSetting() {}
 }
