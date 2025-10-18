@@ -1,26 +1,25 @@
-package com.github.codestorm.bounceverse.systems.physics;
+package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.github.codestorm.bounceverse.components.properties.Velocity;
-import com.github.codestorm.bounceverse.components.properties.Wall;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
+import com.github.codestorm.bounceverse.components.properties.wall.Border;
 import com.github.codestorm.bounceverse.data.types.EntityType;
-import com.github.codestorm.bounceverse.systems.System;
 
 /**
  *
  *
- * <h1>{@link CollisionSystem}</h1>
+ * <h1>{@link PhysicSystem}</h1>
  *
- * Hệ thống xử lý va chạm.
+ * Hệ thống xử lý vật lý.
  *
  * <p><i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
  *
  * @see System
  */
-public final class CollisionSystem extends System {
+public final class PhysicSystem extends System {
 
     /**
      * Lazy-loaded singleton holder.
@@ -29,11 +28,10 @@ public final class CollisionSystem extends System {
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {
-
-        static final CollisionSystem INSTANCE = new CollisionSystem();
+        static final PhysicSystem INSTANCE = new PhysicSystem();
     }
 
-    public static CollisionSystem getInstance() {
+    public static PhysicSystem getInstance() {
         return Holder.INSTANCE;
     }
 
@@ -49,6 +47,7 @@ public final class CollisionSystem extends System {
                                 // Nếu brick có máu -> trừ 1 HP
                                 if (brick.hasComponent(BrickHealth.class)) {
                                     brick.getComponent(BrickHealth.class).damage(1);
+                                    // TODO: kiểm tra shield
                                 }
 
                                 // Hủy viên đạn
@@ -62,7 +61,7 @@ public final class CollisionSystem extends System {
                         new CollisionHandler(EntityType.PADDLE, EntityType.WALL) {
                             @Override
                             protected void onCollision(Entity paddle, Entity wall) {
-                                if (wall.hasComponent(Wall.class)) {
+                                if (wall.hasComponent(Border.class)) {
                                     var wallProp = wall.getComponent(Wall.class);
                                     var move = paddle.getComponentOptional(Velocity.class);
 
@@ -80,5 +79,5 @@ public final class CollisionSystem extends System {
                         });
     }
 
-    private CollisionSystem() {}
+    private PhysicSystem() {}
 }
