@@ -21,7 +21,7 @@ public final class Utils {
         public static Properties loadProperties(String path) throws IOException {
             InputStream fileStream = IO.class.getResourceAsStream(path);
             if (fileStream == null) {
-                throw new IOException("Cannot open InputStream in" + path);
+                throw new IOException("Cannot open InputStream on " + path);
             }
 
             Properties prop = new Properties();
@@ -92,7 +92,7 @@ public final class Utils {
          *
          * @see ActiveCooldown
          */
-        public static class Cooldown {
+        public static final class Cooldown {
             /** Đại diện cooldown hiện tại. Giống như một wrapper của {@link TimerAction}. */
             public final class ActiveCooldown {
                 private TimerAction waiter = null;
