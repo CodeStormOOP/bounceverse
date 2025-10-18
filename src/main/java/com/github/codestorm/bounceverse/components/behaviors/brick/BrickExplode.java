@@ -3,9 +3,10 @@ package com.github.codestorm.bounceverse.components.behaviors.brick;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.data.tags.components.BehaviorComponent;
+import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
+import com.github.codestorm.bounceverse.data.tags.components.Behavior;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
-import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
+import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import java.util.List;
 
@@ -17,8 +18,7 @@ import java.util.List;
  * <p>Lớp này biểu diễn hành vi nổ của viên gạch. Khi viên gạch bị phá hủy, nó sẽ kích hoạt hiệu ứng
  * nổ, có thể gây sát thương đến các viên gạch xung quanh trong bán kính xác định.
  */
-public final class BrickExplode extends Component
-        implements BehaviorComponent, ForBrick, OptionalTag {
+public final class BrickExplode extends Component implements Behavior, ForBrick, Optional {
     public static final int DEFAULT_EXPLODE_RADIUS = 1;
     private int explodeRadius;
 
@@ -42,8 +42,17 @@ public final class BrickExplode extends Component
             double dx = Math.abs(ex - cx) / getEntity().getWidth();
             double dy = Math.abs(ey - cy) / getEntity().getHeight();
 
-            if (dx <= explodeRadius && dy <= explodeRadius) {
-                // TODO: Make Explode
+            if (Math.hypot(dx, dy) <= explodeRadius) {
+                entity.getComponentOptional(BrickHealth.class)
+                        .ifPresent(
+                                health -> {
+                                    health.damage(1);
+
+                                    if (health.isDead()
+                                            && entity.hasComponent(BrickExplode.class)) {
+                                        entity.getComponent(BrickExplode.class).explode();
+                                    }
+                                });
             }
         }
     }

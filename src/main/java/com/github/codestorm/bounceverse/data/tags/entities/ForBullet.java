@@ -6,8 +6,8 @@ import com.github.codestorm.bounceverse.data.types.EntityType;
 /**
  *
  *
- * <h1>{@link ForBrick}</h1>
+ * <h1>{@link ForBullet}</h1>
  *
- * Nhãn cho các thành phần có thể sử dụng với entity kiểu {@link EntityType#BRICK}.
+ * Nhãn cho các thành phần có thể sử dụng với entity kiểu {@link EntityType#BULLET}.
  */
-public interface ForBrick extends EntityTag {}
+public interface ForBullet extends EntityTag {}

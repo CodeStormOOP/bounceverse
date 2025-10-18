@@ -1,9 +1,10 @@
 package com.github.codestorm.bounceverse.components.properties.brick;
 
+import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.component.CoreComponent;
 import com.github.codestorm.bounceverse.components.properties.Health;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
-import com.github.codestorm.bounceverse.data.tags.requirements.RequiredTag;
+import com.github.codestorm.bounceverse.data.tags.requirements.Required;
 
 /**
  *
@@ -13,21 +14,27 @@ import com.github.codestorm.bounceverse.data.tags.requirements.RequiredTag;
  * <p>Lớp này đại diện cho thuộc tính HP của Viên gạch.
  */
 @CoreComponent
-public final class BrickHealth extends Health implements ForBrick, RequiredTag {
+public final class BrickHealth extends Health implements ForBrick, Required {
     public BrickHealth(int maxHealth) {
         super(maxHealth);
     }
-
-    //    private void updateColor() {
-    //        var ratio = getHealth().getValuePercent() / 100;
-    //        Color dimmed = baseColor.deriveColor(0, 1, 0.6 + 0.4 * ratio, 1);
-    //        view.setFill(dimmed);
-    //        view.setStroke(Color.BLACK);
-    //    }
 
     @Override
     public void onUpdate(double tpf) {
         super.onUpdate(tpf);
         // updateColor here
+    }
+
+    public void damage(int amount) {
+        if (amount <= 0) return;
+        HealthIntComponent h = getHealth();
+
+        if (h.isZero()) return;
+
+        h.damage(amount);
+    }
+
+    public boolean isDead() {
+        return getHealth().isZero();
     }
 }

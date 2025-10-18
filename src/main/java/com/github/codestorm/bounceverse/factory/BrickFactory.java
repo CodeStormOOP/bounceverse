@@ -8,7 +8,7 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
 import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
-import com.github.codestorm.bounceverse.data.tags.requirements.OptionalTag;
+import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
  * @see EntityFactory
  */
 public final class BrickFactory implements EntityFactory {
+
     private static final int DEFAULT_WIDTH = 80;
     private static final int DEFAULT_HEIGHT = 30;
     private static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
@@ -42,9 +43,8 @@ public final class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    private static <OptionalBrickComponent extends Component & ForBrick & OptionalTag>
-            Entity newBrick(
-                    Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
+    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
+            Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
         return FXGL.entityBuilder()
                 .type(EntityType.BRICK)
                 .at(pos)
@@ -64,8 +64,8 @@ public final class BrickFactory implements EntityFactory {
      * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
      */
     @NotNull @SafeVarargs
-    private static <OptionalBrickComponent extends Component & ForBrick & OptionalTag>
-            Entity newBrick(Point2D pos, int hp, OptionalBrickComponent... components) {
+    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
+            Point2D pos, int hp, OptionalBrickComponent... components) {
         return newBrick(
                 pos, hp, new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_COLOR), components);
     }

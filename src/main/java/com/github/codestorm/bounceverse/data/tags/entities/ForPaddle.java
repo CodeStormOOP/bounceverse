@@ -1,13 +1,13 @@
 package com.github.codestorm.bounceverse.data.tags.entities;
 
 import com.github.codestorm.bounceverse.data.tags.EntityTag;
+import com.github.codestorm.bounceverse.data.types.EntityType;
 
 /**
  *
  *
  * <h1>{@link ForPaddle}</h1>
  *
- * Nhãn cho các component có thể gắn với entity kiểu {@link
- * com.github.codestorm.bounceverse.data.types.EntityType#PADDLE}.
+ * Nhãn cho các thành phần có thể sử dụng với entity kiểu {@link EntityType#PADDLE}.
  */
 public interface ForPaddle extends EntityTag {}
