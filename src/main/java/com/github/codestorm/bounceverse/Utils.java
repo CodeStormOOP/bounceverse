@@ -95,20 +95,11 @@ public final class Utils {
          * @see ActiveCooldown
          */
         public static final class Cooldown {
+            private final ActiveCooldown current = new ActiveCooldown();
             private Duration duration;
-            private ActiveCooldown current;
 
             public Cooldown(Duration duration) {
                 this.duration = duration;
-            }
-
-            /**
-             * Đặt callback khi cooldown hết hạn.
-             *
-             * @param callback Callback
-             */
-            public void setOnExpired(Runnable callback) {
-                current.customOnExpired = callback;
             }
 
             public Duration getDuration() {
@@ -134,16 +125,20 @@ public final class Utils {
             public final class ActiveCooldown {
                 private TimerAction waiter = null;
                 private double timestamp = Double.NaN;
-                private Runnable customOnExpired = null;
+                private Runnable onExpiredCallback = null;
 
                 private ActiveCooldown() {}
 
                 /** Hành động khi cooldown hết. */
                 private void onExpired() {
                     timestamp = Double.NaN;
-                    if (customOnExpired != null) {
-                        customOnExpired.run();
+                    if (onExpiredCallback != null) {
+                        onExpiredCallback.run();
                     }
+                }
+
+                public void setOnExpired(Runnable callback) {
+                    this.onExpiredCallback = callback;
                 }
 
                 /**
