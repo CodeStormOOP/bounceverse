@@ -7,15 +7,7 @@ import com.github.codestorm.bounceverse.factory.PaddleFactory;
 import com.github.codestorm.bounceverse.factory.WallFactory;
 
 public final class GameSystem extends System {
-    /**
-     * Lazy-loaded singleton holder.
-     *
-     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
-     * Initialization-on-demand holder idiom</a>.
-     */
-    private static final class Holder {
-        static final GameSystem INSTANCE = new GameSystem();
-    }
+    private GameSystem() {}
 
     public static GameSystem getInstance() {
         return GameSystem.Holder.INSTANCE;
@@ -42,5 +34,13 @@ public final class GameSystem extends System {
         FXGL.spawn("normalBrick", 200, 200);
     }
 
-    private GameSystem() {}
+    /**
+     * Lazy-loaded singleton holder.
+     *
+     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Initialization-on-demand holder idiom</a>.
+     */
+    private static final class Holder {
+        static final GameSystem INSTANCE = new GameSystem();
+    }
 }

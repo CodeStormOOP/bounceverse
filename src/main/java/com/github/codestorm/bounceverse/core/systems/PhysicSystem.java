@@ -21,15 +21,7 @@ import com.github.codestorm.bounceverse.data.types.EntityType;
  */
 public final class PhysicSystem extends System {
 
-    /**
-     * Lazy-loaded singleton holder.
-     *
-     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
-     * Initialization-on-demand holder idiom</a>.
-     */
-    private static final class Holder {
-        static final PhysicSystem INSTANCE = new PhysicSystem();
-    }
+    private PhysicSystem() {}
 
     public static PhysicSystem getInstance() {
         return Holder.INSTANCE;
@@ -79,5 +71,13 @@ public final class PhysicSystem extends System {
                         });
     }
 
-    private PhysicSystem() {}
+    /**
+     * Lazy-loaded singleton holder.
+     *
+     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Initialization-on-demand holder idiom</a>.
+     */
+    private static final class Holder {
+        static final PhysicSystem INSTANCE = new PhysicSystem();
+    }
 }

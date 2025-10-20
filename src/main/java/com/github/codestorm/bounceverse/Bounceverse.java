@@ -17,6 +17,11 @@ import java.io.IOException;
  * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như vậy?</i>
  */
 public final class Bounceverse extends GameApplication {
+    static void main(String[] args) {
+        LaunchOptions.load(args);
+        launch(args);
+    }
+
     @Override
     protected void initSettings(com.almasb.fxgl.app.GameSettings settings) {
         try {
@@ -44,10 +49,5 @@ public final class Bounceverse extends GameApplication {
     @Override
     protected void initUI() {
         UISystem.getInstance().apply();
-    }
-
-    static void main(String[] args) {
-        LaunchOptions.load(args);
-        launch(args);
     }
 }

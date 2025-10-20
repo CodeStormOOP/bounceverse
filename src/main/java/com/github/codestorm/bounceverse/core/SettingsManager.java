@@ -16,6 +16,8 @@ import java.io.IOException;
  * @see GameSettings
  */
 public final class SettingsManager {
+    private SettingsManager() {}
+
     /**
      * Tải các settings từ file đã thiết lập vào CTDL.
      *
@@ -53,6 +55,4 @@ public final class SettingsManager {
         target.setMainMenuEnabled(true);
         target.setIntroEnabled(true);
     }
-
-    private SettingsManager() {}
 }

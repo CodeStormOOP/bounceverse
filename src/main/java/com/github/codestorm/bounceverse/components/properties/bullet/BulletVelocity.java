@@ -3,10 +3,9 @@ package com.github.codestorm.bounceverse.components.properties.bullet;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.CoreComponent;
+import com.github.codestorm.bounceverse.components.Behavior;
 import com.github.codestorm.bounceverse.components.properties.Velocity;
-import com.github.codestorm.bounceverse.data.tags.components.Behavior;
-import com.github.codestorm.bounceverse.data.tags.entities.ForBullet;
-import com.github.codestorm.bounceverse.data.tags.requirements.Required;
+import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.geometry.Point2D;
 
@@ -18,7 +17,8 @@ import javafx.geometry.Point2D;
  * Đại diện cho vận tốc hiện có của entity {@link EntityType#BULLET}.
  */
 @CoreComponent
-public final class BulletVelocity extends Velocity implements Behavior, ForBullet, Required {
+@ForEntity(EntityType.BULLET)
+public final class BulletVelocity extends Velocity implements Behavior {
     public BulletVelocity(Vec2 velocity) {
         super(velocity);
     }

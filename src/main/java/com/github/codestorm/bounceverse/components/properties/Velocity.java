@@ -2,8 +2,7 @@ package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.data.tags.components.Property;
-import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
+import com.github.codestorm.bounceverse.components.Property;
 import com.github.codestorm.bounceverse.data.types.UnitVelocity;
 import javafx.geometry.Point2D;
 
@@ -16,7 +15,7 @@ import javafx.geometry.Point2D;
  *
  * @see Vec2
  */
-public class Velocity extends Component implements Property, Optional {
+public class Velocity extends Component implements Property {
     private final Vec2 vector;
 
     public Velocity(Vec2 velocity) {

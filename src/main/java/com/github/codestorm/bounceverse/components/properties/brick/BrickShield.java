@@ -1,9 +1,9 @@
 package com.github.codestorm.bounceverse.components.properties.brick;
 
 import com.github.codestorm.bounceverse.components.properties.Shield;
-import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
-import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
-import com.github.codestorm.bounceverse.data.types.Side;
+import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
+import com.github.codestorm.bounceverse.data.types.EntityType;
+import javafx.geometry.Side;
 
 /**
  *
@@ -12,7 +12,8 @@ import com.github.codestorm.bounceverse.data.types.Side;
  *
  * <p>Lớp này đại diện cho Khiên bảo vệ Viên gạch.
  */
-public final class BrickShield extends Shield implements ForBrick, Optional {
+@ForEntity(EntityType.BRICK)
+public final class BrickShield extends Shield {
     private static final int BONUS_SCORE = 20;
 
     public BrickShield() {}

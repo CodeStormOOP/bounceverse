@@ -8,7 +8,6 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.github.codestorm.bounceverse.components.properties.Wall;
 import com.github.codestorm.bounceverse.data.types.EntityType;
-import com.github.codestorm.bounceverse.data.types.Side;
 import javafx.scene.shape.Rectangle;
 
 public class WallFactory implements EntityFactory {
