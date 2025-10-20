@@ -4,7 +4,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.Utils.Time.Cooldown;
-import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
@@ -15,7 +14,7 @@ import javafx.util.Duration;
  *
  * Cung cấp khả năng bắn đạn cho Entity.
  */
-public class CanShoot extends Component implements Optional {
+public class CanShoot extends Component implements RequirementTag {
     private final Cooldown cooldown;
 
     public void shoot() {

@@ -1,7 +1,7 @@
 package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.data.tags.components.Property;
+import com.github.codestorm.bounceverse.components.Property;
 import java.util.Arrays;
 import java.util.HashSet;
 import javafx.geometry.Side;

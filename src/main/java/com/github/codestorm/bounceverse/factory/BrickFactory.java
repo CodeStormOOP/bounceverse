@@ -7,8 +7,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
-import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
-import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
+import com.github.codestorm.bounceverse.data.meta.entities.SuitableEntity;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -20,13 +19,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h1>{@link BrickFactory}</h1>
  *
- * <p>Factory để tạo các entity loại {@link
- * com.github.codestorm.bounceverse.data.types.EntityType#BRICK} trong trò chơi.
+ * <p>Factory để tạo các entity loại {@link EntityType#BRICK} trong trò chơi.
  *
  * @see EntityFactory
  */
 public final class BrickFactory implements EntityFactory {
-
     private static final int DEFAULT_WIDTH = 80;
     private static final int DEFAULT_HEIGHT = 30;
     private static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
@@ -40,11 +37,11 @@ public final class BrickFactory implements EntityFactory {
      * @param view Khung nhìn
      * @param components Các components tùy chọn
      * @return Entity Brick mới tạo
-     * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
+     * @param <BrickComponent> Component phù hợp với Brick
      */
     @NotNull @SafeVarargs
-    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
-            Point2D pos, int hp, Rectangle view, OptionalBrickComponent... components) {
+    private static <@SuitableEntity(EntityType.BRICK) BrickComponent extends Component>
+            Entity newBrick(Point2D pos, int hp, Rectangle view, BrickComponent... components) {
         return FXGL.entityBuilder()
                 .type(EntityType.BRICK)
                 .at(pos)
@@ -61,11 +58,11 @@ public final class BrickFactory implements EntityFactory {
      * @param hp HP
      * @param components Các components tùy chọn
      * @return Entity Brick mới tạo
-     * @param <OptionalBrickComponent> Component không bắt buộc phải có của Brick
+     * @param <BrickComponent> Component phù hợp với Brick
      */
     @NotNull @SafeVarargs
-    private static <OptionalBrickComponent extends Component & ForBrick & Optional> Entity newBrick(
-            Point2D pos, int hp, OptionalBrickComponent... components) {
+    private static <@SuitableEntity(EntityType.BRICK) BrickComponent extends Component>
+            Entity newBrick(Point2D pos, int hp, BrickComponent... components) {
         return newBrick(
                 pos, hp, new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_COLOR), components);
     }

@@ -1,10 +1,10 @@
 package com.github.codestorm.bounceverse.components.behaviors.brick;
 
 import com.almasb.fxgl.entity.component.Component;
+import com.github.codestorm.bounceverse.components.Behavior;
 import com.github.codestorm.bounceverse.components._old.base.EntityComponent;
-import com.github.codestorm.bounceverse.data.tags.components.Behavior;
-import com.github.codestorm.bounceverse.data.tags.entities.ForBrick;
-import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
+import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
+import com.github.codestorm.bounceverse.data.types.EntityType;
 import java.util.List;
 
 /**
@@ -16,7 +16,8 @@ import java.util.List;
  *
  * @deprecated <b>TODO: Lớp này chưa hoàn thiện!</b>
  */
-public final class BrickDrop extends Component implements Behavior, ForBrick, Optional {
+@ForEntity(EntityType.BRICK)
+public final class BrickDrop extends Component implements Behavior {
     private List<EntityComponent> items;
 
     /** Hành động rơi ra vật phẩm. */

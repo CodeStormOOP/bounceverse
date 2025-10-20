@@ -3,7 +3,7 @@ package com.github.codestorm.bounceverse.core.systems;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.paint.Color;
 
-public class UISystem extends System {
+public final class UISystem extends System {
     /**
      * Lazy-loaded singleton holder.
      *
