@@ -22,6 +22,38 @@ public abstract class PowerUp {
     private double startAt;
     private double endAt;
 
+    /**
+     * Create PowerUp object.
+     *
+     * @param startAt Time that PowerUp start
+     * @param endAt Time that PowerUp end
+     */
+    public PowerUp(double startAt, double endAt) {
+        setStartAt(startAt);
+        setEndAt(endAt);
+    }
+
+    /**
+     * Create PowerUp object.
+     *
+     * @param duration Duration
+     * @param after Duration to wait before active
+     */
+    public PowerUp(@NotNull Duration duration, @NotNull Duration after) {
+        this(
+                FXGL.getGameTimer().getNow() + after.toMillis(),
+                FXGL.getGameTimer().getNow() + after.toMillis() + duration.toMillis());
+    }
+
+    /**
+     * Create PowerUp object and active.
+     *
+     * @param duration Duration
+     */
+    public PowerUp(@NotNull Duration duration) {
+        this(duration, Duration.ZERO);
+    }
+
     /** Update {@link #waitAction} when {@link #startAt} is changed. */
     private void updateWaitAction() {
         final var gameTimer = FXGL.getGameTimer();
@@ -78,49 +110,17 @@ public abstract class PowerUp {
         return startAt;
     }
 
-    public double getEndAt() {
-        return endAt;
-    }
-
     public void setStartAt(double startAt) {
         this.startAt = startAt;
         updateWaitAction();
     }
 
+    public double getEndAt() {
+        return endAt;
+    }
+
     public void setEndAt(double endAt) {
         this.endAt = endAt;
         updateActiveAction();
-    }
-
-    /**
-     * Create PowerUp object.
-     *
-     * @param startAt Time that PowerUp start
-     * @param endAt Time that PowerUp end
-     */
-    public PowerUp(double startAt, double endAt) {
-        setStartAt(startAt);
-        setEndAt(endAt);
-    }
-
-    /**
-     * Create PowerUp object.
-     *
-     * @param duration Duration
-     * @param after Duration to wait before active
-     */
-    public PowerUp(@NotNull Duration duration, @NotNull Duration after) {
-        this(
-                FXGL.getGameTimer().getNow() + after.toMillis(),
-                FXGL.getGameTimer().getNow() + after.toMillis() + duration.toMillis());
-    }
-
-    /**
-     * Create PowerUp object and active.
-     *
-     * @param duration Duration
-     */
-    public PowerUp(@NotNull Duration duration) {
-        this(duration, Duration.ZERO);
     }
 }

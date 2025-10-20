@@ -14,6 +14,8 @@ import com.github.codestorm.bounceverse.Utils;
 public final class LaunchOptions {
     private static boolean debug = false;
 
+    private LaunchOptions() {}
+
     /**
      * Tải các launch options từ Command-line Arguments.
      *
@@ -28,6 +30,4 @@ public final class LaunchOptions {
     public static boolean isDebug() {
         return debug;
     }
-
-    private LaunchOptions() {}
 }

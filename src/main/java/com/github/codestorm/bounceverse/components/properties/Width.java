@@ -15,14 +15,14 @@ public class Width extends Component implements Property {
         return originalWidth;
     }
 
+    public double getWidth() {
+        return entity.getWidth();
+    }
+
     public void setWidth(double width) {
         var transform = entity.getTransformComponent();
         transform.setAnchoredPosition(entity.getCenter());
         entity.setScaleX(width / originalWidth);
-    }
-
-    public double getWidth() {
-        return entity.getWidth();
     }
 
     public void resetWidth() {

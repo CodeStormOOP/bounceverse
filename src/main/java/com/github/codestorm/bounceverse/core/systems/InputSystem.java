@@ -7,16 +7,6 @@ import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.scene.input.KeyCode;
 
 public class InputSystem extends System {
-    /**
-     * Lazy-loaded singleton holder.
-     *
-     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
-     * Initialization-on-demand holder idiom</a>.
-     */
-    private static final class Holder {
-        static final InputSystem INSTANCE = new InputSystem();
-    }
-
     public static InputSystem getInstance() {
         return InputSystem.Holder.INSTANCE;
     }
@@ -60,5 +50,15 @@ public class InputSystem extends System {
                             }
                         },
                         KeyCode.RIGHT);
+    }
+
+    /**
+     * Lazy-loaded singleton holder.
+     *
+     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Initialization-on-demand holder idiom</a>.
+     */
+    private static final class Holder {
+        static final InputSystem INSTANCE = new InputSystem();
     }
 }

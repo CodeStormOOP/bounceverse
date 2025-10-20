@@ -20,6 +20,10 @@ import java.util.List;
 public final class BrickDrop extends Component implements Behavior {
     private List<EntityComponent> items;
 
+    public BrickDrop(List<EntityComponent> items) {
+        this.items = items;
+    }
+
     /** Hành động rơi ra vật phẩm. */
     private void drop() {
         // TODO: How to drop?
@@ -35,10 +39,6 @@ public final class BrickDrop extends Component implements Behavior {
     }
 
     public void setItems(List<EntityComponent> items) {
-        this.items = items;
-    }
-
-    public BrickDrop(List<EntityComponent> items) {
         this.items = items;
     }
 }

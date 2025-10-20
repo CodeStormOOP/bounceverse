@@ -3,11 +3,10 @@ package com.github.codestorm.bounceverse.data.meta.entities;
 import com.google.auto.service.AutoService;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.processing.*;
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
-import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 /**
@@ -18,7 +17,7 @@ import javax.tools.Diagnostic;
  * {@link Processor} kiểm tra cho annotation {@link SuitableEntity}.
  */
 @AutoService(Processor.class)
-public class SuitableEntityProcessor extends AbstractProcessor {
+public final class SuitableEntityProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         return Set.of(SuitableEntity.class.getCanonicalName());

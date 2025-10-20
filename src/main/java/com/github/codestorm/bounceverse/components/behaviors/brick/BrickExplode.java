@@ -20,6 +20,15 @@ public final class BrickExplode extends Component implements Behavior {
     public static final int DEFAULT_RADIUS = 1;
     private int radius;
 
+    public BrickExplode(int radius) {
+        assert radius > 0;
+        this.radius = radius;
+    }
+
+    public BrickExplode() {
+        this(DEFAULT_RADIUS);
+    }
+
     /**
      * Triggers the explosion effect of this brick.
      *
@@ -63,14 +72,5 @@ public final class BrickExplode extends Component implements Behavior {
 
     public void setRadius(int radius) {
         this.radius = radius;
-    }
-
-    public BrickExplode(int radius) {
-        assert radius > 0;
-        this.radius = radius;
-    }
-
-    public BrickExplode() {
-        this(DEFAULT_RADIUS);
     }
 }

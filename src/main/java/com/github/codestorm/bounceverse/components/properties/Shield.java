@@ -17,8 +17,18 @@ import javafx.geometry.Side;
 public abstract class Shield extends Component implements Property {
     private HashSet<Side> sides = new HashSet<>();
 
+    public Shield() {}
+
+    public Shield(Side... sides) {
+        addSide(sides);
+    }
+
     public HashSet<Side> getSides() {
         return sides;
+    }
+
+    public void setSides(HashSet<Side> sides) {
+        this.sides = sides;
     }
 
     /**
@@ -31,21 +41,11 @@ public abstract class Shield extends Component implements Property {
         return sides.contains(side);
     }
 
-    public void setSides(HashSet<Side> sides) {
-        this.sides = sides;
-    }
-
     public void addSide(Side... sides) {
         this.sides.addAll(Arrays.asList(sides));
     }
 
     public void removeSide(Side... sides) {
         Arrays.asList(sides).forEach(this.sides::remove);
-    }
-
-    public Shield() {}
-
-    public Shield(Side... sides) {
-        addSide(sides);
     }
 }

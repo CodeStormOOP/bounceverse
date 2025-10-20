@@ -17,6 +17,14 @@ import javafx.util.Duration;
 public class CanShoot extends Component implements RequirementTag {
     private final Cooldown cooldown;
 
+    public CanShoot(double cooldown) {
+        this(Duration.seconds(cooldown));
+    }
+
+    public CanShoot(Duration cooldown) {
+        this.cooldown = new Cooldown(cooldown);
+    }
+
     public void shoot() {
         if (!cooldown.getCurrent().expired()) {
             return;
@@ -42,13 +50,5 @@ public class CanShoot extends Component implements RequirementTag {
 
     public Cooldown getCooldown() {
         return cooldown;
-    }
-
-    public CanShoot(double cooldown) {
-        this(Duration.seconds(cooldown));
-    }
-
-    public CanShoot(Duration cooldown) {
-        this.cooldown = new Cooldown(cooldown);
     }
 }
