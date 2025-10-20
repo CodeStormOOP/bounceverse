@@ -20,12 +20,12 @@ import com.github.codestorm.bounceverse.Bounceverse;
  * </ul>
  */
 abstract class System {
+    protected System() {}
+
     /**
      * Áp dụng logic của hệ thống vào game.
      *
      * <p>Sử dụng trên {@link Bounceverse}
      */
     public abstract void apply();
-
-    protected System() {}
 }

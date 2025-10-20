@@ -1,12 +1,13 @@
 package com.github.codestorm.bounceverse.components.behaviors.paddle;
 
 import com.almasb.fxgl.entity.component.Component;
+import com.github.codestorm.bounceverse.components.Behavior;
 import com.github.codestorm.bounceverse.components.properties.Width;
-import com.github.codestorm.bounceverse.data.tags.components.Behavior;
-import com.github.codestorm.bounceverse.data.tags.entities.ForPaddle;
-import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
+import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
+import com.github.codestorm.bounceverse.data.types.EntityType;
 
-public class PaddleExpand extends Component implements Behavior, ForPaddle, Optional {
+@ForEntity(EntityType.PADDLE)
+public class PaddleExpand extends Component implements Behavior {
     private final double expandedWidth = 200;
     private final double duration = 5.0;
     private double timer = 0;

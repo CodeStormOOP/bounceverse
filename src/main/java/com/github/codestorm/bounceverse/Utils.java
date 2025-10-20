@@ -9,8 +9,12 @@ import javafx.util.Duration;
 
 /** Utilities. */
 public final class Utils {
+    private Utils() {}
+
     /** Input/Output utilities. */
     public static final class IO {
+        private IO() {}
+
         /**
          * Load .properties file.
          *
@@ -82,8 +86,6 @@ public final class Utils {
             scanner.close();
             return res;
         }
-
-        private IO() {}
     }
 
     public static final class Time {
@@ -93,18 +95,50 @@ public final class Utils {
          * @see ActiveCooldown
          */
         public static final class Cooldown {
+            private final ActiveCooldown current = new ActiveCooldown();
+            private Duration duration;
+
+            public Cooldown(Duration duration) {
+                this.duration = duration;
+            }
+
+            public Duration getDuration() {
+                return duration;
+            }
+
+            /**
+             * Đặt thời lượng cooldown mới.
+             *
+             * <p><b>Lưu ý: Chỉ áp dụng cho cooldown mới.</b>
+             *
+             * @param duration Thời lượng mới
+             */
+            public void setDuration(Duration duration) {
+                this.duration = duration;
+            }
+
+            public ActiveCooldown getCurrent() {
+                return current;
+            }
+
             /** Đại diện cooldown hiện tại. Giống như một wrapper của {@link TimerAction}. */
             public final class ActiveCooldown {
                 private TimerAction waiter = null;
                 private double timestamp = Double.NaN;
-                private Runnable customOnExpired = null;
+                private Runnable onExpiredCallback = null;
+
+                private ActiveCooldown() {}
 
                 /** Hành động khi cooldown hết. */
                 private void onExpired() {
                     timestamp = Double.NaN;
-                    if (customOnExpired != null) {
-                        customOnExpired.run();
+                    if (onExpiredCallback != null) {
+                        onExpiredCallback.run();
                     }
+                }
+
+                public void setOnExpired(Runnable callback) {
+                    this.onExpiredCallback = callback;
                 }
 
                 /**
@@ -171,46 +205,7 @@ public final class Utils {
                         waiter.update(duration.toMillis());
                     }
                 }
-
-                private ActiveCooldown() {}
-            }
-
-            private Duration duration;
-            private ActiveCooldown current;
-
-            /**
-             * Đặt callback khi cooldown hết hạn.
-             *
-             * @param callback Callback
-             */
-            public void setOnExpired(Runnable callback) {
-                current.customOnExpired = callback;
-            }
-
-            public Duration getDuration() {
-                return duration;
-            }
-
-            /**
-             * Đặt thời lượng cooldown mới.
-             *
-             * <p><b>Lưu ý: Chỉ áp dụng cho cooldown mới.</b>
-             *
-             * @param duration Thời lượng mới
-             */
-            public void setDuration(Duration duration) {
-                this.duration = duration;
-            }
-
-            public ActiveCooldown getCurrent() {
-                return current;
-            }
-
-            public Cooldown(Duration duration) {
-                this.duration = duration;
             }
         }
     }
-
-    private Utils() {}
 }

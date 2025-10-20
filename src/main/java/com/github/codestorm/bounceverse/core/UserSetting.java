@@ -17,32 +17,9 @@ import java.nio.file.Paths;
  */
 public final class UserSetting {
     private static final String FORMAT = "toml";
-
-    /** Setting về Hình ảnh. */
-    public static final class Video {
-        private int width = 1024;
-        private int height = 768;
-
-        public int getWidth() {
-            return width;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        private Video() {}
-    }
-
     private Video video = new Video();
+
+    private UserSetting() {}
 
     /**
      * Lấy tên file setting tương ứng của người chơi.
@@ -103,5 +80,27 @@ public final class UserSetting {
         this.video = video;
     }
 
-    private UserSetting() {}
+    /** Setting về Hình ảnh. */
+    public static final class Video {
+        private int width = 1024;
+        private int height = 768;
+
+        private Video() {}
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+    }
 }

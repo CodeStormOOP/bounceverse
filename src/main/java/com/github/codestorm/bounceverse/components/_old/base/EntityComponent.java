@@ -2,7 +2,6 @@ package com.github.codestorm.bounceverse.components._old.base;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.data.tags.requirements.Optional;
 
 /**
  *

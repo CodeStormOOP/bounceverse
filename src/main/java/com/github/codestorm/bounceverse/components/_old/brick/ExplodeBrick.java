@@ -7,11 +7,11 @@ import javafx.scene.paint.Color;
 
 public class ExplodeBrick extends BrickComponent {
 
+    private static final int EXPLODE_RADIUS = 1;
+
     public ExplodeBrick(int width, int height, int hp, Color baseColor) {
         super(width, height, hp, baseColor);
     }
-
-    private static final int EXPLODE_RADIUS = 1;
 
     public int getRadius() {
         return EXPLODE_RADIUS;
