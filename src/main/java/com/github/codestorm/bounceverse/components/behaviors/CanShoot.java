@@ -14,7 +14,7 @@ import javafx.util.Duration;
  *
  * Cung cấp khả năng bắn đạn cho Entity.
  */
-public class CanShoot extends Component implements RequirementTag {
+public class CanShoot extends Component {
     private final Cooldown cooldown;
 
     public CanShoot(double cooldown) {

@@ -26,8 +26,7 @@ public final class SuitableEntityProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(SuitableEntity.class)) {
-            if (element.getKind() != ElementKind.PARAMETER
-                    && element.getKind() != ElementKind.TYPE_PARAMETER) {
+            if (element.getKind() != ElementKind.PARAMETER) {
                 continue;
             }
 

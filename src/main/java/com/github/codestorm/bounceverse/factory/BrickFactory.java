@@ -35,13 +35,14 @@ public final class BrickFactory implements EntityFactory {
      * @param pos Vị trí
      * @param hp HP
      * @param view Khung nhìn
-     * @param components Các components tùy chọn
+     * @param components Các components thêm vào
      * @return Entity Brick mới tạo
-     * @param <BrickComponent> Component phù hợp với Brick
      */
-    @NotNull @SafeVarargs
-    private static <@SuitableEntity(EntityType.BRICK) BrickComponent extends Component>
-            Entity newBrick(Point2D pos, int hp, Rectangle view, BrickComponent... components) {
+    @NotNull private static Entity newBrick(
+            Point2D pos,
+            int hp,
+            Rectangle view,
+            @SuitableEntity(EntityType.BRICK) Component... components) {
         return FXGL.entityBuilder()
                 .type(EntityType.BRICK)
                 .at(pos)
@@ -56,13 +57,11 @@ public final class BrickFactory implements EntityFactory {
      *
      * @param pos Vị trí
      * @param hp HP
-     * @param components Các components tùy chọn
+     * @param components Các components thêm vào
      * @return Entity Brick mới tạo
-     * @param <BrickComponent> Component phù hợp với Brick
      */
-    @NotNull @SafeVarargs
-    private static <@SuitableEntity(EntityType.BRICK) BrickComponent extends Component>
-            Entity newBrick(Point2D pos, int hp, BrickComponent... components) {
+    @NotNull private static Entity newBrick(
+            Point2D pos, int hp, @SuitableEntity(EntityType.BRICK) Component... components) {
         return newBrick(
                 pos, hp, new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_COLOR), components);
     }

@@ -21,7 +21,9 @@ public final class BrickExplode extends Component implements Behavior {
     private int radius;
 
     public BrickExplode(int radius) {
-        assert radius > 0;
+        if (radius <= 0) {
+            throw new IllegalArgumentException("Radius must be positive");
+        }
         this.radius = radius;
     }
 
