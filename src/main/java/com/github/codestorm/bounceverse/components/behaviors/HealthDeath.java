@@ -8,14 +8,14 @@ import java.util.List;
 /**
  *
  *
- * <h1>{@link HeathDeath}</h1>
+ * <h1>{@link HealthDeath}</h1>
  *
  * Hành động chết <s>vì yêu :<</s> vì hết máu. <br>
  * <b>Yêu cầu entity có {@link HealthIntComponent} trước.</b>
  */
 @Required(HealthIntComponent.class)
 @ForEntity({})
-public class HeathDeath extends Behavior {
+public class HealthDeath extends Behavior {
     @Override
     public void execute(List<Object> data) {
         final var health = entity.getComponent(HealthIntComponent.class);

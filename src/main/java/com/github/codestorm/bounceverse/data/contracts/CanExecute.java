@@ -7,7 +7,7 @@ import java.util.List;
  *
  * <h1>{@link CanExecute}</h1>
  *
- * Có thể thưc thi hành động nào đó.
+ * Có thể thực thi hành động nào đó.
  */
 public interface CanExecute {
     /**

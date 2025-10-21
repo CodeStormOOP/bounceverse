@@ -4,7 +4,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
 import com.github.codestorm.bounceverse.data.types.DirectionUnit;
 import com.github.codestorm.bounceverse.data.types.EntityType;
-
 import javafx.scene.input.KeyCode;
 
 /**
