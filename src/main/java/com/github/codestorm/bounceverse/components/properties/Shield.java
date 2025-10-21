@@ -1,27 +1,37 @@
 package com.github.codestorm.bounceverse.components.properties;
 
-import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.data.tags.components.PropertyComponent;
-import com.github.codestorm.bounceverse.data.types.Side;
+import com.almasb.fxgl.entity.Entity;
+import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
+import javafx.geometry.Side;
 
 /**
  *
  *
  * <h1>{@link Shield}</h1>
  *
- * <p>Lớp này đại diện cho Khiên bảo vệ Entity. Khiên có thể bảo vệ Entity từ một hoặc nhiều phía
- * khỏi bị tấn công.
+ * Khiên bảo vệ {@link Entity}. Khiên có thể bảo vệ một hoặc nhiều phía khỏi bị tấn công.
  */
-public abstract class Shield extends Component implements PropertyComponent {
-    private HashSet<Side> sides = new HashSet<>();
+@ForEntity({})
+public class Shield extends Property {
+    private EnumSet<Side> sides = EnumSet.noneOf(Side.class);
 
-    public HashSet<Side> getSides() {
+    /**
+     * Kiểm tra khiên có bảo vệ được cạnh mong muốn không.
+     *
+     * @param sides Cạnh cần kiểm tra
+     * @return {@code true} nếu bảo vệ được, ngược lại {@code false}
+     */
+    public boolean hasSide(Side... sides) {
+        return this.sides.containsAll(Arrays.asList(sides));
+    }
+
+    public EnumSet<Side> getSides() {
         return sides;
     }
 
-    public void setSides(HashSet<Side> sides) {
+    public void setSides(EnumSet<Side> sides) {
         this.sides = sides;
     }
 
