@@ -2,10 +2,9 @@ package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
-import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleMovement;
 import com.github.codestorm.bounceverse.data.types.DirectionUnit;
 import com.github.codestorm.bounceverse.data.types.EntityType;
-import java.util.List;
+
 import javafx.scene.input.KeyCode;
 
 /**
@@ -27,29 +26,15 @@ public class InputSystem extends System {
                 .addAction(
                         new UserAction("Move Left") {
                             @Override
-                            protected void onActionBegin() {
+                            protected void onAction() {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.PADDLE)
                                         .forEach(
                                                 e ->
-                                                        e.getComponent(PaddleMovement.class)
-                                                                .execute(
-                                                                        List.of(
-                                                                                DirectionUnit
-                                                                                        .LEFT)));
-                            }
-
-                            @Override
-                            protected void onActionEnd() {
-                                FXGL.getGameWorld()
-                                        .getEntitiesByType(EntityType.PADDLE)
-                                        .forEach(
-                                                e ->
-                                                        e.getComponent(PaddleMovement.class)
-                                                                .execute(
-                                                                        List.of(
-                                                                                DirectionUnit
-                                                                                        .STAND)));
+                                                        e.translate(
+                                                                DirectionUnit.LEFT
+                                                                        .getVector()
+                                                                        .mul(10)));
                             }
                         },
                         KeyCode.LEFT);
@@ -58,29 +43,15 @@ public class InputSystem extends System {
                 .addAction(
                         new UserAction("Move Right") {
                             @Override
-                            protected void onActionBegin() {
+                            protected void onAction() {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.PADDLE)
                                         .forEach(
                                                 e ->
-                                                        e.getComponent(PaddleMovement.class)
-                                                                .execute(
-                                                                        List.of(
-                                                                                DirectionUnit
-                                                                                        .RIGHT)));
-                            }
-
-                            @Override
-                            protected void onActionEnd() {
-                                FXGL.getGameWorld()
-                                        .getEntitiesByType(EntityType.PADDLE)
-                                        .forEach(
-                                                e ->
-                                                        e.getComponent(PaddleMovement.class)
-                                                                .execute(
-                                                                        List.of(
-                                                                                DirectionUnit
-                                                                                        .STAND)));
+                                                        e.translate(
+                                                                DirectionUnit.RIGHT
+                                                                        .getVector()
+                                                                        .mul(10)));
                             }
                         },
                         KeyCode.RIGHT);

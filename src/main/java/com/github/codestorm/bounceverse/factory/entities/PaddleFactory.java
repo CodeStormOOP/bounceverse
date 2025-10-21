@@ -6,8 +6,6 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.physics.BoundingShape;
-import com.almasb.fxgl.physics.HitBox;
 import com.github.codestorm.bounceverse.components.behaviors.ScaleChange;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
 import com.github.codestorm.bounceverse.data.types.EntityType;
@@ -39,8 +37,7 @@ public class PaddleFactory implements EntityFactory {
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.PADDLE)
-                .view(view)
-                .bbox(new HitBox(BoundingShape.box(DEFAULT_WIDTH, DEFAULT_HEIGHT)))
+                .viewWithBBox(view)
                 .with(
                         new CollidableComponent(true),
                         new ScaleChange(),
