@@ -3,6 +3,14 @@ package com.github.codestorm.bounceverse.core.systems;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.paint.Color;
 
+/**
+ *
+ *
+ * <h1>{@link UISystem}</h1>
+ *
+ * {@link System} quản lý Giao diện trong game. <br>
+ * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
+ */
 public final class UISystem extends System {
     public static UISystem getInstance() {
         return UISystem.Holder.INSTANCE;
@@ -14,9 +22,8 @@ public final class UISystem extends System {
     }
 
     /**
-     * Lazy-loaded singleton holder.
-     *
-     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Lazy-loaded singleton holder. <br>
+     * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {

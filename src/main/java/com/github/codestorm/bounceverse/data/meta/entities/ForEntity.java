@@ -11,7 +11,8 @@ import java.lang.annotation.Target;
  *
  * <h1>@{@link ForEntity}</h1>
  *
- * Đánh dấu class chỉ định là phù hợp cho entity nào.
+ * Đánh dấu class chỉ định là phù hợp cho entity nào. <br>
+ * <b>Nếu chỉ định tất cả entity, hãy truyền vào mảng rỗng {@code {}}.</b>
  *
  * @see SuitableEntity
  * @see EntityType

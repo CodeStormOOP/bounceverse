@@ -1,12 +1,12 @@
-package com.github.codestorm.bounceverse.factory;
+package com.github.codestorm.bounceverse.factory.entities;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.components.properties.brick.BrickHealth;
 import com.github.codestorm.bounceverse.data.meta.entities.SuitableEntity;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.geometry.Point2D;
@@ -19,7 +19,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h1>{@link BrickFactory}</h1>
  *
- * <p>Factory để tạo các entity loại {@link EntityType#BRICK} trong trò chơi.
+ * <br>
+ * Factory để tạo các entity loại {@link EntityType#BRICK} trong trò chơi.
  *
  * @see EntityFactory
  */
@@ -47,7 +48,7 @@ public final class BrickFactory implements EntityFactory {
                 .type(EntityType.BRICK)
                 .at(pos)
                 .viewWithBBox(view)
-                .with(new BrickHealth(hp))
+                .with(new HealthIntComponent(hp))
                 .with(components)
                 .build();
     }

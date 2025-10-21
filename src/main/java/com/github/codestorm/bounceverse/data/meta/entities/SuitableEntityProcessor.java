@@ -1,7 +1,8 @@
 package com.github.codestorm.bounceverse.data.meta.entities;
 
 import com.google.auto.service.AutoService;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -26,35 +27,38 @@ public final class SuitableEntityProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(SuitableEntity.class)) {
-            if (element.getKind() != ElementKind.PARAMETER) {
-                continue;
-            }
+            if (element.getKind() == ElementKind.PARAMETER) {
+                // Phía yêu cầu (parameter của @SuitableEntity)
+                final var requireParameter = (VariableElement) element;
+                final var requireAnnotation = requireParameter.getAnnotation(SuitableEntity.class);
+                final var requiredTypes = EnumSet.copyOf(Arrays.asList(requireAnnotation.value()));
 
-            // Phía yêu cầu (@SuitableEntity)
-            final var requireParameter = (VariableElement) element;
-            final var requireAnnotation = requireParameter.getAnnotation(SuitableEntity.class);
-            final var requiredTypes = Set.of(requireAnnotation.value());
+                // Phía thực tế (parameter truyền vào trong hàm)
+                final var actualClassElement =
+                        processingEnv.getTypeUtils().asElement(requireParameter.asType());
+                if (actualClassElement == null) {
+                    continue;
+                }
+                final var actualAnnotation = actualClassElement.getAnnotation(ForEntity.class);
 
-            // Phía thực tế (parameter)
-            final var actualClassElement =
-                    processingEnv.getTypeUtils().asElement(requireParameter.asType());
-            if (actualClassElement == null) {
-                continue;
-            }
-            final var actualAnnotation = actualClassElement.getAnnotation(ForEntity.class);
+                // Kiểm tra (bao hàm - loại trừ)
+                if (actualAnnotation != null) {
+                    final var actualTypes = EnumSet.copyOf(Arrays.asList(actualAnnotation.value()));
+                    if (actualTypes.isEmpty()) {
+                        continue; // bao phủ cả (quy ước là mảng rỗng)
+                    }
+                    requiredTypes.removeAll(actualTypes);
+                    if (requiredTypes.isEmpty()) {
+                        continue; // đáp ứng hết
+                    }
+                }
 
-            // Kiểm tra
-            if (actualAnnotation != null) {
-                final var actualTypes = Set.of(actualAnnotation.value());
-                final var missingTypes = new HashSet<>(requiredTypes);
-                missingTypes.removeAll(actualTypes);
-
-                for (var missingType : missingTypes) {
+                for (var requiredType : requiredTypes) {
                     final var message =
                             String.format(
                                     "Parameter '%s' must suitable for '%s', but '%s' does not.",
                                     requireParameter.getSimpleName(),
-                                    missingType.name(),
+                                    requiredType.name(),
                                     actualClassElement.getSimpleName());
                     processingEnv
                             .getMessager()
