@@ -7,9 +7,8 @@ import com.github.codestorm.bounceverse.Utils;
  *
  * <h1>{@link LaunchOptions}</h1>
  *
- * Các tùy chọn khi khởi động được áp dụng trong game.
- *
- * <p>Sử dụng {@link #load(String...)} để tải các options.
+ * Các tùy chọn khi khởi động được áp dụng trong game. <br>
+ * Sử dụng {@link #load(String...)} để tải các options.
  */
 public final class LaunchOptions {
     private static boolean debug = false;

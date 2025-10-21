@@ -1,10 +1,10 @@
 package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
-import com.github.codestorm.bounceverse.factory.BrickFactory;
-import com.github.codestorm.bounceverse.factory.BulletFactory;
-import com.github.codestorm.bounceverse.factory.PaddleFactory;
-import com.github.codestorm.bounceverse.factory.WallFactory;
+import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
+import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
+import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
+import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 
 public final class GameSystem extends System {
     private GameSystem() {}
@@ -35,9 +35,8 @@ public final class GameSystem extends System {
     }
 
     /**
-     * Lazy-loaded singleton holder.
-     *
-     * <p>Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Lazy-loaded singleton holder. <br>
+     * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {

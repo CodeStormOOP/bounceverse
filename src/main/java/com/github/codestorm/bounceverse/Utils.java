@@ -1,10 +1,13 @@
 package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.TimerAction;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 /** Utilities. */
@@ -37,9 +40,8 @@ public final class Utils {
         /**
          * Convert an array of key=value pairs into a hashmap. The string "key=" maps key onto "",
          * while just "key" maps key onto null. The value may contain '=' characters, only the first
-         * "=" is a delimiter.
-         *
-         * <p>Source code from <a href="https://stackoverflow.com/a/52940215/16410937">here</a>.
+         * "=" is a delimiter. <br>
+         * Source code from <a href="https://stackoverflow.com/a/52940215/16410937">here</a>.
          *
          * @param args command-line arguments in the key=value format (or just key= or key)
          * @param defaults a map of default values, may be null. Mappings to null are not copied to
@@ -96,20 +98,15 @@ public final class Utils {
          */
         public static final class Cooldown {
             private final ActiveCooldown current = new ActiveCooldown();
-            private Duration duration;
-
-            public Cooldown(Duration duration) {
-                this.duration = duration;
-            }
+            private Duration duration = Duration.INDEFINITE;
 
             public Duration getDuration() {
                 return duration;
             }
 
             /**
-             * Đặt thời lượng cooldown mới.
-             *
-             * <p><b>Lưu ý: Chỉ áp dụng cho cooldown mới.</b>
+             * Đặt thời lượng cooldown mới. <br>
+             * <b>Lưu ý: Chỉ áp dụng cho cooldown mới.</b>
              *
              * @param duration Thời lượng mới
              */
@@ -121,13 +118,17 @@ public final class Utils {
                 return current;
             }
 
-            /** Đại diện cooldown hiện tại. Giống như một wrapper của {@link TimerAction}. */
+            public Cooldown() {}
+
+            public Cooldown(Duration duration) {
+                this.duration = duration;
+            }
+
+            /** Cooldown thời điểm hiện tại. Giống như một wrapper của {@link TimerAction}. */
             public final class ActiveCooldown {
                 private TimerAction waiter = null;
                 private double timestamp = Double.NaN;
                 private Runnable onExpiredCallback = null;
-
-                private ActiveCooldown() {}
 
                 /** Hành động khi cooldown hết. */
                 private void onExpired() {
@@ -137,6 +138,11 @@ public final class Utils {
                     }
                 }
 
+                /**
+                 * Callback thực thi khi cooldown hết hạn.
+                 *
+                 * @param callback Callback sẽ thực thi
+                 */
                 public void setOnExpired(Runnable callback) {
                     this.onExpiredCallback = callback;
                 }
@@ -166,12 +172,14 @@ public final class Utils {
                     timestamp = gameTimer.getNow();
                 }
 
+                /** Tạm dừng cooldown. */
                 public void pause() {
                     if (!expired()) {
                         waiter.pause();
                     }
                 }
 
+                /** Tiếp tục cooldown. */
                 public void resume() {
                     if (!expired()) {
                         waiter.resume();
@@ -205,7 +213,50 @@ public final class Utils {
                         waiter.update(duration.toMillis());
                     }
                 }
+
+                private ActiveCooldown() {}
             }
+        }
+    }
+
+    public static final class Geometric {
+        /**
+         * Lọc các Entity trong phạm vi Hình tròn.
+         *
+         * @param circle Hình tròn
+         * @return Các entity
+         */
+        public static List<Entity> getEntityInCircle(Circle circle) {
+            final var cx = circle.getCenterX();
+            final var cy = circle.getCenterY();
+            final var radius = circle.getRadius();
+
+            return getEntityInCircle(cx, cy, radius);
+        }
+
+        /**
+         * Lọc các Entity trong phạm vi Hình tròn.
+         *
+         * @param cx Tâm X
+         * @param cy Tâm Y
+         * @param radius Bán kính
+         * @return Các entity
+         */
+        public static List<Entity> getEntityInCircle(double cx, double cy, double radius) {
+            final Rectangle2D outRect =
+                    new Rectangle2D(cx - radius, cy - radius, 2 * radius, 2 * radius);
+            return FXGL.getGameWorld().getEntitiesInRange(outRect).stream()
+                    .filter(
+                            e -> {
+                                double nearestX =
+                                        Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
+                                double nearestY =
+                                        Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
+                                double dx = cx - nearestX;
+                                double dy = cy - nearestY;
+                                return (dx * dx + dy * dy) <= radius * radius;
+                            })
+                    .toList();
         }
     }
 }
