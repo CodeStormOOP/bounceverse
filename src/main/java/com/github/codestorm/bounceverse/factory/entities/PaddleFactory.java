@@ -21,7 +21,7 @@ import javafx.util.Duration;
  *
  * @see EntityFactory
  */
-public class PaddleFactory implements EntityFactory {
+public final class PaddleFactory implements EntityFactory {
     private static final double DEFAULT_WIDTH = 150;
     private static final double DEFAULT_HEIGHT = 20;
     private static final double DEFAULT_ARC_WIDTH = 14;

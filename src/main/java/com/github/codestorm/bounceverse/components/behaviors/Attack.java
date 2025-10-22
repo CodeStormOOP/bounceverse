@@ -32,9 +32,6 @@ public class Attack extends Behavior {
 
             final var actualDamage = damage >= 0 ? Math.max(0, damage - theirDefense) : damage;
             theirHealth.get().damage(actualDamage);
-            if (theirHealth.get().isZero()) {
-                theirHealth.get().getEntity().removeFromWorld();
-            }
         }
     }
 

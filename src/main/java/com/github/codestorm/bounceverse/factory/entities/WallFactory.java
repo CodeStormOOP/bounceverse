@@ -25,7 +25,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author minngoc1213
  */
-public class WallFactory implements EntityFactory {
+public final class WallFactory implements EntityFactory {
     public static final double DEFAULT_THICKNESS = 5;
 
     /**

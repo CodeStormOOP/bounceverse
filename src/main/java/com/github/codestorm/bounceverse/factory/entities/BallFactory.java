@@ -31,7 +31,7 @@ import javafx.scene.shape.Circle;
  *
  * @author minngoc1213
  */
-public class BallFactory implements EntityFactory {
+public final class BallFactory implements EntityFactory {
     public static final int DEFAULT_RADIUS = 10;
     public static final Point2D DEFAULT_POS = new Point2D(400, 500);
     public static final Color DEFAULT_COLOR = Color.RED;

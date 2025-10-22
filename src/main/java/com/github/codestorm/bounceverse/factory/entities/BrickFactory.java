@@ -10,6 +10,7 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
 import com.github.codestorm.bounceverse.data.meta.entities.SuitableEntity;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.geometry.Point2D;
@@ -60,7 +61,7 @@ public final class BrickFactory implements EntityFactory {
                 .at(pos)
                 .viewWithBBox(view)
                 .collidable()
-                .with(physics, new HealthIntComponent(hp))
+                .with(physics, new HealthIntComponent(hp), new HealthDeath())
                 .with(components)
                 .build();
     }
