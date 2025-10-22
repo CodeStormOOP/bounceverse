@@ -7,6 +7,9 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.data.meta.entities.SuitableEntity;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.geometry.Point2D;
@@ -44,11 +47,20 @@ public final class BrickFactory implements EntityFactory {
             int hp,
             Rectangle view,
             @SuitableEntity(EntityType.BRICK) Component... components) {
+        var physics = new PhysicsComponent();
+        var fixture = new FixtureDef();
+        fixture.setFriction(0f);
+        fixture.setRestitution(1f);
+
+        physics.setFixtureDef(fixture);
+        physics.setBodyType(BodyType.STATIC);
+
         return FXGL.entityBuilder()
                 .type(EntityType.BRICK)
                 .at(pos)
                 .viewWithBBox(view)
-                .with(new HealthIntComponent(hp))
+                .collidable()
+                .with(physics, new HealthIntComponent(hp))
                 .with(components)
                 .build();
     }

@@ -7,7 +7,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.data.types.EntityType;
 import javafx.scene.paint.Color;
@@ -31,7 +30,8 @@ public final class BulletFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(EntityType.BULLET)
                 .viewWithBBox(new Circle(4, Color.YELLOW))
-                .with(new CollidableComponent(true), physics)
+                .collidable()
+                .with(physics)
                 .build();
     }
 }

@@ -1,10 +1,8 @@
 package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
-import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
-import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
-import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
-import com.github.codestorm.bounceverse.factory.entities.WallFactory;
+import com.almasb.fxgl.entity.EntityFactory;
+import com.github.codestorm.bounceverse.factory.entities.*;
 
 public final class GameSystem extends System {
     private GameSystem() {}
@@ -13,25 +11,45 @@ public final class GameSystem extends System {
         return GameSystem.Holder.INSTANCE;
     }
 
-    @Override
-    public void apply() {
-        FXGL.getGameWorld().addEntityFactory(new BrickFactory());
-        FXGL.getGameWorld().addEntityFactory(new BulletFactory());
-        FXGL.getGameWorld().addEntityFactory(new PaddleFactory());
-        FXGL.getGameWorld().addEntityFactory(new WallFactory());
+    private static void addFactory(EntityFactory... factories) {
+        for (var factory : factories) {
+            FXGL.getGameWorld().addEntityFactory(factory);
+        }
+    }
 
-        // Spawn walls.
+    private static void spawnWalls() {
+        FXGL.spawn("wallTop");
+        FXGL.spawn("wallBottom");
         FXGL.spawn("wallLeft");
         FXGL.spawn("wallRight");
-        FXGL.spawn("wallTop");
+    }
 
-        // Spawn paddle
+    @Override
+    public void apply() {
+        addFactory(
+                new WallFactory(),
+                new BrickFactory(),
+                new BulletFactory(),
+                new PaddleFactory(),
+                new BallFactory());
+
+        // Wall
+        spawnWalls();
+
+        // Brick
+        for (int y = 1; y <= 6; y++) {
+            for (int x = 1; x <= 10; x++) {
+                FXGL.spawn("normalBrick", 85 * x, 35 * y);
+            }
+        }
+
+        // Paddle
         double px = FXGL.getAppWidth() / 2.0 - 60;
         double py = FXGL.getAppHeight() - 40;
         FXGL.spawn("paddle", px, py);
 
-        FXGL.spawn("normalBrick", 100, 100);
-        FXGL.spawn("normalBrick", 200, 200);
+        // Ball
+        FXGL.spawn("ball");
     }
 
     /**

@@ -5,7 +5,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.github.codestorm.bounceverse.components.behaviors.ScaleChange;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
 import com.github.codestorm.bounceverse.data.types.EntityType;
@@ -38,10 +37,8 @@ public class PaddleFactory implements EntityFactory {
         return FXGL.entityBuilder(data)
                 .type(EntityType.PADDLE)
                 .viewWithBBox(view)
-                .with(
-                        new CollidableComponent(true),
-                        new ScaleChange(),
-                        new PaddleShooting(DEFAULT_SHOOT_COOLDOWN))
+                .collidable()
+                .with(new ScaleChange(), new PaddleShooting(DEFAULT_SHOOT_COOLDOWN))
                 .build();
         // TODO: Thêm điều chỉnh tốc độ
     }
