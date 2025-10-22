@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.TimerAction;
+import com.github.codestorm.bounceverse.data.types.DirectionUnit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -257,6 +258,22 @@ public final class Utils {
                                 return (dx * dx + dy * dy) <= radius * radius;
                             })
                     .toList();
+        }
+    }
+
+    public static final class Collision {
+        public static DirectionUnit getCollisionDirection(Entity source, Entity target) {
+            var fromBox = source.getBoundingBoxComponent();
+            var toBox = target.getBoundingBoxComponent();
+
+            var fCenter = fromBox.getCenterWorld();
+            var tCenter = toBox.getCenterWorld();
+
+            var direction = tCenter.subtract(fCenter);
+
+            return Math.abs(direction.getX()) > Math.abs(direction.getY())
+                    ? direction.getX() > 0 ? DirectionUnit.RIGHT : DirectionUnit.LEFT
+                    : direction.getY() > 0 ? DirectionUnit.DOWN : DirectionUnit.UP;
         }
     }
 }
