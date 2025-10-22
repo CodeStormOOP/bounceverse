@@ -30,8 +30,11 @@ public class Attack extends Behavior {
             final var theirAttributes = obj.getComponentOptional(Attributes.class);
             final var theirDefense = theirAttributes.map(Attributes::getDefense).orElse(0);
 
-            final var actualDamage = damage >= 0 ? Math.min(0, damage - theirDefense) : damage;
+            final var actualDamage = damage >= 0 ? Math.max(0, damage - theirDefense) : damage;
             theirHealth.get().damage(actualDamage);
+            if (theirHealth.get().isZero()) {
+                theirHealth.get().getEntity().removeFromWorld();
+            }
         }
     }
 
