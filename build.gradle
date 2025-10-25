@@ -89,5 +89,6 @@ tasks.withType(JavaExec).configureEach {
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(24)
+		vendor.set(JvmVendorSpec.ADOPTIUM)
 	}
 }

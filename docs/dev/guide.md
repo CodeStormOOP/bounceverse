@@ -2,7 +2,7 @@
 
 ## 📋 Yêu cầu
 
-* **[Oracle OpenJDK 24](https://openjdk.org/projects/jdk/24/)** (Language level: 24 Preview)
+* **[Eclipse Temurin 24](https://adoptium.net/temurin/releases?version=24)**
 * **[Gradle](https://gradle.org/)**
 
 ## 🚀 Setup
