@@ -1,7 +1,7 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import com.github.codestorm.bounceverse.Utils.Time.Cooldown;
-import com.github.codestorm.bounceverse.data.contracts.CanExecute;
+import com.github.codestorm.bounceverse.Utilities.Time.Cooldown;
+import com.github.codestorm.bounceverse.typing.interfaces.CanExecute;
 import java.util.List;
 import javafx.util.Duration;
 

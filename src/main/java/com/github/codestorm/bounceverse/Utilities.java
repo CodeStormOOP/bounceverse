@@ -2,8 +2,11 @@ package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.time.TimerAction;
-import com.github.codestorm.bounceverse.data.types.DirectionUnit;
+import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -12,8 +15,8 @@ import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 /** Utilities. */
-public final class Utils {
-    private Utils() {}
+public final class Utilities {
+    private Utilities() {}
 
     /** Input/Output utilities. */
     public static final class IO {
@@ -274,6 +277,76 @@ public final class Utils {
             return Math.abs(direction.getX()) > Math.abs(direction.getY())
                     ? direction.getX() > 0 ? DirectionUnit.RIGHT : DirectionUnit.LEFT
                     : direction.getY() > 0 ? DirectionUnit.DOWN : DirectionUnit.UP;
+        }
+    }
+
+    public static final class Compatibility {
+        /**
+         * Throw {@link IllegalArgumentException} nếu như có component trong {@code params} không
+         * phù hợp với {@code onlyFor}.
+         *
+         * @param onlyFor {@link EntityType} muốn kiểm tra tương thích
+         * @param params Các component cần kiểm tra
+         */
+        public static void throwIfNotCompatible(EntityType onlyFor, Component... params) {
+            for (var param : params) {
+                final var annotation = param.getClass().getAnnotation(ForEntity.class);
+                if (annotation != null) {
+                    final var paramSet = EnumSet.copyOf(Arrays.asList(annotation.value()));
+                    if (paramSet.isEmpty() || paramSet.contains(onlyFor)) {
+                        continue;
+                    }
+                }
+                throw new IllegalArgumentException(
+                        String.format(
+                                "Class '%s' does not compatible for entity has '%s' type.",
+                                param.getClass().getSimpleName(), onlyFor.name()));
+            }
+        }
+
+        /**
+         * {@link #throwIfNotCompatible(EntityType, Component...)} nhưng không throw exception.
+         *
+         * @param onlyFor {@link EntityType} muốn kiểm tra tương thích
+         * @param params Các component cần kiểm tra
+         * @return {@code true} nếu tất cả tương thích, ngược lại {@code false}.
+         */
+        public static boolean isCompatible(EntityType onlyFor, Component... params) {
+            try {
+                throwIfNotCompatible(onlyFor, params);
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        }
+
+        /**
+         * Throw {@link IllegalArgumentException} nếu như có component trong {@code params} không
+         * phù hợp đồng thời tất cả với {@code onlyFor}.
+         *
+         * @param onlyFor Các {@link EntityType} muốn kiểm tra tương thích
+         * @param params Các component cần kiểm tra
+         */
+        public static void throwIfNotCompatible(EntityType[] onlyFor, Component... params) {
+            for (var only : onlyFor) {
+                throwIfNotCompatible(only, params);
+            }
+        }
+
+        /**
+         * {@link #throwIfNotCompatible(EntityType[], Component...)} nhưng không throw exception.
+         *
+         * @param onlyFor Các {@link EntityType} muốn kiểm tra tương thích
+         * @param params Các component cần kiểm tra
+         * @return {@code true} nếu tất cả tương thích, ngược lại {@code false}.
+         */
+        public static boolean isCompatible(EntityType[] onlyFor, Component... params) {
+            try {
+                throwIfNotCompatible(onlyFor, params);
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
         }
     }
 }

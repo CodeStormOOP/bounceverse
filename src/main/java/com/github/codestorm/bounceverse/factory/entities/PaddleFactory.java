@@ -7,7 +7,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.github.codestorm.bounceverse.components.behaviors.ScaleChange;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;

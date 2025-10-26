@@ -2,7 +2,7 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.time.TimerAction;
-import com.github.codestorm.bounceverse.data.contracts.CanUndo;
+import com.github.codestorm.bounceverse.typing.interfaces.CanUndo;
 import java.util.List;
 import javafx.util.Duration;
 

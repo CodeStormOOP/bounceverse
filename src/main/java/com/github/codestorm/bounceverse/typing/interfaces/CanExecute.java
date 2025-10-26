@@ -1,11 +1,11 @@
-package com.github.codestorm.bounceverse.data.contracts;
+package com.github.codestorm.bounceverse.typing.interfaces;
 
 import java.util.List;
 
 /**
  *
  *
- * <h1>{@link CanExecute}</h1>
+ * <h1>%{@link CanExecute}</h1>
  *
  * Có thể thực thi hành động nào đó.
  */

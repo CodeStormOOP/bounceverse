@@ -1,11 +1,11 @@
-package com.github.codestorm.bounceverse.data.types;
+package com.github.codestorm.bounceverse.typing.enums;
 
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
  *
  *
- * <h1>{@link DirectionUnit}</h1>
+ * <h1>#{@link DirectionUnit}</h1>
  *
  * Vector đơn vị đại diện cho hướng di chuyển.
  *

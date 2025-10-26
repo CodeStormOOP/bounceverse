@@ -8,7 +8,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 

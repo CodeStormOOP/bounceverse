@@ -10,12 +10,14 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
-import com.github.codestorm.bounceverse.data.meta.entities.SuitableEntity;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,11 +45,9 @@ public final class BrickFactory implements EntityFactory {
      * @param components Các components thêm vào
      * @return Entity Brick mới tạo
      */
-    @NotNull private static Entity newBrick(
-            Point2D pos,
-            int hp,
-            Rectangle view,
-            @SuitableEntity(EntityType.BRICK) Component... components) {
+    @NotNull private static Entity newBrick(Point2D pos, int hp, Rectangle view, Component... components) {
+        Utilities.Compatibility.throwIfNotCompatible(EntityType.BRICK, components);
+
         var physics = new PhysicsComponent();
         var fixture = new FixtureDef();
         fixture.setFriction(0f);
@@ -74,8 +74,7 @@ public final class BrickFactory implements EntityFactory {
      * @param components Các components thêm vào
      * @return Entity Brick mới tạo
      */
-    @NotNull private static Entity newBrick(
-            Point2D pos, int hp, @SuitableEntity(EntityType.BRICK) Component... components) {
+    @NotNull private static Entity newBrick(Point2D pos, int hp, Component... components) {
         return newBrick(
                 pos, hp, new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_COLOR), components);
     }
@@ -88,6 +87,7 @@ public final class BrickFactory implements EntityFactory {
      */
     @NotNull @Spawns("normalBrick")
     public static Entity newNormalBrick(SpawnData pos) {
-        return newBrick(new Point2D(pos.getX(), pos.getY()), DEFAULT_HP);
+        return newBrick(
+                new Point2D(pos.getX(), pos.getY()), DEFAULT_HP, new PaddleShooting(Duration.ONE));
     }
 }
