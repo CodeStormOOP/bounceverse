@@ -28,14 +28,9 @@ javadoc. Cấu trúc của dự án chúng ta sẽ là:
 
 trong đó `?` ở Tên lớp sẽ là:
 
-| Loại lớp      | Kí hiệu |
-|---------------|---------|
-| 📚 Class      |         |
-| 📱Interface   | %       |
-| 🔢 Enum       | #       |
-| ❗ Exception   | !       |
-| 📍 Annotation | @       |
-| 📝 Record     | $       |
+| Loại lớp | 📚 Class | 📱Interface | 🔢 Enum | ❗ Exception | 📍 Annotation | 📝 Record |
+|----------|----------|-------------|---------|-------------|---------------|-----------|
+| Kí hiệu  |          | %           | #       | !           | @             | $         |
 
 **VD:** `ThisIsClass`, `%Interface`, `!StackoverflowException`, `#EntityType`
 
