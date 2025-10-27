@@ -1,6 +1,6 @@
 package com.github.codestorm.bounceverse.core;
 
-import com.github.codestorm.bounceverse.Utils;
+import com.github.codestorm.bounceverse.Utilities;
 
 /**
  *
@@ -21,7 +21,7 @@ public final class LaunchOptions {
      * @param args Command-Line Arguments - được truyền vào từ hàm {@code main()}
      */
     public static void load(String... args) {
-        final var map = Utils.IO.parseArgs(args, null, null);
+        final var map = Utilities.IO.parseArgs(args, null, null);
 
         debug = Boolean.parseBoolean(map.getOrDefault("debug", "false"));
     }

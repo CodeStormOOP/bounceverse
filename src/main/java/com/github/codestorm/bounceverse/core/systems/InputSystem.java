@@ -2,8 +2,8 @@ package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
-import com.github.codestorm.bounceverse.data.types.DirectionUnit;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.scene.input.KeyCode;
 
 /**

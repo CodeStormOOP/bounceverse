@@ -9,7 +9,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -31,7 +31,7 @@ import javafx.scene.shape.Circle;
  *
  * @author minngoc1213
  */
-public class BallFactory implements EntityFactory {
+public final class BallFactory implements EntityFactory {
     public static final int DEFAULT_RADIUS = 10;
     public static final Point2D DEFAULT_POS = new Point2D(400, 500);
     public static final Color DEFAULT_COLOR = Color.RED;

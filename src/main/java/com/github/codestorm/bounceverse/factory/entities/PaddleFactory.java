@@ -7,7 +7,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.github.codestorm.bounceverse.components.behaviors.ScaleChange;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -21,7 +21,7 @@ import javafx.util.Duration;
  *
  * @see EntityFactory
  */
-public class PaddleFactory implements EntityFactory {
+public final class PaddleFactory implements EntityFactory {
     private static final double DEFAULT_WIDTH = 150;
     private static final double DEFAULT_HEIGHT = 20;
     private static final double DEFAULT_ARC_WIDTH = 14;
