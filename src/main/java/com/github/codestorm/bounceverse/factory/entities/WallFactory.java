@@ -8,8 +8,8 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
-import com.github.codestorm.bounceverse.data.types.AnchorPoint;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.AnchorPoint;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -25,7 +25,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author minngoc1213
  */
-public class WallFactory implements EntityFactory {
+public final class WallFactory implements EntityFactory {
     public static final double DEFAULT_THICKNESS = 5;
 
     /**

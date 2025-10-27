@@ -4,9 +4,9 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.github.codestorm.bounceverse.Utils;
+import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import java.util.List;
 
 /**
@@ -51,7 +51,7 @@ public final class PhysicSystem extends System {
                     protected void onCollisionBegin(Entity ball, Entity brick) {
                         // collision
                         final var collisionDirection =
-                                Utils.Collision.getCollisionDirection(ball, brick);
+                                Utilities.Collision.getCollisionDirection(ball, brick);
 
                         final var physics = ball.getComponent(PhysicsComponent.class);
                         switch (collisionDirection) {
@@ -75,7 +75,7 @@ public final class PhysicSystem extends System {
                     @Override
                     protected void onCollisionBegin(Entity ball, Entity paddle) {
                         final var collisionDirection =
-                                Utils.Collision.getCollisionDirection(ball, paddle);
+                                Utilities.Collision.getCollisionDirection(ball, paddle);
 
                         final var physics = ball.getComponent(PhysicsComponent.class);
                         switch (collisionDirection) {
@@ -95,7 +95,7 @@ public final class PhysicSystem extends System {
                     @Override
                     protected void onCollisionBegin(Entity ball, Entity wall) {
                         final var collisionDirection =
-                                Utils.Collision.getCollisionDirection(ball, wall);
+                                Utilities.Collision.getCollisionDirection(ball, wall);
 
                         final var physics = ball.getComponent(PhysicsComponent.class);
                         switch (collisionDirection) {

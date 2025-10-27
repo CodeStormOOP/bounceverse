@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse;
 import com.almasb.fxgl.app.GameApplication;
 import com.github.codestorm.bounceverse.core.*;
 import com.github.codestorm.bounceverse.core.systems.*;
+import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 import java.io.IOException;
 
 /**
@@ -27,7 +28,7 @@ public final class Bounceverse extends GameApplication {
         try {
             SettingsManager.load(settings);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BounceverseException(e);
         }
     }
 

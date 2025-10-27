@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.data.types;
+package com.github.codestorm.bounceverse.typing.enums;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 /**
  *
  *
- * <h1>{@link AnchorPoint}</h1>
+ * <h1>#{@link AnchorPoint}</h1>
  *
  * Các cạnh neo phổ biến trên {@link Rectangle2D}.
  */

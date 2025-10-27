@@ -2,9 +2,9 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
-import com.github.codestorm.bounceverse.Utils;
+import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
-import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import java.util.List;
 
 /**
@@ -29,7 +29,7 @@ public final class Explosion extends Attack {
         final double cx = getEntity().getCenter().getX();
         final double cy = getEntity().getCenter().getY();
 
-        final var nearEntities = Utils.Geometric.getEntityInCircle(cx, cy, radius);
+        final var nearEntities = Utilities.Geometric.getEntityInCircle(cx, cy, radius);
         super.execute(nearEntities.stream().map(e -> (Object) e).toList());
     }
 

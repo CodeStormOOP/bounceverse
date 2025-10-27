@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.data.types;
+package com.github.codestorm.bounceverse.typing.enums;
 
 import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.entity.Entity;
@@ -6,7 +6,7 @@ import com.almasb.fxgl.entity.Entity;
 /**
  *
  *
- * <h1>{@link EntityType}</h1>
+ * <h1>#{@link EntityType}</h1>
  *
  * Loại của {@link Entity}, dùng để phân biệt giữa các entity có loại khác nhau. <br>
  * Sử dụng {@link EntityBuilder#type(Enum)} để gán cho entity và {@link Entity#getType()} để truy
