@@ -1,7 +1,7 @@
 package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.entity.Entity;
-import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import java.util.Arrays;
 import java.util.EnumSet;
 import javafx.geometry.Side;

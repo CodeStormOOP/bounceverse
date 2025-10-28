@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see com.almasb.fxgl.app.scene.SceneFactory
  */
-public class SceneFactory extends com.almasb.fxgl.app.scene.SceneFactory {
+public final class SceneFactory extends com.almasb.fxgl.app.scene.SceneFactory {
     @NotNull @Override
     public FXGLMenu newMainMenu() {
         return new MainMenu();

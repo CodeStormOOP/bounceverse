@@ -3,7 +3,7 @@ package com.github.codestorm.bounceverse.components.behaviors;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
-import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import java.util.List;
 
 /**
@@ -32,9 +32,6 @@ public class Attack extends Behavior {
 
             final var actualDamage = damage >= 0 ? Math.max(0, damage - theirDefense) : damage;
             theirHealth.get().damage(actualDamage);
-            if (theirHealth.get().isZero()) {
-                theirHealth.get().getEntity().removeFromWorld();
-            }
         }
     }
 

@@ -20,12 +20,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: oracle
-          java-version: 24
-          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Run Spotless check
         run: |
@@ -40,12 +36,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: oracle
-          java-version: 24
-          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Run Spotless apply
         run: |
