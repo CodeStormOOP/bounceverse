@@ -16,19 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: oracle
-          java-version: 24
-          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Build release
         run: |
           chmod +x gradlew
           ./gradlew clean buildRelease
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+      - name: Upload to Release assets
+        uses: softprops/action-gh-release@v2
         with:
-          path: out/*.jar
+          files: out/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

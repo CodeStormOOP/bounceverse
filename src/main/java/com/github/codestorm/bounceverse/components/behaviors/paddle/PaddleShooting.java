@@ -3,12 +3,12 @@ package com.github.codestorm.bounceverse.components.behaviors.paddle;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
-import com.github.codestorm.bounceverse.Utils.Time.Cooldown;
+import com.github.codestorm.bounceverse.Utilities.Time.Cooldown;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.behaviors.Behavior;
-import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
-import com.github.codestorm.bounceverse.data.types.DirectionUnit;
-import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import java.util.List;
 import javafx.util.Duration;
 

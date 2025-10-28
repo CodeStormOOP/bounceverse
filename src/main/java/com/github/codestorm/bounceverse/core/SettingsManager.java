@@ -2,7 +2,7 @@ package com.github.codestorm.bounceverse.core;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameSettings;
-import com.github.codestorm.bounceverse.Utils;
+import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
 import java.io.IOException;
 
@@ -31,13 +31,13 @@ public final class SettingsManager {
      * @throws IOException if an error occurred when reading from the input stream.
      */
     public static void load(GameSettings target) throws IOException {
-        final var gameSettings = Utils.IO.loadProperties("/settings.properties");
+        final var gameSettings = Utilities.IO.loadProperties("/settings.properties");
         final var userSettings = UserSetting.getSetting();
 
         // ? General
         target.setTitle(gameSettings.getProperty("general.name"));
         target.setVersion(gameSettings.getProperty("general.version"));
-        target.setCredits(Utils.IO.readTextFile("credits.txt"));
+        target.setCredits(Utilities.IO.readTextFile("credits.txt"));
         target.setApplicationMode(
                 Boolean.parseBoolean(gameSettings.getProperty("general.devMode"))
                         ? ApplicationMode.DEVELOPER

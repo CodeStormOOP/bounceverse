@@ -2,11 +2,7 @@ package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.EntityFactory;
-import com.github.codestorm.bounceverse.factory.entities.BallFactory;
-import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
-import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
-import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
-import com.github.codestorm.bounceverse.factory.entities.WallFactory;
+import com.github.codestorm.bounceverse.factory.entities.*;
 
 public final class GameSystem extends System {
     private GameSystem() {}
@@ -23,9 +19,9 @@ public final class GameSystem extends System {
 
     private static void spawnWalls() {
         FXGL.spawn("wallTop");
+        FXGL.spawn("wallBottom");
         FXGL.spawn("wallLeft");
         FXGL.spawn("wallRight");
-        FXGL.spawn("wallBottom");
     }
 
     @Override
