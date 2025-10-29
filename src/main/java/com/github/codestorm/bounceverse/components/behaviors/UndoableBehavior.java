@@ -95,6 +95,8 @@ public abstract class UndoableBehavior extends Behavior implements CanUndo {
         this.removeWhenUndo = removeWhenUndo;
     }
 
+    public UndoableBehavior() {}
+
     public UndoableBehavior(Duration duration) {
         this.duration = duration;
     }

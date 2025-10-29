@@ -45,8 +45,6 @@ public final class GameSystem extends System {
 
     @Override
     public void apply() {
-        final var gameWorld = FXGL.getGameWorld();
-
         addFactory(
                 new WallFactory(),
                 new BrickFactory(),
