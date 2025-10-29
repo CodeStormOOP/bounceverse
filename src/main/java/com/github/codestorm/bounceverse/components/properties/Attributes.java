@@ -1,7 +1,6 @@
 package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.entity.Entity;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 
 /**
  *
@@ -10,7 +9,6 @@ import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
  *
  * Các chỉ số thuộc tính chung (chưa cụ thể thành class) của {@link Entity}.
  */
-@ForEntity({})
 public final class Attributes extends Property {
     public static final int DEFAULT_DEFENSE = 0;
     private int defense = DEFAULT_DEFENSE;
