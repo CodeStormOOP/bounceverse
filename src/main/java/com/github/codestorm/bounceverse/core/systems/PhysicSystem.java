@@ -10,6 +10,8 @@ import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
+import javafx.geometry.Side;
+
 /**
  *
  *
@@ -68,6 +70,31 @@ public final class PhysicSystem extends System {
                     default -> {
                     }
                 }
+
+                 var shieldOpt = brick.getComponentOptional(
+                com.github.codestorm.bounceverse.components.properties.Shield.class
+            );
+
+            if (shieldOpt.isPresent()) {
+                var shield = shieldOpt.get();
+
+                // Kiểm tra hướng bị bảo vệ
+                switch (collisionDirection) {
+                    case UP -> {
+                        if (shield.hasSide(Side.TOP)) return;
+                    }
+                    case DOWN -> {
+                        if (shield.hasSide(Side.BOTTOM)) return;
+                    }
+                    case LEFT -> {
+                        if (shield.hasSide(Side.LEFT)) return;
+                    }
+                    case RIGHT -> {
+                        if (shield.hasSide(Side.RIGHT)) return;
+                    }
+                    default -> {}
+                }
+            }
 
                 // damage
                 final var atk = ball.getComponent(Attack.class);

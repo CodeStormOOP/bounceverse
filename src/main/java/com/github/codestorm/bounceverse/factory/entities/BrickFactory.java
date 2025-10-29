@@ -16,10 +16,14 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.Utilities;
+import com.github.codestorm.bounceverse.components.behaviors.Explosion;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
+import com.github.codestorm.bounceverse.components.behaviors.Special;
+import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
@@ -115,5 +119,62 @@ public final class BrickFactory implements EntityFactory {
     public static Entity newNormalBrick(SpawnData pos) {
         return newBrick(
                 new Point2D(pos.getX(), pos.getY()), DEFAULT_HP);
+    }
+
+    /**
+     * Tạo entity Brick với nhiều hp hơn
+     *
+     * @param pos Vị trí
+     * @return Entity Brick mới tạo
+     */
+    @Spawns("strongBrick")
+    public static Entity newStrongBrick(SpawnData data) {
+        return newBrick(
+                new Point2D(data.getX(), data.getY()),
+                DEFAULT_HP + 2);
+    }
+
+    /**
+     * Tạo entity Shield Brick chỉ được phá từ trên xuống
+     *
+     * @param pos Vị trí
+     * @return Entity Brick
+     */
+    @NotNull
+    @Spawns("shieldBrick")
+    public static Entity newShieldBrick(SpawnData pos) {
+
+        var shield = new Shield();
+        shield.addSide(Side.LEFT, Side.RIGHT, Side.BOTTOM);
+
+        var brick = newBrick(new Point2D(pos.getX(), pos.getY()), DEFAULT_HP + 1);
+        brick.addComponent(shield);
+        
+        return brick;
+    }
+
+    /**
+     * Tạo entity Exploding Brick
+     *
+     * Exploding Brick – nổ phá gạch lân cận
+     */
+    @Spawns("explodingBrick")
+    public static Entity newExplodingBrick(SpawnData data) {
+        var explosion = new Explosion(120);
+        return newBrick(
+                new Point2D(data.getX(), data.getY()),
+                DEFAULT_HP,
+                explosion
+        );
+    }
+
+    @Spawns("specialBrick")
+    public static Entity newSpecialBrick(SpawnData data) {
+
+        return newBrick(
+                new Point2D(data.getX(), data.getY()),
+                DEFAULT_HP,
+                new Special()
+        );
     }
 }

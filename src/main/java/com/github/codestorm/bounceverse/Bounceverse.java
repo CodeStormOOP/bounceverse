@@ -1,6 +1,7 @@
 package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.GameSettings;
 import com.github.codestorm.bounceverse.core.*;
 import com.github.codestorm.bounceverse.core.systems.*;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
@@ -24,7 +25,7 @@ public final class Bounceverse extends GameApplication {
     }
 
     @Override
-    protected void initSettings(com.almasb.fxgl.app.GameSettings settings) {
+    protected void initSettings(GameSettings settings) {
         try {
             SettingsManager.load(settings);
         } catch (IOException e) {
