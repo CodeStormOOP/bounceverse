@@ -16,6 +16,7 @@ import javafx.util.Duration;
  * @see CanUndo
  */
 public abstract class UndoableBehavior extends Behavior implements CanUndo {
+    protected boolean removeWhenUndo = true;
     protected Duration duration = Duration.INDEFINITE;
     private List<Object> modified = null;
     private TimerAction current;
@@ -67,7 +68,15 @@ public abstract class UndoableBehavior extends Behavior implements CanUndo {
         if (undoLogic(modified)) {
             current = null;
             modified = null;
+            if (removeWhenUndo) {
+                entity.removeComponent(this.getClass());
+            }
         }
+    }
+
+    @Override
+    public void onRemoved() {
+        undo();
     }
 
     public Duration getDuration() {
@@ -76,5 +85,22 @@ public abstract class UndoableBehavior extends Behavior implements CanUndo {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    public boolean isRemoveWhenUndo() {
+        return removeWhenUndo;
+    }
+
+    public void setRemoveWhenUndo(boolean removeWhenUndo) {
+        this.removeWhenUndo = removeWhenUndo;
+    }
+
+    public UndoableBehavior(Duration duration) {
+        this.duration = duration;
+    }
+
+    public UndoableBehavior(Duration duration, boolean removeWhenUndo) {
+        this(duration);
+        this.removeWhenUndo = removeWhenUndo;
     }
 }

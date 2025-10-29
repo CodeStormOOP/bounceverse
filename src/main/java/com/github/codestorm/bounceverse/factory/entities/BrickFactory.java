@@ -12,12 +12,10 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
-import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -87,7 +85,6 @@ public final class BrickFactory implements EntityFactory {
      */
     @NotNull @Spawns("normalBrick")
     public static Entity newNormalBrick(SpawnData pos) {
-        return newBrick(
-                new Point2D(pos.getX(), pos.getY()), DEFAULT_HP, new PaddleShooting(Duration.ONE));
+        return newBrick(new Point2D(pos.getX(), pos.getY()), DEFAULT_HP);
     }
 }
