@@ -1,32 +1,48 @@
 package com.github.codestorm.bounceverse;
 
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.TimerAction;
-import com.github.codestorm.bounceverse.data.types.DirectionUnit;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Scanner;
+
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.time.TimerAction;
+import com.github.codestorm.bounceverse.data.types.DirectionUnit;
+
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
-/** Utilities. */
+/**
+ * Utilities.
+ */
 public final class Utils {
 
-    private Utils() {}
+    private Utils() {
+    }
 
-    /** Input/Output utilities. */
+    /**
+     * Input/Output utilities.
+     */
     public static final class IO {
 
-        private IO() {}
+        private IO() {
+        }
 
         /**
          * Load .properties file.
          *
          * @param path Relative path
          * @return Parsed properties
-         * @throws IOException if an error occurred when reading from the input stream.
+         * @throws IOException if an error occurred when reading from the input
+         * stream.
          */
         public static Properties loadProperties(String path) throws IOException {
             InputStream fileStream = IO.class.getResourceAsStream(path);
@@ -41,16 +57,18 @@ public final class Utils {
         }
 
         /**
-         * Convert an array of key=value pairs into a hashmap. The string "key=" maps key onto "",
-         * while just "key" maps key onto null. The value may contain '=' characters, only the first
-         * "=" is a delimiter. <br>
-         * Source code from <a href="https://stackoverflow.com/a/52940215/16410937">here</a>.
+         * Convert an array of key=value pairs into a hashmap. The string "key="
+         * maps key onto "", while just "key" maps key onto null. The value may
+         * contain '=' characters, only the first "=" is a delimiter. <br>
+         * Source code from
+         * <a href="https://stackoverflow.com/a/52940215/16410937">here</a>.
          *
-         * @param args command-line arguments in the key=value format (or just key= or key)
-         * @param defaults a map of default values, may be null. Mappings to null are not copied to
-         *     the resulting map.
-         * @param whiteList if not null, the keys not present in this map cause an exception (and
-         *     keys mapped to null are ok)
+         * @param args command-line arguments in the key=value format (or just
+         * key= or key)
+         * @param defaults a map of default values, may be null. Mappings to
+         * null are not copied to the resulting map.
+         * @param whiteList if not null, the keys not present in this map cause
+         * an exception (and keys mapped to null are ok)
          * @return a map that maps these keys onto the corresponding values.
          */
         public static HashMap<String, String> parseArgs(
@@ -96,7 +114,8 @@ public final class Utils {
     public static final class Time {
 
         /**
-         * Thời gian hồi để thực hiện lại gì đó. Thực hiện thông qua {@link #current}
+         * Thời gian hồi để thực hiện lại gì đó. Thực hiện thông qua
+         * {@link #current}
          *
          * @see ActiveCooldown
          */
@@ -123,20 +142,26 @@ public final class Utils {
                 return current;
             }
 
-            public Cooldown() {}
+            public Cooldown() {
+            }
 
             public Cooldown(Duration duration) {
                 this.duration = duration;
             }
 
-            /** Cooldown thời điểm hiện tại. Giống như một wrapper của {@link TimerAction}. */
+            /**
+             * Cooldown thời điểm hiện tại. Giống như một wrapper của
+             * {@link TimerAction}.
+             */
             public final class ActiveCooldown {
 
                 private TimerAction waiter = null;
                 private double timestamp = Double.NaN;
                 private Runnable onExpiredCallback = null;
 
-                /** Hành động khi cooldown hết. */
+                /**
+                 * Hành động khi cooldown hết.
+                 */
                 private void onExpired() {
                     timestamp = Double.NaN;
                     if (onExpiredCallback != null) {
@@ -162,14 +187,18 @@ public final class Utils {
                     return (waiter == null) || waiter.isExpired();
                 }
 
-                /** Khiến cooldown hết hạn ngay (nếu có). */
+                /**
+                 * Khiến cooldown hết hạn ngay (nếu có).
+                 */
                 public void expire() {
                     if (!expired()) {
                         waiter.expire();
                     }
                 }
 
-                /** Set một cooldown mới. */
+                /**
+                 * Set một cooldown mới.
+                 */
                 public void makeNew() {
                     expire();
 
@@ -178,14 +207,18 @@ public final class Utils {
                     timestamp = gameTimer.getNow();
                 }
 
-                /** Tạm dừng cooldown. */
+                /**
+                 * Tạm dừng cooldown.
+                 */
                 public void pause() {
                     if (!expired()) {
                         waiter.pause();
                     }
                 }
 
-                /** Tiếp tục cooldown. */
+                /**
+                 * Tiếp tục cooldown.
+                 */
                 public void resume() {
                     if (!expired()) {
                         waiter.resume();
@@ -220,7 +253,8 @@ public final class Utils {
                     }
                 }
 
-                private ActiveCooldown() {}
+                private ActiveCooldown() {
+                }
             }
         }
     }
@@ -250,15 +284,15 @@ public final class Utils {
          * @return Các entity
          */
         public static List<Entity> getEntityInCircle(double cx, double cy, double radius) {
-            final Rectangle2D outRect =
-                    new Rectangle2D(cx - radius, cy - radius, 2 * radius, 2 * radius);
+            final Rectangle2D outRect
+                    = new Rectangle2D(cx - radius, cy - radius, 2 * radius, 2 * radius);
             return FXGL.getGameWorld().getEntitiesInRange(outRect).stream()
                     .filter(
                             e -> {
-                                double nearestX =
-                                        Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
-                                double nearestY =
-                                        Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
+                                double nearestX
+                                = Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
+                                double nearestY
+                                = Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
                                 double dx = cx - nearestX;
                                 double dy = cy - nearestY;
                                 return (dx * dx + dy * dy) <= radius * radius;
@@ -270,9 +304,9 @@ public final class Utils {
     public static final class Collision {
 
         /**
-         * Xác định hướng va chạm giữa hai Entity bằng cách tính độ chồng lấn (overlap). Trả về
-         * hướng mà source "tiếp xúc" với target: UP, DOWN, LEFT, RIGHT. Nếu không chồng lấn rõ
-         * ràng, trả về null.
+         * Xác định hướng va chạm giữa hai Entity bằng cách tính độ chồng lấn
+         * (overlap). Trả về hướng mà source "tiếp xúc" với target: UP, DOWN,
+         * LEFT, RIGHT. Nếu không chồng lấn rõ ràng, trả về null.
          */
         public static DirectionUnit getCollisionDirection(Entity source, Entity target) {
             var fromBox = source.getBoundingBoxComponent();
@@ -290,10 +324,17 @@ public final class Utils {
 
             double overlapX = Math.min(fx + fw, tx + tw) - Math.max(fx, tx);
             double overlapY = Math.min(fy + fh, ty + th) - Math.max(fy, ty);
-
             final double EPS = 0.0001;
-            if (overlapX <= EPS || overlapY <= EPS) {
-                return null;
+            if (Math.abs(overlapX - overlapY) <= EPS) {
+                var phys = source.getComponentOptional(PhysicsComponent.class);
+                if (phys.isPresent()) {
+                    Point2D vel = (Point2D) phys.get().getLinearVelocity();
+                    if (Math.abs(vel.getX()) > Math.abs(vel.getY())) {
+                        return (vel.getX() > 0) ? DirectionUnit.LEFT : DirectionUnit.RIGHT;
+                    } else {
+                        return (vel.getY() > 0) ? DirectionUnit.UP : DirectionUnit.DOWN;
+                    }
+                }
             }
 
             if (overlapX <= 0 || overlapY <= 0) {

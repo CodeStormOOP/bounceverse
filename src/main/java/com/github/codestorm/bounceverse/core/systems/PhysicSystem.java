@@ -1,5 +1,7 @@
 package com.github.codestorm.bounceverse.core.systems;
 
+import java.util.List;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -7,7 +9,6 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-import java.util.List;
 
 /**
  *
@@ -15,12 +16,15 @@ import java.util.List;
  * <h1>{@link PhysicSystem}</h1>
  *
  * {@link System} quản lý Vật lý trong game. <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
+ * <i>Đây là một Singleton, cần lấy instance thông qua
+ * {@link #getInstance()}</i>.
  *
  * @see System
  */
 public final class PhysicSystem extends System {
-    private PhysicSystem() {}
+
+    private PhysicSystem() {
+    }
 
     public static PhysicSystem getInstance() {
         return Holder.INSTANCE;
@@ -34,88 +38,118 @@ public final class PhysicSystem extends System {
         // Bullet vs Brick
         physicWorld.addCollisionHandler(
                 new CollisionHandler(EntityType.BULLET, EntityType.BRICK) {
-                    @Override
-                    protected void onCollisionBegin(Entity bullet, Entity brick) {
-                        final var atk = bullet.getComponentOptional(Attack.class);
-                        if (atk.isEmpty()) {
-                            return;
-                        }
-                        atk.get().execute(List.of(brick));
-                    }
-                });
+            @Override
+            protected void onCollisionBegin(Entity bullet, Entity brick) {
+                final var atk = bullet.getComponentOptional(Attack.class);
+                if (atk.isEmpty()) {
+                    return;
+                }
+                atk.get().execute(List.of(brick));
+            }
+        });
 
         // Ball vs Brick
         physicWorld.addCollisionHandler(
                 new CollisionHandler(EntityType.BALL, EntityType.BRICK) {
-                    @Override
-                    protected void onCollisionBegin(Entity ball, Entity brick) {
-                        // collision
-                        final var collisionDirection =
-                                Utilities.Collision.getCollisionDirection(ball, brick);
+            @Override
+            protected void onCollisionBegin(Entity ball, Entity brick) {
+                // collision
+                final var collisionDirection
+                        = Utilities.Collision.getCollisionDirection(ball, brick);
 
-                        final var physics = ball.getComponent(PhysicsComponent.class);
-                        switch (collisionDirection) {
-                            case UP, DOWN ->
-                                    physics.setLinearVelocity(
-                                            physics.getVelocityX(), -physics.getVelocityY());
-                            case LEFT, RIGHT ->
-                                    physics.setLinearVelocity(
-                                            -physics.getVelocityX(), physics.getVelocityY());
-                        }
-
-                        // damage
-                        final var atk = ball.getComponent(Attack.class);
-                        atk.execute(List.of(brick));
+                final var physics = ball.getComponent(PhysicsComponent.class);
+                switch (collisionDirection) {
+                    case UP, DOWN ->
+                        physics.setLinearVelocity(
+                                physics.getVelocityX(), -physics.getVelocityY());
+                    case LEFT, RIGHT ->
+                        physics.setLinearVelocity(
+                                -physics.getVelocityX(), physics.getVelocityY());
+                    default -> {
                     }
-                });
+                }
+
+                // damage
+                final var atk = ball.getComponent(Attack.class);
+                atk.execute(List.of(brick));
+            }
+        });
 
         // Ball vs Paddle
         physicWorld.addCollisionHandler(
                 new CollisionHandler(EntityType.BALL, EntityType.PADDLE) {
-                    @Override
-                    protected void onCollisionBegin(Entity ball, Entity paddle) {
-                        final var collisionDirection =
-                                Utilities.Collision.getCollisionDirection(ball, paddle);
+            @Override
+            protected void onCollisionBegin(Entity ball, Entity paddle) {
+                final var collisionDirection
+                        = Utilities.Collision.getCollisionDirection(ball, paddle);
 
-                        final var physics = ball.getComponent(PhysicsComponent.class);
-                        switch (collisionDirection) {
-                            case UP, DOWN ->
-                                    physics.setLinearVelocity(
-                                            physics.getVelocityX(), -physics.getVelocityY());
-                            case LEFT, RIGHT ->
-                                    physics.setLinearVelocity(
-                                            -physics.getVelocityX(), physics.getVelocityY());
-                        }
+                final var physics = ball.getComponent(PhysicsComponent.class);
+                switch (collisionDirection) {
+                    case UP, DOWN ->
+                        physics.setLinearVelocity(
+                                physics.getVelocityX(), -physics.getVelocityY());
+                    case LEFT, RIGHT ->
+                        physics.setLinearVelocity(
+                                -physics.getVelocityX(), physics.getVelocityY());
+                    default -> {
                     }
-                });
+                }
+            }
+        });
 
         // Ball vs Wall
         physicWorld.addCollisionHandler(
                 new CollisionHandler(EntityType.BALL, EntityType.WALL) {
-                    @Override
-                    protected void onCollisionBegin(Entity ball, Entity wall) {
-                        final var collisionDirection =
-                                Utilities.Collision.getCollisionDirection(ball, wall);
+            @Override
+            protected void onCollisionBegin(Entity ball, Entity wall) {
+                final var physics = ball.getComponent(PhysicsComponent.class);
+                String side = wall.getString("side");
 
-                        final var physics = ball.getComponent(PhysicsComponent.class);
-                        switch (collisionDirection) {
+                switch (side) {
+                    case "LEFT", "RIGHT" ->
+                        physics.setLinearVelocity(-physics.getVelocityX(), physics.getVelocityY());
+                    case "TOP", "BOTTOM" ->
+                        physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
+                    default -> {
+                        // fallback nếu chưa có side
+                        final var dir = Utilities.Collision.getCollisionDirection(ball, wall);
+                        switch (dir) {
                             case UP, DOWN ->
-                                    physics.setLinearVelocity(
-                                            physics.getVelocityX(), -physics.getVelocityY());
+                                physics.setLinearVelocity(
+                                        physics.getVelocityX(), -physics.getVelocityY());
                             case LEFT, RIGHT ->
-                                    physics.setLinearVelocity(
-                                            -physics.getVelocityX(), physics.getVelocityY());
+                                physics.setLinearVelocity(
+                                        -physics.getVelocityX(), physics.getVelocityY());
+                            default -> {
+                            }
                         }
                     }
-                });
+                }
+
+                final double eps = 0.5;
+                switch (side) {
+                    case "LEFT" ->
+                        ball.translateX(eps);
+                    case "RIGHT" ->
+                        ball.translateX(-eps);
+                    case "TOP" ->
+                        ball.translateY(eps);
+                    case "BOTTOM" ->
+                        ball.translateY(-eps);
+                }
+            }
+        });
+
     }
 
     /**
      * Lazy-loaded singleton holder. <br>
-     * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Follow
+     * <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {
+
         static final PhysicSystem INSTANCE = new PhysicSystem();
     }
 }
