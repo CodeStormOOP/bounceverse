@@ -13,11 +13,19 @@ import java.lang.annotation.Target;
  *
  * <h1>@{@link ForEntity}</h1>
  *
- * Đánh dấu class chỉ định là phù hợp cho entity nào. <br>
- * <b>Nếu chỉ định tất cả entity, hãy truyền vào mảng rỗng {@code {}}.</b> <br>
+ * Ràng buộc đánh dấu class chỉ định là phù hợp cho entity nào. <br>
  * <br>
  * Sử dụng {@link Utilities.Compatibility#throwIfNotCompatible(EntityType, Component...)} để kiểm
- * tra.
+ * tra. <br>
+ * <br>
+ *
+ * <h2>Ví dụ</h2>
+ *
+ * <ul>
+ *   <li>Cho phép tất cả: Không thêm annotation này.
+ *   <li>Cho phép cụ thể: {@code @ForEntity(A)} hoặc {@code @ForEntity({A, B, C})}
+ *   <li>Không cho phép: {@code @ForEntity({})}
+ * </ul>
  *
  * @see EntityType
  */

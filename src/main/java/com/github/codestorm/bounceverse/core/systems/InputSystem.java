@@ -14,7 +14,7 @@ import javafx.scene.input.KeyCode;
  * {@link System} quản lý Input trong game. <br>
  * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
  */
-public class InputSystem extends System {
+public final class InputSystem extends System {
     public static InputSystem getInstance() {
         return InputSystem.Holder.INSTANCE;
     }

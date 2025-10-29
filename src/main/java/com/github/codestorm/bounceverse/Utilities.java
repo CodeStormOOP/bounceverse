@@ -291,16 +291,17 @@ public final class Utilities {
         public static void throwIfNotCompatible(EntityType onlyFor, Component... params) {
             for (var param : params) {
                 final var annotation = param.getClass().getAnnotation(ForEntity.class);
-                if (annotation != null) {
-                    final var paramSet = EnumSet.copyOf(Arrays.asList(annotation.value()));
-                    if (paramSet.isEmpty() || paramSet.contains(onlyFor)) {
-                        continue;
-                    }
+                if (annotation == null) {
+                    continue;
                 }
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Class '%s' does not compatible for entity has '%s' type.",
-                                param.getClass().getSimpleName(), onlyFor.name()));
+
+                final var paramEntityTypeSet = EnumSet.copyOf(Arrays.asList(annotation.value()));
+                if (!paramEntityTypeSet.contains(onlyFor)) {
+                    throw new IllegalArgumentException(
+                            String.format(
+                                    "Class '%s' does not compatible for entity has '%s' type.",
+                                    param.getClass().getSimpleName(), onlyFor.name()));
+                }
             }
         }
 

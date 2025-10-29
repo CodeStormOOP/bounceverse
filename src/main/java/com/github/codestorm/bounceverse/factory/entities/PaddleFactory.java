@@ -5,7 +5,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.github.codestorm.bounceverse.components.behaviors.ScaleChange;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.scene.paint.Color;
@@ -38,8 +37,8 @@ public final class PaddleFactory implements EntityFactory {
                 .type(EntityType.PADDLE)
                 .viewWithBBox(view)
                 .collidable()
-                .with(new ScaleChange(), new PaddleShooting(DEFAULT_SHOOT_COOLDOWN))
+                .with(new PaddleShooting(DEFAULT_SHOOT_COOLDOWN))
                 .build();
-        // TODO: Thêm điều chỉnh tốc độ
+        // TODO: Thêm Dashing
     }
 }
