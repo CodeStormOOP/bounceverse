@@ -1,5 +1,10 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
+import java.util.List;
+import java.util.Random;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
@@ -12,13 +17,11 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
-import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
-import org.jetbrains.annotations.NotNull;
+import javafx.scene.Node;
+import javafx.scene.image.ImageView;
 
 /**
  *
@@ -31,10 +34,21 @@ import org.jetbrains.annotations.NotNull;
  * @see EntityFactory
  */
 public final class BrickFactory implements EntityFactory {
+
     private static final int DEFAULT_WIDTH = 80;
     private static final int DEFAULT_HEIGHT = 30;
-    private static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
     private static final int DEFAULT_HP = 1;
+
+    private static final List<String> BRICK_TEXTURES = List.of(
+            "bricks/normalBrick/06_test11.png",
+            "bricks/normalBrick/07_test11.png",
+            "bricks/normalBrick/08_test11.png",
+            "bricks/normalBrick/09_test11.png",
+            "bricks/normalBrick/10_test11.png",
+            "bricks/normalBrick/11_test11.png"
+    );
+
+    private static final Random RANDOM = new Random();
 
     /**
      * Tạo mới một entity brick.
@@ -45,7 +59,8 @@ public final class BrickFactory implements EntityFactory {
      * @param components Các components thêm vào
      * @return Entity Brick mới tạo
      */
-    @NotNull private static Entity newBrick(Point2D pos, int hp, Rectangle view, Component... components) {
+    @NotNull
+    private static Entity newBrick(Point2D pos, int hp, Node view, Component... components) {
         Utilities.Compatibility.throwIfNotCompatible(EntityType.BRICK, components);
 
         var physics = new PhysicsComponent();
@@ -74,9 +89,19 @@ public final class BrickFactory implements EntityFactory {
      * @param components Các components thêm vào
      * @return Entity Brick mới tạo
      */
-    @NotNull private static Entity newBrick(Point2D pos, int hp, Component... components) {
-        return newBrick(
-                pos, hp, new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_COLOR), components);
+    @NotNull
+    private static Entity newBrick(Point2D pos, int hp, Component... components) {
+        String randomTexture = BRICK_TEXTURES.get(RANDOM.nextInt(BRICK_TEXTURES.size()));
+
+        ImageView view = new ImageView(FXGL.image(randomTexture));
+        view.setFitWidth(DEFAULT_WIDTH);
+        view.setFitHeight(DEFAULT_HEIGHT);
+        view.setSmooth(false);
+        view.setPreserveRatio(false);
+        view.setOpacity(1.0);
+        view.setBlendMode(null);
+
+        return newBrick(pos, hp, view, components);
     }
 
     /**
@@ -85,9 +110,10 @@ public final class BrickFactory implements EntityFactory {
      * @param pos Vị trí
      * @return Entity Brick mới tạo
      */
-    @NotNull @Spawns("normalBrick")
+    @NotNull
+    @Spawns("normalBrick")
     public static Entity newNormalBrick(SpawnData pos) {
         return newBrick(
-                new Point2D(pos.getX(), pos.getY()), DEFAULT_HP, new PaddleShooting(Duration.ONE));
+                new Point2D(pos.getX(), pos.getY()), DEFAULT_HP);
     }
 }
