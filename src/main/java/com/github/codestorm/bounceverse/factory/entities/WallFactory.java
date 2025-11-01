@@ -60,7 +60,6 @@ public final class WallFactory implements EntityFactory {
                 .collidable()
                 .with(physics)
                 .with("side", side)
-                .anchorFromCenter()
                 .build();
     }
 
@@ -95,7 +94,7 @@ public final class WallFactory implements EntityFactory {
         final double thickness = thicknessObj == null ? DEFAULT_THICKNESS : thicknessObj;
 
         return createWall(
-                AnchorPoint.BOTTOM_LEFT.of(appShape),
+                AnchorPoint.BOTTOM_LEFT.of(appShape).subtract(0, thickness),
                 appShape.getWidth(),
                 thickness, "BOTTOM");
     }
@@ -113,8 +112,8 @@ public final class WallFactory implements EntityFactory {
         final double thickness = thicknessObj == null ? DEFAULT_THICKNESS : thicknessObj;
 
         return createWall(
-                AnchorPoint.TOP_LEFT.of(appShape), 
-                thickness, 
+                AnchorPoint.TOP_LEFT.of(appShape),
+                thickness,
                 appShape.getHeight(), "LEFT");
     }
 
@@ -130,9 +129,9 @@ public final class WallFactory implements EntityFactory {
         final Double thicknessObj = data.hasKey("thickness") ? data.get("thickness") : null;
         final double thickness = thicknessObj == null ? DEFAULT_THICKNESS : thicknessObj;
 
-        return createWall( 
-                AnchorPoint.TOP_RIGHT.of(appShape).subtract(thickness, 0), 
-                thickness, 
-                appShape.getHeight(), "RIGHT"); 
+        return createWall(
+                AnchorPoint.TOP_RIGHT.of(appShape).subtract(thickness, 0),
+                thickness,
+                appShape.getHeight(), "RIGHT");
     }
 }

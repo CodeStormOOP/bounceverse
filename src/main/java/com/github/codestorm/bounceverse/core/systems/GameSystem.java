@@ -1,8 +1,14 @@
 package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
-import com.github.codestorm.bounceverse.factory.entities.*;
+import com.github.codestorm.bounceverse.factory.entities.BallFactory;
+import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
+import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
+import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
+import com.github.codestorm.bounceverse.factory.entities.WallFactory;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 public final class GameSystem extends System {
 
@@ -73,12 +79,25 @@ public final class GameSystem extends System {
         }
 
         // Paddle
+        FXGL.getGameWorld()
+                .getEntitiesByType(EntityType.PADDLE)
+                .forEach(Entity::removeFromWorld);
+
         double px = FXGL.getAppWidth() / 2.0 - 60;
         double py = FXGL.getAppHeight() - 40;
         FXGL.spawn("paddle", px, py);
 
         // Ball
-        FXGL.spawn("ball");
+        if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
+            Entity paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+
+            double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
+            double y = paddle.getY() - BallFactory.DEFAULT_RADIUS + 1;
+
+            FXGL.spawn("ball", new com.almasb.fxgl.entity.SpawnData(x, y).put("attached", true));
+            FXGL.set("ballAttached", true);
+        }
+
     }
 
     /**

@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import com.github.codestorm.bounceverse.components.behaviors.Attachment;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
@@ -38,12 +39,10 @@ import javafx.scene.shape.Circle;
 public final class BallFactory implements EntityFactory {
 
     public static final int DEFAULT_RADIUS = 10;
-    public static final Point2D DEFAULT_POS = new Point2D(400, 500);
     public static final Color DEFAULT_COLOR = Color.RED;
 
-    @Spawns("ball")
-    public Entity spawnBall(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
+    private Entity buildBall(SpawnData data, boolean attached) {
+        var physics = new PhysicsComponent();
 
         var fixture = new FixtureDef();
         fixture.setDensity(1.0f);
@@ -54,28 +53,31 @@ public final class BallFactory implements EntityFactory {
         physics.setBodyType(BodyType.DYNAMIC);
 
         physics.setOnPhysicsInitialized(() -> {
-            // không chịu trọng lực (game kiểu Arkanoid)
             physics.getBody().setGravityScale(0f);
-
-            // tốc độ khởi đầu
-            physics.setLinearVelocity(200, -200);
-
-            // không xoay
             physics.getBody().setFixedRotation(true);
-
-            // không giảm tốc theo thời gian
             physics.getBody().setLinearDamping(0f);
             physics.getBody().setAngularDamping(0f);
+
+            if (attached) {
+                physics.setLinearVelocity(Point2D.ZERO);
+            } else {
+                physics.setLinearVelocity(200, -200);
+            }
         });
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.BALL)
-                .at(DEFAULT_POS)
+                .at(data.getX(), data.getY())
                 .viewWithBBox(new Circle(DEFAULT_RADIUS, DEFAULT_COLOR))
                 .collidable()
-                .with(physics, new Attack())
-                .anchorFromCenter()
+                .with(physics, new Attack(), new Attachment())
                 .buildAndAttach();
+    }
+
+    @Spawns("ball")
+    public Entity spawnBall(SpawnData data) {
+        boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
+        return buildBall(data, attached);
     }
 
 }
