@@ -6,7 +6,6 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
 import javafx.geometry.Point2D;
 
 public class Attachment extends Component {
@@ -74,8 +73,8 @@ public class Attachment extends Component {
 
         double dir = (ballCenterX >= paddleCenterX) ? 1 : -1;
 
-        double angle = Math.toRadians(45);   
-        double speed = 350;                 
+        double angle = Math.toRadians(45);
+        double speed = 350;
 
         // Tính vận tốc thành phần
         double vx = speed * Math.sin(angle) * dir;

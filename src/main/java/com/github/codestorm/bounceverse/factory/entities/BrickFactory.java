@@ -1,13 +1,5 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-import javax.management.Attribute;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
@@ -25,13 +17,15 @@ import com.github.codestorm.bounceverse.components.behaviors.Special;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
+import java.util.List;
+import java.util.Random;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -51,25 +45,24 @@ public final class BrickFactory implements EntityFactory {
 
     private static final Random RANDOM = new Random();
 
-    private static final List<String> NORMAL_TEXTURES = List.of(
-            "bricks/normalBrick/06_test11.png",
-            "bricks/normalBrick/07_test11.png",
-            "bricks/normalBrick/08_test11.png",
-            "bricks/normalBrick/09_test11.png",
-            "bricks/normalBrick/10_test11.png",
-            "bricks/normalBrick/11_test11.png");
+    private static final List<String> NORMAL_TEXTURES =
+            List.of(
+                    "bricks/normalBrick/06_test11.png",
+                    "bricks/normalBrick/07_test11.png",
+                    "bricks/normalBrick/08_test11.png",
+                    "bricks/normalBrick/09_test11.png",
+                    "bricks/normalBrick/10_test11.png",
+                    "bricks/normalBrick/11_test11.png");
 
-    private static final List<String> STRONG_TEXTURES = List.of(
-            "bricks/strongBrick/12_test11.png");
+    private static final List<String> STRONG_TEXTURES = List.of("bricks/strongBrick/12_test11.png");
 
-    private static final List<String> SHIELD_TEXTURES = List.of(
-            "bricks/shieldBrick/00_test11.png");
+    private static final List<String> SHIELD_TEXTURES = List.of("bricks/shieldBrick/00_test11.png");
 
-    private static final List<String> EXPLODING_TEXTURES = List.of(
-            "bricks/shieldBrick/00_test11.png");
+    private static final List<String> EXPLODING_TEXTURES =
+            List.of("bricks/shieldBrick/00_test11.png");
 
-    private static final List<String> SPECIAL_TEXTURES = List.of(
-            "bricks/specialBrick/special_01.png");
+    private static final List<String> SPECIAL_TEXTURES =
+            List.of("bricks/specialBrick/special_01.png");
 
     private static Node makeView(String texturePath) {
         ImageView view = new ImageView(FXGL.image(texturePath));
@@ -87,14 +80,13 @@ public final class BrickFactory implements EntityFactory {
     /**
      * Tạo mới một entity brick.
      *
-     * @param pos        Vị trí
-     * @param hp         HP
-     * @param view       Khung nhìn
+     * @param pos Vị trí
+     * @param hp HP
+     * @param view Khung nhìn
      * @param components Các components thêm vào
      * @return Entity Brick mới tạo
      */
-    @NotNull
-    private static Entity newBrick(Point2D pos, int hp, Node view, Component... components) {
+    @NotNull private static Entity newBrick(Point2D pos, int hp, Node view, Component... components) {
         Utilities.Compatibility.throwIfNotCompatible(EntityType.BRICK, components);
 
         var physics = new PhysicsComponent();
@@ -104,15 +96,19 @@ public final class BrickFactory implements EntityFactory {
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);
 
-        var builder = FXGL.entityBuilder()
-                .type(EntityType.BRICK)
-                .at(pos)
-                .viewWithBBox(view)
-                .collidable()
-                .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath());
+        var builder =
+                FXGL.entityBuilder()
+                        .type(EntityType.BRICK)
+                        .at(pos)
+                        .viewWithBBox(view)
+                        .collidable()
+                        .with(
+                                physics,
+                                new Attributes(),
+                                new HealthIntComponent(hp),
+                                new HealthDeath());
 
-        if (components != null && components.length > 0)
-            builder.with(components);
+        if (components != null && components.length > 0) builder.with(components);
 
         return builder.build();
     }
@@ -147,8 +143,7 @@ public final class BrickFactory implements EntityFactory {
      * @param pos Vị trí
      * @return Entity Brick
      */
-    @NotNull
-    @Spawns("shieldBrick")
+    @NotNull @Spawns("shieldBrick")
     public static Entity newShieldBrick(SpawnData data) {
         String tex = SHIELD_TEXTURES.get(RANDOM.nextInt(SHIELD_TEXTURES.size()));
         var shield = new Shield();
@@ -161,20 +156,20 @@ public final class BrickFactory implements EntityFactory {
     /**
      * Tạo entity Exploding Brick
      *
-     * Exploding Brick – nổ phá gạch lân cận
+     * <p>Exploding Brick – nổ phá gạch lân cận
      */
     @Spawns("explodingBrick")
     public static Entity newExplodingBrick(SpawnData data) {
         String tex = EXPLODING_TEXTURES.get(RANDOM.nextInt(EXPLODING_TEXTURES.size()));
         var explosion = new Explosion(120);
-        return newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex), explosion);
+        return newBrick(
+                new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex), explosion);
     }
 
     @Spawns("specialBrick")
     public static Entity newSpecialBrick(SpawnData data) {
         String tex = SPECIAL_TEXTURES.get(RANDOM.nextInt(SPECIAL_TEXTURES.size()));
-        return newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex), new Special());
+        return newBrick(
+                new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex), new Special());
     }
-
-    
 }

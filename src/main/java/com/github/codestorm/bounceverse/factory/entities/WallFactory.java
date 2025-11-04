@@ -10,7 +10,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.typing.enums.AnchorPoint;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -20,11 +19,9 @@ import javafx.scene.shape.Rectangle;
  *
  * <h1>{@link WallFactory}</h1>
  *
- * <p>
- * This class spawns {@link EntityType#WALL} entity for the game world.
+ * <p>This class spawns {@link EntityType#WALL} entity for the game world.
  *
- * <p>
- * By default, 4 walls top, left, bottom, right will be spawn at the beginning.
+ * <p>By default, 4 walls top, left, bottom, right will be spawn at the beginning.
  *
  * @author minngoc1213
  */
@@ -75,10 +72,7 @@ public final class WallFactory implements EntityFactory {
         final Double thicknessObj = data.hasKey("thickness") ? data.get("thickness") : null;
         final double thickness = thicknessObj == null ? DEFAULT_THICKNESS : thicknessObj;
 
-        return createWall(
-                AnchorPoint.TOP_LEFT.of(appShape),
-                appShape.getWidth(),
-                thickness, "TOP");
+        return createWall(AnchorPoint.TOP_LEFT.of(appShape), appShape.getWidth(), thickness, "TOP");
     }
 
     /**
@@ -96,7 +90,8 @@ public final class WallFactory implements EntityFactory {
         return createWall(
                 AnchorPoint.BOTTOM_LEFT.of(appShape).subtract(0, thickness),
                 appShape.getWidth(),
-                thickness, "BOTTOM");
+                thickness,
+                "BOTTOM");
     }
 
     /**
@@ -112,9 +107,7 @@ public final class WallFactory implements EntityFactory {
         final double thickness = thicknessObj == null ? DEFAULT_THICKNESS : thicknessObj;
 
         return createWall(
-                AnchorPoint.TOP_LEFT.of(appShape),
-                thickness,
-                appShape.getHeight(), "LEFT");
+                AnchorPoint.TOP_LEFT.of(appShape), thickness, appShape.getHeight(), "LEFT");
     }
 
     /**
@@ -132,6 +125,7 @@ public final class WallFactory implements EntityFactory {
         return createWall(
                 AnchorPoint.TOP_RIGHT.of(appShape).subtract(thickness, 0),
                 thickness,
-                appShape.getHeight(), "RIGHT");
+                appShape.getHeight(),
+                "RIGHT");
     }
 }

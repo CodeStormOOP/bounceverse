@@ -11,7 +11,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.components.behaviors.Attachment;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -21,17 +20,14 @@ import javafx.scene.shape.Circle;
  *
  * <h1>{@link BallFactory}</h1>
  *
- * <p>
- * This class defines and spawns a new {@link EntityType#BALL} entity in the
- * game world.
+ * <p>This class defines and spawns a new {@link EntityType#BALL} entity in the game world.
  *
- * <p>
- * By default, the spawned ball has:
+ * <p>By default, the spawned ball has:
  *
  * <ul>
- * <li>Radius = {@link #DEFAULT_RADIUS}
- * <li>Position: {@link #DEFAULT_POS}
- * <li>Color: {@link #DEFAULT_COLOR}
+ *   <li>Radius = {@link #DEFAULT_RADIUS}
+ *   <li>Position: {@link #DEFAULT_POS}
+ *   <li>Color: {@link #DEFAULT_COLOR}
  * </ul>
  *
  * @author minngoc1213
@@ -52,18 +48,19 @@ public final class BallFactory implements EntityFactory {
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.DYNAMIC);
 
-        physics.setOnPhysicsInitialized(() -> {
-            physics.getBody().setGravityScale(0f);
-            physics.getBody().setFixedRotation(true);
-            physics.getBody().setLinearDamping(0f);
-            physics.getBody().setAngularDamping(0f);
+        physics.setOnPhysicsInitialized(
+                () -> {
+                    physics.getBody().setGravityScale(0f);
+                    physics.getBody().setFixedRotation(true);
+                    physics.getBody().setLinearDamping(0f);
+                    physics.getBody().setAngularDamping(0f);
 
-            if (attached) {
-                physics.setLinearVelocity(Point2D.ZERO);
-            } else {
-                physics.setLinearVelocity(200, -200);
-            }
-        });
+                    if (attached) {
+                        physics.setLinearVelocity(Point2D.ZERO);
+                    } else {
+                        physics.setLinearVelocity(200, -200);
+                    }
+                });
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.BALL)
@@ -79,5 +76,4 @@ public final class BallFactory implements EntityFactory {
         boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
         return buildBall(data, attached);
     }
-
 }

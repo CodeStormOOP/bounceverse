@@ -5,10 +5,8 @@ import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
-
-import java.util.List;
-
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import java.util.List;
 
 /**
  *

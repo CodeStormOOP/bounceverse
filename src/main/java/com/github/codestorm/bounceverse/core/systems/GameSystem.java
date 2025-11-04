@@ -12,8 +12,7 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 public final class GameSystem extends System {
 
-    private GameSystem() {
-    }
+    private GameSystem() {}
 
     public static GameSystem getInstance() {
         return GameSystem.Holder.INSTANCE;
@@ -62,16 +61,11 @@ public final class GameSystem extends System {
                 // Xác định loại brick theo hàng (bạn có thể chỉnh lại tuỳ ý)
                 String type;
                 switch (y) {
-                    case 0 ->
-                        type = "shieldBrick";    // Hàng đầu có khiên
-                    case 1 ->
-                        type = "explodingBrick"; // Hàng thứ 2 nổ
-                    case 2 ->
-                        type = "specialBrick";   // Hàng thứ 3 rơi power-up
-                    case 3 ->
-                        type = "strongBrick";    // Hàng thứ 4 trâu
-                    default ->
-                        type = "normalBrick";   // Còn lại là thường
+                    case 0 -> type = "shieldBrick"; // Hàng đầu có khiên
+                    case 1 -> type = "explodingBrick"; // Hàng thứ 2 nổ
+                    case 2 -> type = "specialBrick"; // Hàng thứ 3 rơi power-up
+                    case 3 -> type = "strongBrick"; // Hàng thứ 4 trâu
+                    default -> type = "normalBrick"; // Còn lại là thường
                 }
 
                 FXGL.spawn(type, posX, posY);
@@ -79,9 +73,7 @@ public final class GameSystem extends System {
         }
 
         // Paddle
-        FXGL.getGameWorld()
-                .getEntitiesByType(EntityType.PADDLE)
-                .forEach(Entity::removeFromWorld);
+        FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).forEach(Entity::removeFromWorld);
 
         double px = FXGL.getAppWidth() / 2.0 - 60;
         double py = FXGL.getAppHeight() - 40;
@@ -97,13 +89,11 @@ public final class GameSystem extends System {
             FXGL.spawn("ball", new com.almasb.fxgl.entity.SpawnData(x, y).put("attached", true));
             FXGL.set("ballAttached", true);
         }
-
     }
 
     /**
      * Lazy-loaded singleton holder. <br>
-     * Follow
-     * <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {
