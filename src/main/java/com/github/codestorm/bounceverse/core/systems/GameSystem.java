@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse.core.systems;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
+import com.github.codestorm.bounceverse.core.BackgroundColorManager;
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
 import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
@@ -63,20 +64,25 @@ public final class GameSystem extends System {
                 String type;
                 switch (y) {
                     case 0 ->
-                        type = "shieldBrick";    // Hàng đầu có khiên
+                        type = "shieldBrick"; // Hàng đầu có khiên
                     case 1 ->
                         type = "explodingBrick"; // Hàng thứ 2 nổ
                     case 2 ->
-                        type = "specialBrick";   // Hàng thứ 3 rơi power-up
+                        type = "specialBrick"; // Hàng thứ 3 rơi power-up
                     case 3 ->
-                        type = "strongBrick";    // Hàng thứ 4 trâu
+                        type = "strongBrick"; // Hàng thứ 4 trâu
                     default ->
-                        type = "normalBrick";   // Còn lại là thường
+                        type = "normalBrick"; // Còn lại là thường
                 }
 
                 FXGL.spawn(type, posX, posY);
             }
         }
+
+        int totalBricks = FXGL.getGameWorld()
+                .getEntitiesByType(EntityType.BRICK)
+                .size();
+        BackgroundColorManager.init(totalBricks);
 
         // Paddle
         FXGL.getGameWorld()
@@ -103,7 +109,8 @@ public final class GameSystem extends System {
     /**
      * Lazy-loaded singleton holder. <br>
      * Follow
-     * <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * <a href=
+     * "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {

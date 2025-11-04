@@ -2,7 +2,10 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.component.Required;
+import com.github.codestorm.bounceverse.core.BackgroundColorManager;
 import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import java.util.List;
 
 /**
@@ -20,6 +23,9 @@ public class HealthDeath extends Behavior {
     public void execute(List<Object> data) {
         final var health = entity.getComponent(HealthIntComponent.class);
         if (health != null && health.isZero()) {
+            if (entity.isType(EntityType.BRICK)) {
+                BackgroundColorManager.brickDestroyed();
+            }
             entity.removeFromWorld();
         }
     }
