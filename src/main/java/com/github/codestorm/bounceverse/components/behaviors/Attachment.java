@@ -15,10 +15,18 @@ public class Attachment extends Component {
     private boolean attached = true;
     private PhysicsComponent physics;
 
+    private static boolean move = false;
+    private double moveSpeed = 50;
+    private double direction = 1;
+    private double maxOffset = 50;
+    private double currentOffset = 0;
+    private double lastPaddleX;
+
     @Override
     public void onAdded() {
         paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
         physics = getEntity().getComponent(PhysicsComponent.class);
+        lastPaddleX = paddle.getX();
     }
 
     @Override
@@ -27,9 +35,24 @@ public class Attachment extends Component {
             double paddleCenterX = paddle.getCenter().getX();
             double paddleTopY = paddle.getY();
 
-            // canh giữa theo tâm paddle
-            double x = paddleCenterX - entity.getWidth() / 2 + 10;
-            // đặt bóng ngay trên mặt paddle, cách 1 px cho đẹp
+            double deltaX = paddle.getX() - lastPaddleX;
+            lastPaddleX = paddle.getX();
+
+            if (!move && Math.abs(deltaX) > 0.5) {
+                move = true;
+                direction = Math.signum(deltaX);
+            }
+
+            if (move) {
+                currentOffset += direction * moveSpeed * tpf;
+
+                if (Math.abs(currentOffset) > maxOffset) {
+                    direction *= -1;
+                }
+            }
+
+            // tính vị trí mới
+            double x = paddleCenterX - entity.getWidth() / 2 + currentOffset + 10;
             double y = paddleTopY - BallFactory.DEFAULT_RADIUS * 2 + 5;
 
             entity.setPosition(x, y);
@@ -43,15 +66,35 @@ public class Attachment extends Component {
         }
 
         attached = false;
-
         physics.overwritePosition(entity.getPosition());
-
-        // Đánh thức body và cho vận tốc bay lên
         physics.getBody().setAwake(true);
-        physics.setLinearVelocity(new Point2D(0, -300));
+
+        double ballCenterX = entity.getCenter().getX();
+        double paddleCenterX = paddle.getCenter().getX();
+
+        double dir = (ballCenterX >= paddleCenterX) ? 1 : -1;
+
+        double angle = Math.toRadians(45);   
+        double speed = 350;                 
+
+        // Tính vận tốc thành phần
+        double vx = speed * Math.sin(angle) * dir;
+        double vy = -speed * Math.cos(angle);
+
+        physics.setLinearVelocity(new Point2D(vx, vy));
+
+        move = false;
     }
 
     public boolean isAttached() {
         return attached;
+    }
+
+    public static boolean isMove() {
+        return move;
+    }
+
+    public static void setMove(boolean value) {
+        move = value;
     }
 }
