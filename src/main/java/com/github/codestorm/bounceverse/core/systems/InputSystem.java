@@ -112,7 +112,8 @@ public class InputSystem extends System {
 
     /**
      * Lazy-loaded singleton holder.
-     * <a href="https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * <a href=
+     * "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {

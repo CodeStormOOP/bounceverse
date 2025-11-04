@@ -1,0 +1,7 @@
+[video]
+width = 1280.0
+height = 960.0
+fullscreen = false
+[audio]
+music = 1.0
+sound = 1.0

@@ -13,6 +13,8 @@ public class Special extends Component {
 
     @Override
     public void onRemoved() {
-        FXGL.spawn("powerUp", getEntity().getCenter());
+        if (Math.random() < 0.3) { // 30% tỉ lệ rơi PowerUp
+            FXGL.spawn("powerUp", getEntity().getCenter());
+        }
     }
 }

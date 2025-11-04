@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.github.codestorm.bounceverse.core.LaunchOptions;
-import com.github.codestorm.bounceverse.core.SettingsManager;
+import com.github.codestorm.bounceverse.core.settings.GameSettingsManager;
+import com.github.codestorm.bounceverse.core.settings.LaunchOptionsManager;
+import com.github.codestorm.bounceverse.core.systems.AppEventSystem;
 import com.github.codestorm.bounceverse.core.systems.GameSystem;
 import com.github.codestorm.bounceverse.core.systems.InputSystem;
 import com.github.codestorm.bounceverse.core.systems.PhysicSystem;
@@ -28,27 +29,32 @@ import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 public final class Bounceverse extends GameApplication {
 
     public static void main(String[] args) {
-        LaunchOptions.load(args);
+        LaunchOptionsManager.load(args);
         launch(args);
     }
 
     @Override
     protected void initSettings(GameSettings settings) {
         try {
-            SettingsManager.load(settings);
+            GameSettingsManager.loadTo(settings);
         } catch (IOException e) {
             throw new BounceverseException(e);
         }
     }
 
     @Override
-    protected void initGame() {
-        GameSystem.getInstance().apply();
+    protected void initInput() {
+        InputSystem.getInstance().apply();
     }
 
     @Override
-    protected void initInput() {
-        InputSystem.getInstance().apply();
+    protected void onPreInit() {
+        AppEventSystem.getInstance().apply();
+    }
+
+    @Override
+    protected void initGame() {
+        GameSystem.getInstance().apply();
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.github.codestorm.bounceverse.components.behaviors;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.core.BackgroundColorManager;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.List;
  * <b>Yêu cầu entity có {@link HealthIntComponent} trước.</b>
  */
 @Required(HealthIntComponent.class)
-@ForEntity({})
 public class HealthDeath extends Behavior {
     @Override
     public void execute(List<Object> data) {

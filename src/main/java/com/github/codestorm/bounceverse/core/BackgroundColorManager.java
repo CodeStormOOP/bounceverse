@@ -1,12 +1,8 @@
 package com.github.codestorm.bounceverse.core;
 
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.animation.Animation;
 import com.github.codestorm.bounceverse.core.systems.UISystem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 /**
  * <h1>{@link BackgroundColorManager}</h1>

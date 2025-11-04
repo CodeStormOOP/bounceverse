@@ -48,3 +48,6 @@ Chi tiết: [Spotless Gradle Plugin](https://github.com/diffplug/spotless/tree/m
 * **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) (và viết message bằng **Tiếng Anh**)
 * **Files Structure:**
   [Gradle project Structure](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html)
+
+Ngoài ra:
+* [Hướng dẫn viết javadoc](javadoc.md)

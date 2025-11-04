@@ -4,6 +4,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
@@ -36,7 +37,8 @@ public final class PhysicSystem extends System {
         physicWorld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BRICK) {
             @Override
             protected void onCollisionBegin(Entity bullet, Entity brick) {
-                final var atk = bullet.getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class);
+                final var atk = bullet
+                        .getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class);
                 atk.ifPresent(a -> a.execute(java.util.List.of(brick)));
             }
         });
@@ -56,12 +58,12 @@ public final class PhysicSystem extends System {
                 final var dir = com.github.codestorm.bounceverse.Utilities.Collision.getCollisionDirection(ball, brick);
 
                 // Kiểm tra shield (nếu có)
-                var shieldOpt = brick.getComponentOptional(com.github.codestorm.bounceverse.components.properties.Shield.class);
+                var shieldOpt = brick
+                        .getComponentOptional(com.github.codestorm.bounceverse.components.properties.Shield.class);
                 if (shieldOpt.isPresent()) {
                     var shield = shieldOpt.get();
 
-                    boolean isProtected
-                            = (dir == DirectionUnit.UP && shield.hasSide(javafx.geometry.Side.TOP))
+                    boolean isProtected = (dir == DirectionUnit.UP && shield.hasSide(javafx.geometry.Side.TOP))
                             || (dir == DirectionUnit.DOWN && shield.hasSide(javafx.geometry.Side.BOTTOM))
                             || (dir == DirectionUnit.LEFT && shield.hasSide(javafx.geometry.Side.LEFT))
                             || (dir == DirectionUnit.RIGHT && shield.hasSide(javafx.geometry.Side.RIGHT));
@@ -91,7 +93,8 @@ public final class PhysicSystem extends System {
                 }
 
                 // Thực thi attack (gây damage)
-                final var atkOpt = ball.getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class);
+                final var atkOpt = ball
+                        .getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class);
                 atkOpt.ifPresent(a -> a.execute(java.util.List.of(brick)));
             }
         });
@@ -134,15 +137,18 @@ public final class PhysicSystem extends System {
 
                         FXGL.getGameTimer().runOnceAfter(() -> {
                             var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-                            double x = paddle.getCenter().getX() - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS;
-                            double y = paddle.getY() - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS * 2;
+                            double x = paddle.getCenter().getX()
+                                    - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS;
+                            double y = paddle.getY()
+                                    - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS * 2;
 
                             FXGL.spawn("ball", new com.almasb.fxgl.entity.SpawnData(x, y).put("attached", true));
                             FXGL.set("ballAttached", true);
                         }, javafx.util.Duration.millis(100));
                     }
                     default -> {
-                        final var dir = com.github.codestorm.bounceverse.Utilities.Collision.getCollisionDirection(ball, wall);
+                        final var dir = com.github.codestorm.bounceverse.Utilities.Collision.getCollisionDirection(ball,
+                                wall);
                         switch (dir) {
                             case UP, DOWN ->
                                 physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
@@ -183,6 +189,17 @@ public final class PhysicSystem extends System {
                 }
             }
         });
+
+        physicWorld.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
+            @Override
+            protected void onCollisionBegin(Entity paddle, Entity powerUp) {
+                var container = powerUp.getComponentOptional(PowerUpContainer.class);
+                container.ifPresent(c -> c.addTo(paddle));
+
+                powerUp.removeFromWorld();
+            }
+        });
+
     }
 
     /**
