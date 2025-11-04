@@ -1,7 +1,9 @@
 package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.github.codestorm.bounceverse.core.*;
+import com.almasb.fxgl.app.GameSettings;
+import com.github.codestorm.bounceverse.core.settings.GameSettingsManager;
+import com.github.codestorm.bounceverse.core.settings.LaunchOptionsManager;
 import com.github.codestorm.bounceverse.core.systems.*;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 import java.io.IOException;
@@ -19,27 +21,32 @@ import java.io.IOException;
  */
 public final class Bounceverse extends GameApplication {
     public static void main(String[] args) {
-        LaunchOptions.load(args);
+        LaunchOptionsManager.load(args);
         launch(args);
     }
 
     @Override
-    protected void initSettings(com.almasb.fxgl.app.GameSettings settings) {
+    protected void initSettings(GameSettings settings) {
         try {
-            SettingsManager.load(settings);
+            GameSettingsManager.loadTo(settings);
         } catch (IOException e) {
             throw new BounceverseException(e);
         }
     }
 
     @Override
-    protected void initGame() {
-        GameSystem.getInstance().apply();
+    protected void initInput() {
+        InputSystem.getInstance().apply();
     }
 
     @Override
-    protected void initInput() {
-        InputSystem.getInstance().apply();
+    protected void onPreInit() {
+        AppEventSystem.getInstance().apply();
+    }
+
+    @Override
+    protected void initGame() {
+        GameSystem.getInstance().apply();
     }
 
     @Override
