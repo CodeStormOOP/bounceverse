@@ -9,7 +9,7 @@ import com.github.codestorm.bounceverse.typing.records.LaunchOptions;
  * <h1>{@link LaunchOptionsManager}</h1>
  *
  * Các tùy chọn khi khởi động được áp dụng trong game. <br>
- * Sử dụng {@link #loadSettings(String...)} để tải các options. <br>
+ * Sử dụng {@link #load(String...)} để tải các options. <br>
  *
  * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  */
@@ -27,13 +27,13 @@ public final class LaunchOptionsManager extends SettingsManager {
      *
      * @param args Command-Line Arguments - được truyền vào từ hàm {@code main()}
      */
-    public void loadSettings(String... args) {
+    public void load(String... args) {
         final var map = Utilities.IO.parseArgs(args, null, null);
 
         options = new LaunchOptions(Boolean.parseBoolean(map.getOrDefault("debug", "false")));
     }
 
-    public LaunchOptions getSettings() {
+    public LaunchOptions get() {
         return options;
     }
 

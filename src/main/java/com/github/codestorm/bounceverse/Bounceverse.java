@@ -4,6 +4,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.github.codestorm.bounceverse.core.settings.GameSettingsManager;
 import com.github.codestorm.bounceverse.core.settings.LaunchOptionsManager;
+import com.github.codestorm.bounceverse.core.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.core.systems.*;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 import java.io.IOException;
@@ -21,14 +22,15 @@ import java.io.IOException;
  */
 public final class Bounceverse extends GameApplication {
     public static void main(String[] args) {
-        LaunchOptionsManager.getInstance().loadSettings(args);
+        LaunchOptionsManager.getInstance().load(args);
         launch(args);
     }
 
     @Override
     protected void initSettings(GameSettings settings) {
+        UserSettingsManager.getInstance().load();
         try {
-            GameSettingsManager.loadSettings(settings);
+            GameSettingsManager.load(settings);
         } catch (IOException e) {
             throw new BounceverseException(e);
         }

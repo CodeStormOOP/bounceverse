@@ -7,13 +7,14 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
 import java.io.IOException;
+import javafx.stage.StageStyle;
 
 /**
  *
  *
  * <h1>{@link GameSettingsManager}</h1>
  *
- * Trình quản lý việc loadSettings {@link GameSettings}. <br>
+ * Trình quản lý việc apply {@link GameSettings}. <br>
  *
  * @see UserSettingsManager
  */
@@ -21,14 +22,14 @@ public final class GameSettingsManager extends SettingsManager {
     private GameSettingsManager() {}
 
     /**
-     * Tải các settings từ file đã thiết lập vào CTDL. <br>
-     * <b>Chú ý: Cần loadSettings {@link LaunchOptionsManager#loadSettings(String...)} trước khi
-     * tải.</b>
+     * Tải các settings từ file đã thiết lập vào bộ nhớ. <br>
+     * <b>Cần tải {@link LaunchOptionsManager#load(String...)} và {@link UserSettingsManager#load()}
+     * trước khi dùng.</b>
      *
      * @param settings Nơi tải vào
      * @throws IOException if an error occurred when reading from the input stream.
      */
-    public static void loadSettings(GameSettings settings) throws IOException {
+    public static void load(GameSettings settings) throws IOException {
         final var gameSettings = Utilities.IO.loadProperties("/settings.properties");
 
         // ? General
@@ -38,14 +39,18 @@ public final class GameSettingsManager extends SettingsManager {
         settings.setApplicationMode(
                 Boolean.parseBoolean(gameSettings.getProperty("general.devMode"))
                         ? ApplicationMode.DEVELOPER
-                        : (LaunchOptionsManager.getInstance().getSettings().debug())
+                        : (LaunchOptionsManager.getInstance().get().debug())
                                 ? ApplicationMode.DEBUG
                                 : ApplicationMode.RELEASE);
 
         // ? Display
-        settings.setWidth(Integer.parseInt(gameSettings.getProperty("logic.width")));
-        settings.setHeight(Integer.parseInt(gameSettings.getProperty("logic.height")));
+        settings.setWidth(Integer.parseInt(gameSettings.getProperty("video.width")));
+        settings.setHeight(Integer.parseInt(gameSettings.getProperty("video.height")));
+        settings.setStageStyle(StageStyle.DECORATED);
+        settings.setManualResizeEnabled(false);
         settings.setFullScreenAllowed(true);
+        settings.setFullScreenFromStart(
+                UserSettingsManager.getInstance().get().getVideo().isFullscreen());
 
         // ? In-game
         settings.setSceneFactory(new SceneFactory());
@@ -58,7 +63,7 @@ public final class GameSettingsManager extends SettingsManager {
      *
      * @return Settings trong game (Read-only)
      */
-    public static ReadOnlyGameSettings getSettings() {
+    public static ReadOnlyGameSettings get() {
         return FXGL.getSettings();
     }
 }
