@@ -29,7 +29,8 @@ dependencies {
 application {
 	mainClass = 'com.github.codestorm.bounceverse.Bounceverse'
 	applicationDefaultJvmArgs = [
-			"--enable-native-access=javafx.graphics"
+			"--enable-native-access=javafx.graphics",
+            "--enable-native-access=javafx.media"
 	]
 }
 

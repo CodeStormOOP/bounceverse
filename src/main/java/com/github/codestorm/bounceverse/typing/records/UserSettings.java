@@ -26,7 +26,7 @@ public final class UserSettings {
     /** Setting về Hình ảnh. */
     public static final class Video {
         private double width = 1280;
-        private double height = 960;
+        private double height = 720;
         private boolean fullscreen = false;
 
         public double getWidth() {
