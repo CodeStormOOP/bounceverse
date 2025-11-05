@@ -1,8 +1,8 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
+import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -10,7 +10,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.typing.enums.AnchorPoint;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -25,37 +24,25 @@ import javafx.scene.shape.Rectangle;
  *
  * @author minngoc1213
  */
-public final class WallFactory implements EntityFactory {
+public final class WallFactory extends EntityFactory {
     public static final double DEFAULT_THICKNESS = 5;
+    public static final Color DEFAULT_COLOR = Color.GRAY;
 
-    /**
-     * Create new Entity Wall with ing-game physic.
-     *
-     * @param pos position
-     * @param width width
-     * @param height height
-     * @return Wall entity at pos
-     */
-    public static Entity createWall(Point2D pos, double width, double height) {
-        Rectangle rect = new Rectangle(width, height, Color.GRAY);
-
+    @Override
+    protected EntityBuilder getBuilder(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
-
         FixtureDef fixture = new FixtureDef();
+
         fixture.setFriction(0f);
         fixture.setRestitution(1f);
-
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);
 
         return FXGL.entityBuilder()
                 .type(EntityType.WALL)
-                .at(pos)
-                .viewWithBBox(rect)
                 .collidable()
                 .with(physics)
-                .anchorFromCenter()
-                .build();
+                .anchorFromCenter();
     }
 
     /**
@@ -67,10 +54,17 @@ public final class WallFactory implements EntityFactory {
     @Spawns("wallTop")
     public Entity newWallTop(SpawnData data) {
         final var appShape = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight());
+
         final double thickness =
                 data.hasKey("thickness") ? data.get("thickness") : DEFAULT_THICKNESS;
+        final Color color = data.hasKey("color") ? data.get("color") : DEFAULT_COLOR;
 
-        return createWall(AnchorPoint.TOP_LEFT.of(appShape), appShape.getWidth(), thickness);
+        final var pos = AnchorPoint.TOP_LEFT.of(appShape);
+        final var width = appShape.getWidth();
+        final var height = thickness;
+
+        final var rect = new Rectangle(width, height, color);
+        return getBuilder(data).at(pos).viewWithBBox(rect).buildAndAttach();
     }
 
     /**
@@ -82,13 +76,17 @@ public final class WallFactory implements EntityFactory {
     @Spawns("wallBottom")
     public Entity newWallBottom(SpawnData data) {
         final var appShape = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight());
+
         final double thickness =
                 data.hasKey("thickness") ? data.get("thickness") : DEFAULT_THICKNESS;
+        final Color color = data.hasKey("color") ? data.get("color") : DEFAULT_COLOR;
 
-        return createWall(
-                AnchorPoint.BOTTOM_LEFT.of(appShape).subtract(0, thickness),
-                appShape.getWidth(),
-                thickness);
+        final var pos = AnchorPoint.BOTTOM_LEFT.of(appShape).subtract(0, thickness);
+        final var width = appShape.getWidth();
+        final var height = thickness;
+
+        final var rect = new Rectangle(width, height, color);
+        return getBuilder(data).at(pos).viewWithBBox(rect).buildAndAttach();
     }
 
     /**
@@ -100,10 +98,17 @@ public final class WallFactory implements EntityFactory {
     @Spawns("wallLeft")
     public Entity newWallLeft(SpawnData data) {
         final var appShape = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight());
+
         final double thickness =
                 data.hasKey("thickness") ? data.get("thickness") : DEFAULT_THICKNESS;
+        final Color color = data.hasKey("color") ? data.get("color") : DEFAULT_COLOR;
 
-        return createWall(AnchorPoint.TOP_LEFT.of(appShape), thickness, appShape.getHeight());
+        final var pos = AnchorPoint.TOP_LEFT.of(appShape);
+        final var width = thickness;
+        final var height = appShape.getHeight();
+
+        final var rect = new Rectangle(width, height, color);
+        return getBuilder(data).at(pos).viewWithBBox(rect).buildAndAttach();
     }
 
     /**
@@ -115,12 +120,16 @@ public final class WallFactory implements EntityFactory {
     @Spawns("wallRight")
     public Entity newWallRight(SpawnData data) {
         final var appShape = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight());
+
         final double thickness =
                 data.hasKey("thickness") ? data.get("thickness") : DEFAULT_THICKNESS;
+        final Color color = data.hasKey("color") ? data.get("color") : DEFAULT_COLOR;
 
-        return createWall(
-                AnchorPoint.TOP_RIGHT.of(appShape).subtract(thickness, 0),
-                thickness,
-                appShape.getHeight());
+        final var pos = AnchorPoint.TOP_RIGHT.of(appShape).subtract(thickness, 0);
+        final var width = thickness;
+        final var height = appShape.getHeight();
+
+        final var rect = new Rectangle(width, height, color);
+        return getBuilder(data).at(pos).viewWithBBox(rect).buildAndAttach();
     }
 }

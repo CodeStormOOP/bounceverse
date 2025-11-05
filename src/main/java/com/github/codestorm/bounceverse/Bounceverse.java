@@ -21,14 +21,14 @@ import java.io.IOException;
  */
 public final class Bounceverse extends GameApplication {
     public static void main(String[] args) {
-        LaunchOptionsManager.load(args);
+        LaunchOptionsManager.getInstance().loadSettings(args);
         launch(args);
     }
 
     @Override
     protected void initSettings(GameSettings settings) {
         try {
-            GameSettingsManager.loadTo(settings);
+            GameSettingsManager.loadSettings(settings);
         } catch (IOException e) {
             throw new BounceverseException(e);
         }

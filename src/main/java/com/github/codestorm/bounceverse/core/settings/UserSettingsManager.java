@@ -20,7 +20,7 @@ import java.nio.file.Paths;
  *
  * @see GameSettingsManager
  */
-public final class UserSettingsManager {
+public final class UserSettingsManager extends SettingsManager {
     private static final String FORMAT = "toml";
 
     private UserSettingsManager() {}
@@ -30,28 +30,29 @@ public final class UserSettingsManager {
      *
      * @return Tên file
      */
-    public static String getFilename() {
+    public static String getSettingsFilename() {
         final String username = System.getProperty("user.name");
         return String.format("settings.%s.%s", username, FORMAT);
     }
 
     /**
-     * Lấy địa chỉ file setting tương ứng của người chơi.
+     * Lấy địa chỉ file settings tương ứng của người chơi.
      *
      * @return Địa chỉ file setting tuyệt đối
      */
-    public static Path getFilepath() {
-        return Paths.get(getFilename()).toAbsolutePath();
+    public static Path getSettingsFilepath() {
+        return Paths.get(getSettingsFilename()).toAbsolutePath();
     }
 
     /**
      * Load setting được chỉ định.
      *
-     * <p><b>Chú ý: Cần loadTo {@link GameSettingsManager#loadTo(GameSettings)} trước khi tải.</b>
+     * <p><b>Chú ý: Cần loadSettings {@link GameSettingsManager#loadSettings(GameSettings)} trước
+     * khi tải.</b>
      *
-     * @param settings Setting muốn loadTo
+     * @param settings Setting muốn loadSettings
      */
-    public static void load(UserSettings settings) {
+    public static void loadSettings(UserSettings settings) {
         // ? Video
         FXGL.getPrimaryStage().setWidth(settings.getVideo().getWidth());
         FXGL.getPrimaryStage().setHeight(settings.getVideo().getHeight());
@@ -63,25 +64,26 @@ public final class UserSettingsManager {
     }
 
     /**
-     * Load settings của người dùng từ file {@link #getFilepath()}.
+     * Load settings của người dùng từ file {@link #getSettingsFilepath()}.
      *
-     * <p><b>Chú ý: Cần loadTo {@link GameSettingsManager#loadTo(GameSettings)} trước khi tải.</b>
+     * <p><b>Chú ý: Cần loadSettings {@link GameSettingsManager#loadSettings(GameSettings)} trước
+     * khi tải.</b>
      */
-    public static void load() {
-        final var filepath = getFilepath();
+    public static void loadSettings() {
+        final var filepath = getSettingsFilepath();
         try {
             final var file = new File(filepath.toUri());
             final var parsed = new Toml().read(file);
             UserSettings settings = parsed.to(UserSettings.class);
             Logger.get(UserSettingsManager.class).infof("Read user settings in: %s", filepath);
-            load(settings);
+            loadSettings(settings);
             return;
         } catch (Exception e) {
             Logger.get(UserSettingsManager.class)
                     .warning("Cannot read user settings in: " + filepath, e);
         }
         Logger.get(UserSettingsManager.class).info("Using default user settings");
-        load(new UserSettings());
+        loadSettings(new UserSettings());
     }
 
     /**
@@ -89,7 +91,7 @@ public final class UserSettingsManager {
      *
      * @return Setting người dùng
      */
-    public static UserSettings get() {
+    public static UserSettings getSettings() {
         final var settings = new UserSettings();
 
         // ? Video
@@ -104,16 +106,16 @@ public final class UserSettingsManager {
         return settings;
     }
 
-    /** Lưu thiết lập game tại {@link #getFilepath()}. */
-    public static void save() {
-        final var filepath = getFilepath();
+    /** Lưu thiết lập game tại {@link #getSettingsFilepath()}. */
+    public static void saveSettings() {
+        final var filepath = getSettingsFilepath();
         TomlWriter writer = new TomlWriter();
         try {
-            writer.write(get(), new File(filepath.toUri()));
+            writer.write(getSettings(), new File(filepath.toUri()));
             Logger.get(UserSettingsManager.class).infof("Saved user settings to: %s", filepath);
         } catch (IOException e) {
             Logger.get(UserSettingsManager.class)
-                    .fatal("Cannot save user settings to: " + filepath, e);
+                    .fatal("Cannot saveSettings user settings to: " + filepath, e);
         }
     }
 }

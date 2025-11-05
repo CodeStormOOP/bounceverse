@@ -1,7 +1,7 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Component;
+import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.components.properties.Property;
 import com.github.codestorm.bounceverse.typing.interfaces.CanExecute;
 

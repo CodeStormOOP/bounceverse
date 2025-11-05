@@ -19,11 +19,11 @@ public final class AppEventSystem extends System {
     }
 
     private void onStart() {
-        UserSettingsManager.load();
+        UserSettingsManager.loadSettings();
     }
 
     private void onExit() {
-        UserSettingsManager.save();
+        UserSettingsManager.saveSettings();
     }
 
     @Override

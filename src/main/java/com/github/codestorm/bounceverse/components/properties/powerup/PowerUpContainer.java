@@ -3,7 +3,6 @@ package com.github.codestorm.bounceverse.components.properties.powerup;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.CoreComponent;
-import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Property;
 import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
@@ -32,9 +31,7 @@ public final class PowerUpContainer extends Property {
     public void addTo(Entity entity) {
         for (var entry : container.entrySet()) {
             final var component = entry.getValue();
-            // TODO: Gán việc kiểm tra trên chính Entity/Component thay vì thủ tục ntn
-            Utilities.Compatibility.throwIfNotCompatible((EntityType) entity.getType(), component);
-            entity.addComponent(entry.getValue());
+            entity.addComponent(component);
         }
     }
 

@@ -13,21 +13,22 @@ import java.io.IOException;
  *
  * <h1>{@link GameSettingsManager}</h1>
  *
- * Trình quản lý việc loadTo {@link GameSettings}. <br>
+ * Trình quản lý việc loadSettings {@link GameSettings}. <br>
  *
  * @see UserSettingsManager
  */
-public final class GameSettingsManager {
+public final class GameSettingsManager extends SettingsManager {
     private GameSettingsManager() {}
 
     /**
      * Tải các settings từ file đã thiết lập vào CTDL. <br>
-     * <b>Chú ý: Cần loadTo {@link LaunchOptionsManager#load(String...)} trước khi tải.</b>
+     * <b>Chú ý: Cần loadSettings {@link LaunchOptionsManager#loadSettings(String...)} trước khi
+     * tải.</b>
      *
      * @param settings Nơi tải vào
      * @throws IOException if an error occurred when reading from the input stream.
      */
-    public static void loadTo(GameSettings settings) throws IOException {
+    public static void loadSettings(GameSettings settings) throws IOException {
         final var gameSettings = Utilities.IO.loadProperties("/settings.properties");
 
         // ? General
@@ -37,7 +38,7 @@ public final class GameSettingsManager {
         settings.setApplicationMode(
                 Boolean.parseBoolean(gameSettings.getProperty("general.devMode"))
                         ? ApplicationMode.DEVELOPER
-                        : (LaunchOptionsManager.getOptions().debug())
+                        : (LaunchOptionsManager.getInstance().getSettings().debug())
                                 ? ApplicationMode.DEBUG
                                 : ApplicationMode.RELEASE);
 
@@ -57,7 +58,7 @@ public final class GameSettingsManager {
      *
      * @return Settings trong game (Read-only)
      */
-    public static ReadOnlyGameSettings get() {
+    public static ReadOnlyGameSettings getSettings() {
         return FXGL.getSettings();
     }
 }

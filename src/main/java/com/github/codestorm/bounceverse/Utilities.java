@@ -2,8 +2,9 @@ package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.time.TimerAction;
+import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
@@ -320,34 +321,35 @@ public final class Utilities {
                 return false;
             }
         }
+    }
 
+    public static final class Typing {
         /**
-         * Throw {@link IllegalArgumentException} nếu như có component trong {@code params} không
-         * phù hợp đồng thời tất cả với {@code onlyFor}.
+         * Xử lý nhanh lấy data từ {@link SpawnData}.
          *
-         * @param onlyFor Các {@link EntityType} muốn kiểm tra tương thích
-         * @param params Các component cần kiểm tra
+         * @param data Dữ liệu cần lấy
+         * @param key Khóa cần lấy
+         * @param ifNot Nếu không có thì trả về cái này
+         * @return Giá trị
+         * @param <T> Kiểu của Giá trị
          */
-        public static void throwIfNotCompatible(EntityType[] onlyFor, Component... params) {
-            for (var only : onlyFor) {
-                throwIfNotCompatible(only, params);
+        public static <T> T getOr(SpawnData data, String key, T ifNot) {
+            if (data.hasKey(key)) {
+                return data.get(key);
             }
+            return ifNot;
         }
 
         /**
-         * {@link #throwIfNotCompatible(EntityType[], Component...)} nhưng không throw exception.
+         * Hợp nhanh varargs sang Array.
          *
-         * @param onlyFor Các {@link EntityType} muốn kiểm tra tương thích
-         * @param params Các component cần kiểm tra
-         * @return {@code true} nếu tất cả tương thích, ngược lại {@code false}.
+         * @param varargs Varargs
+         * @return Array tương ứng
+         * @param <T> Kiểu của Giá trị
          */
-        public static boolean isCompatible(EntityType[] onlyFor, Component... params) {
-            try {
-                throwIfNotCompatible(onlyFor, params);
-                return true;
-            } catch (IllegalArgumentException e) {
-                return false;
-            }
+        @SafeVarargs
+        public static <T> T[] toArray(T... varargs) {
+            return varargs;
         }
     }
 }

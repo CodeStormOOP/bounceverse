@@ -1,16 +1,15 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
+import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
-import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
@@ -28,11 +27,17 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see EntityFactory
  */
-public final class BrickFactory implements EntityFactory {
+public final class BrickFactory extends EntityFactory {
     private static final int DEFAULT_WIDTH = 80;
     private static final int DEFAULT_HEIGHT = 30;
     private static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
     private static final int DEFAULT_HP = 1;
+
+    @Override
+    protected EntityBuilder getBuilder(SpawnData data) {
+        return null;
+        // TODO: Hoàn thiện Builder
+    }
 
     /**
      * Tạo mới một entity brick.
@@ -44,8 +49,6 @@ public final class BrickFactory implements EntityFactory {
      * @return Entity Brick mới tạo
      */
     @NotNull private static Entity newBrick(Point2D pos, int hp, Rectangle view, Component... components) {
-        Utilities.Compatibility.throwIfNotCompatible(EntityType.BRICK, components);
-
         var physics = new PhysicsComponent();
         var fixture = new FixtureDef();
         fixture.setFriction(0f);

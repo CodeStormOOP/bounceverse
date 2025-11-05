@@ -12,7 +12,7 @@ import javafx.util.Duration;
  *
  * {@link Behavior} sau khi thực thi sẽ mất thời gian để có thể {@link #executeLogic(List)} lại.
  */
-public abstract class CooldownBehavior extends Behavior implements CanExecute {
+public abstract class CooldownBehavior extends Behavior {
     private final Cooldown cooldown = new Cooldown();
 
     public Cooldown getCooldown() {
