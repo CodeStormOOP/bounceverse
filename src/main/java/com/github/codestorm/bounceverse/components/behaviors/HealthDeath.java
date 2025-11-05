@@ -1,11 +1,11 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
+import java.util.List;
+
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.core.BackgroundColorManager;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
-import java.util.List;
 
 /**
  *

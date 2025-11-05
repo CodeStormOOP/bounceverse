@@ -8,15 +8,14 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.Texture;
+import com.github.codestorm.bounceverse.components.properties.powerup.FallingComponent;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.ExpandPaddlePowerUp;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.ShrinkPaddlePowerUp;
-import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
+import com.github.codestorm.bounceverse.components.properties.powerup.types.paddle.ExpandPaddlePowerUp;
+import com.github.codestorm.bounceverse.components.properties.powerup.types.paddle.ShrinkPaddlePowerUp;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
-import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -28,8 +27,9 @@ import org.jetbrains.annotations.NotNull;
  * @see EntityFactory
  */
 public final class PowerUpFactory implements EntityFactory {
+
     public static final double DEFAULT_RADIUS = 10;
-    public static final double DEFAULT_SPEED = 10;
+    public static final double DEFAULT_SPEED = 150;
 
     /**
      * Tạo mới một PowerUp. Đây là một "abstract" method.
@@ -43,27 +43,12 @@ public final class PowerUpFactory implements EntityFactory {
 
         return FXGL.entityBuilder()
                 .type(EntityType.POWER_UP)
-                .bbox(hitbox)
                 .at(pos)
+                .bbox(hitbox)
                 .view(texture)
                 .collidable()
-                .with(getPhysicsComponent(), new PowerUpContainer(has))
+                .with(new FallingComponent(), new PowerUpContainer(has))
                 .buildAndAttach();
-    }
-
-    @NotNull private static PhysicsComponent getPhysicsComponent() {
-        final var velocity = DirectionUnit.DOWN.getVector().mul(DEFAULT_SPEED);
-
-        var physics = new PhysicsComponent();
-        physics.setOnPhysicsInitialized(
-                () -> {
-                    physics.setLinearVelocity(velocity.toPoint2D());
-                    physics.setAngularVelocity(0);
-                    physics.getBody().setFixedRotation(true);
-                    physics.getBody().setLinearDamping(0f);
-                    physics.getBody().setAngularDamping(0f);
-                });
-        return physics;
     }
 
     @Spawns("powerUpExpand")
@@ -80,9 +65,10 @@ public final class PowerUpFactory implements EntityFactory {
 
     @Spawns("powerUp")
     public Entity newRandomPowerUp(SpawnData data) {
-        if (Math.random() < 0.5)
+        if (Math.random() < 0.5) {
             return newPowerUpExpand(data);
-        else
+        } else {
             return newPowerUpShrink(data);
+        }
     }
 }

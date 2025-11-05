@@ -2,9 +2,13 @@ package com.github.codestorm.bounceverse.core.systems;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
+import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
@@ -137,12 +141,19 @@ public final class PhysicSystem extends System {
 
                         FXGL.getGameTimer().runOnceAfter(() -> {
                             var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-                            double x = paddle.getCenter().getX()
-                                    - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS;
-                            double y = paddle.getY()
-                                    - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS * 2;
 
-                            FXGL.spawn("ball", new com.almasb.fxgl.entity.SpawnData(x, y).put("attached", true));
+                            var sizeManager = paddle.getComponentOptional(
+                                    PaddleSizeManager.class);
+                            sizeManager.ifPresent(PaddleSizeManager::resetSize);
+
+                            PowerUpManager.getInstance().clearAll();
+
+                            double x = paddle.getCenter().getX()
+                                    - BallFactory.DEFAULT_RADIUS;
+                            double y = paddle.getY()
+                                    - BallFactory.DEFAULT_RADIUS * 2;
+
+                            FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
                             FXGL.set("ballAttached", true);
                         }, javafx.util.Duration.millis(100));
                     }
@@ -190,6 +201,7 @@ public final class PhysicSystem extends System {
             }
         });
 
+        //Paddle vs Power Up
         physicWorld.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
             @Override
             protected void onCollisionBegin(Entity paddle, Entity powerUp) {

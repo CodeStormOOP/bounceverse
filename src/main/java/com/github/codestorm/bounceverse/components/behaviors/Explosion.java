@@ -28,7 +28,6 @@ public final class Explosion extends Attack {
 
     @Override
     public void execute(List<Object> data) {
-        final var attributes = entity.getComponent(Attributes.class);
         final double cx = getEntity().getCenter().getX();
         final double cy = getEntity().getCenter().getY();
 
