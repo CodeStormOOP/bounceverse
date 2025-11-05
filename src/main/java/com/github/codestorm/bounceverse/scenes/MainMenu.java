@@ -11,7 +11,7 @@ import com.almasb.fxgl.app.scene.MenuType;
  *
  * {@link FXGLMenu} loại {@link MenuType#MAIN_MENU} được sử dụng trong trò chơi.
  */
-public class MainMenu extends FXGLDefaultMenu {
+public final class MainMenu extends FXGLDefaultMenu {
     public MainMenu() {
         super(MenuType.MAIN_MENU);
         // TODO: Customize Main Menu

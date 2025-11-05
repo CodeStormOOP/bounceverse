@@ -11,7 +11,7 @@ import com.github.codestorm.bounceverse.core.settings.UserSettingsManager;
  * {@link System} quản lý các sự kiện trên {@link GameApplication} <br>
  * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
  */
-public class AppEventSystem extends System {
+public final class AppEventSystem extends System {
     private AppEventSystem() {}
 
     public static AppEventSystem getInstance() {

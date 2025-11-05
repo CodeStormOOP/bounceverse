@@ -20,7 +20,7 @@ import javafx.util.Duration;
  * Khả năng {@link EntityType#PADDLE} có thể bắn ra {@link EntityType#BULLET}.
  */
 @ForEntity(EntityType.PADDLE)
-public class PaddleShooting extends Behavior {
+public final class PaddleShooting extends Behavior {
     private static final double OFFSET_LEFT = 4;
     private static final double OFFSET_RIGHT = -8;
     private static final double OFFSET_HEIGHT = -10;
