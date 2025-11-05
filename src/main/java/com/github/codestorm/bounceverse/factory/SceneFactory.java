@@ -17,14 +17,12 @@ import org.jetbrains.annotations.NotNull;
  * @see com.almasb.fxgl.app.scene.SceneFactory
  */
 public final class SceneFactory extends com.almasb.fxgl.app.scene.SceneFactory {
-    @NotNull
-    @Override
+    @NotNull @Override
     public FXGLMenu newMainMenu() {
         return new MainMenu();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public IntroScene newIntro() {
         return new Intro();
     }
