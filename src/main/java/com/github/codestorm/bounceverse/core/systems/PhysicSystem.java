@@ -8,6 +8,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
+import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
@@ -201,12 +202,20 @@ public final class PhysicSystem extends System {
             }
         });
 
-        //Paddle vs Power Up
+        // Paddle vs Power Up
         physicWorld.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
             @Override
             protected void onCollisionBegin(Entity paddle, Entity powerUp) {
-                var container = powerUp.getComponentOptional(PowerUpContainer.class);
-                container.ifPresent(c -> c.addTo(paddle));
+                powerUp.getComponentOptional(PowerUpContainer.class).ifPresent(container -> {
+                    container.addTo(paddle);
+
+                    // gọi apply() cho các Power-Up có hành vi kích hoạt
+                    container.getContainer().values().forEach(comp -> {
+                        if (comp instanceof PowerUp effect) {
+                            effect.apply(paddle);
+                        }
+                    });
+                });
 
                 powerUp.removeFromWorld();
             }

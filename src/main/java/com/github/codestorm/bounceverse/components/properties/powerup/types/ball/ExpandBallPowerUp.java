@@ -3,20 +3,25 @@ package com.github.codestorm.bounceverse.components.properties.powerup.types.bal
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
+import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.util.Duration;
 
 /**
- * PowerUp làm to bóng trong một thời gian ngắn.
+ * Power-Up làm to bóng trong một thời gian ngắn.
  */
-public class ExpandBallPowerUp extends com.almasb.fxgl.entity.component.Component {
+public class ExpandBallPowerUp extends PowerUp {
 
     private static final Duration DURATION = Duration.seconds(8);
 
+    public ExpandBallPowerUp() {
+        super("ExpandBall");
+    }
+
     @Override
-    public void onAdded() {
+    public void apply(Entity paddle) {
         PowerUpManager.getInstance().activate(
-                "ExpandBall",
+                name,
                 DURATION,
                 this::expandBalls,
                 this::resetBalls

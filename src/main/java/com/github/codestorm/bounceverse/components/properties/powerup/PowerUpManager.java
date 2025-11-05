@@ -32,7 +32,6 @@ public final class PowerUpManager {
      * @param onExpire    Logic khi hết hiệu lực
      */
     public void activate(String name, Duration duration, Runnable onActivate, Runnable onExpire) {
-        // Nếu đang chạy timer cũ → huỷ để gia hạn
         if (activeTimers.containsKey(name)) {
             var oldTimer = activeTimers.get(name);
             if (!oldTimer.isExpired()) {
