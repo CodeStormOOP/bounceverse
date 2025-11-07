@@ -4,6 +4,7 @@ import com.almasb.fxgl.app.scene.IntroScene;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.logging.Logger;
 import com.github.codestorm.bounceverse.Assets;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 
 /**
@@ -61,5 +62,11 @@ public final class Intro extends IntroScene {
                     view.setX((screenW - fitW) / 2);
                     view.setY((screenH - fitH) / 2);
                 });
+
+        getContentRoot().setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                player.getOnEndOfMedia().run();
+            }
+        });
     }
 }
