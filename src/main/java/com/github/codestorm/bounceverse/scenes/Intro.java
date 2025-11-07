@@ -63,10 +63,12 @@ public final class Intro extends IntroScene {
                     view.setY((screenH - fitH) / 2);
                 });
 
-        getContentRoot().setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                player.getOnEndOfMedia().run();
-            }
-        });
+        getContentRoot()
+                .setOnMouseClicked(
+                        event -> {
+                            if (event.getButton() == MouseButton.PRIMARY) {
+                                player.getOnEndOfMedia().run();
+                            }
+                        });
     }
 }
