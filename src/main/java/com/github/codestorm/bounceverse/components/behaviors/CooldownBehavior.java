@@ -1,7 +1,7 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import com.github.codestorm.bounceverse.Utilities.Time.Cooldown;
 import com.github.codestorm.bounceverse.typing.interfaces.CanExecute;
+import com.github.codestorm.bounceverse.typing.structures.Cooldown;
 import java.util.List;
 import javafx.util.Duration;
 
@@ -29,11 +29,11 @@ public abstract class CooldownBehavior extends Behavior {
 
     @Override
     public final void execute(List<Object> data) {
-        if (!cooldown.getCurrent().expired()) {
+        if (!cooldown.getCurrent().isExpired()) {
             return;
         }
         if (executeLogic(data)) {
-            cooldown.getCurrent().makeNew();
+            cooldown.getCurrent().createNew();
         }
     }
 

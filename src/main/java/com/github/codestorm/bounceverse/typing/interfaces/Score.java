@@ -2,7 +2,6 @@ package com.github.codestorm.bounceverse.typing.interfaces;
 
 import java.io.Serializable;
 import java.time.Instant;
-import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -19,10 +18,10 @@ public interface Score<T extends Score<T>> extends Serializable, Comparable<T> {
     Instant timestamp();
 
     @Override
-    default int compareTo(@NotNull T o) {
+    default int compareTo(T o) {
         if (score() != o.score()) {
             return Long.compare(score(), o.score());
         }
-        return timestamp().compareTo(o.timestamp());
+        return -timestamp().compareTo(o.timestamp());
     }
 }
