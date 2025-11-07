@@ -8,8 +8,8 @@ import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.util.*;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Circle;
@@ -83,14 +83,20 @@ public final class Utilities {
          *
          * @param path File path
          * @return All lines in text file
+         * @throws FileNotFoundException if an I/O error occurs.
          */
-        public static List<String> readTextFile(String path) {
-            var res = new ArrayList<String>();
-            var scanner = new Scanner(path);
-            while (scanner.hasNext()) {
-                res.add(scanner.next());
+        public static List<String> readTextFile(String path) throws IOException {
+            final var res = new ArrayList<String>();
+            final var stream = IO.class.getResourceAsStream(path);
+            if (stream == null) {
+                throw new FileNotFoundException(path);
+            }
+            final var scanner = new Scanner(stream);
+            while (scanner.hasNextLine()) {
+                res.add(scanner.nextLine());
             }
             scanner.close();
+            stream.close();
             return res;
         }
     }

@@ -2,11 +2,14 @@ package com.github.codestorm.bounceverse.core.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.app.ReadOnlyGameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
 import java.io.IOException;
+import java.util.EnumSet;
+
 import javafx.stage.StageStyle;
 
 /**
@@ -35,7 +38,7 @@ public final class GameSettingsManager extends SettingsManager {
         // ? General
         settings.setTitle(gameSettings.getProperty("general.name"));
         settings.setVersion(gameSettings.getProperty("general.version"));
-        settings.setCredits(Utilities.IO.readTextFile("credits.txt"));
+        settings.setCredits(Utilities.IO.readTextFile("/assets/credits.txt"));
         settings.setApplicationMode(
                 Boolean.parseBoolean(gameSettings.getProperty("general.devMode"))
                         ? ApplicationMode.DEVELOPER
@@ -56,6 +59,7 @@ public final class GameSettingsManager extends SettingsManager {
         settings.setSceneFactory(new SceneFactory());
         settings.setMainMenuEnabled(true);
         settings.setIntroEnabled(true);
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
     }
 
     /**
