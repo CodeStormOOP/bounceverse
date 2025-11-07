@@ -5,7 +5,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.time.TimerAction;
 import com.github.codestorm.bounceverse.components.Component;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import java.io.*;
@@ -101,6 +101,8 @@ public final class Utilities {
     }
 
     public static final class Time {
+        private Time() {}
+
         /**
          * Thời gian hồi để thực hiện lại gì đó. Thực hiện thông qua {@link #current}
          *
@@ -230,6 +232,8 @@ public final class Utilities {
     }
 
     public static final class Geometric {
+        private Geometric() {}
+
         /**
          * Lọc các Entity trong phạm vi Hình tròn.
          *
@@ -271,6 +275,8 @@ public final class Utilities {
     }
 
     public static final class Collision {
+        private Collision() {}
+
         public static DirectionUnit getCollisionDirection(Entity source, Entity target) {
             var fromBox = source.getBoundingBoxComponent();
             var toBox = target.getBoundingBoxComponent();
@@ -287,26 +293,29 @@ public final class Utilities {
     }
 
     public static final class Compatibility {
+        private Compatibility() {}
+
         /**
          * Throw {@link IllegalArgumentException} nếu như có component trong {@code params} không
-         * phù hợp với {@code onlyFor}.
+         * phù hợp với {@code entityType}.
          *
-         * @param onlyFor {@link EntityType} muốn kiểm tra tương thích
+         * @param entityType {@link EntityType} muốn kiểm tra tương thích
          * @param params Các component cần kiểm tra
          */
-        public static void throwIfNotCompatible(EntityType onlyFor, Component... params) {
+        public static void throwIfNotCompatible(EntityType entityType, Component... params) {
             for (var param : params) {
-                final var annotation = param.getClass().getAnnotation(ForEntity.class);
+                final var annotation = param.getClass().getAnnotation(OnlyForEntity.class);
                 if (annotation == null) {
                     continue;
                 }
 
                 final var paramEntityTypeSet = EnumSet.copyOf(Arrays.asList(annotation.value()));
-                if (!paramEntityTypeSet.contains(onlyFor)) {
+                if (!paramEntityTypeSet.contains(entityType)) {
                     throw new IllegalArgumentException(
                             String.format(
-                                    "Class '%s' does not compatible for entity has '%s' type.",
-                                    param.getClass().getSimpleName(), onlyFor.name()));
+                                    "Class '%s' does not compatible for entity has '%s'"
+                                            + " entityType.",
+                                    param.getClass().getSimpleName(), entityType.name()));
                 }
             }
         }
@@ -314,13 +323,13 @@ public final class Utilities {
         /**
          * {@link #throwIfNotCompatible(EntityType, Component...)} nhưng không throw exception.
          *
-         * @param onlyFor {@link EntityType} muốn kiểm tra tương thích
+         * @param entityType {@link EntityType} muốn kiểm tra tương thích
          * @param params Các component cần kiểm tra
          * @return {@code true} nếu tất cả tương thích, ngược lại {@code false}.
          */
-        public static boolean isCompatible(EntityType onlyFor, Component... params) {
+        public static boolean isCompatible(EntityType entityType, Component... params) {
             try {
-                throwIfNotCompatible(onlyFor, params);
+                throwIfNotCompatible(entityType, params);
                 return true;
             } catch (IllegalArgumentException e) {
                 return false;
@@ -329,6 +338,8 @@ public final class Utilities {
     }
 
     public static final class Typing {
+        private Typing() {}
+
         /**
          * Xử lý nhanh lấy data từ {@link SpawnData}.
          *

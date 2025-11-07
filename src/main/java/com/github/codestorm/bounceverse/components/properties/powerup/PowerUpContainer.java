@@ -4,7 +4,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.CoreComponent;
 import com.github.codestorm.bounceverse.components.properties.Property;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import com.google.common.collect.MutableClassToInstanceMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * Giống như một cái túi, nơi lưu trữ {@link Component} bên trong {@link Entity} và không kích hoạt
  * logic của các component đó.
  */
-@ForEntity({EntityType.POWER_UP})
+@OnlyForEntity({EntityType.POWER_UP})
 @CoreComponent
 public final class PowerUpContainer extends Property {
     private MutableClassToInstanceMap<Component> container = MutableClassToInstanceMap.create();

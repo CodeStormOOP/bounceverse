@@ -6,7 +6,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.github.codestorm.bounceverse.Utilities.Time.Cooldown;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.behaviors.Behavior;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import java.util.List;
@@ -19,7 +19,7 @@ import javafx.util.Duration;
  *
  * Khả năng {@link EntityType#PADDLE} có thể bắn ra {@link EntityType#BULLET}.
  */
-@ForEntity(EntityType.PADDLE)
+@OnlyForEntity(EntityType.PADDLE)
 public final class PaddleShooting extends Behavior {
     private static final double OFFSET_LEFT = 4;
     private static final double OFFSET_RIGHT = -8;
