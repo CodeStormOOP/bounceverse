@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.settings;
+package com.github.codestorm.bounceverse.systems.manager.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameSettings;
@@ -9,7 +9,6 @@ import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
 import java.io.IOException;
 import java.util.EnumSet;
-
 import javafx.stage.StageStyle;
 
 /**
@@ -55,11 +54,11 @@ public final class GameSettingsManager extends SettingsManager {
         settings.setFullScreenFromStart(
                 UserSettingsManager.getInstance().get().getVideo().isFullscreen());
 
-        // ? In-game
+        // ? Game
         settings.setSceneFactory(new SceneFactory());
         settings.setMainMenuEnabled(true);
         settings.setIntroEnabled(true);
-        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA, MenuItem.SAVE_LOAD));
     }
 
     /**

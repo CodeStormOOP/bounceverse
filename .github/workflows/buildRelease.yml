@@ -21,7 +21,7 @@ jobs:
       - name: Build release
         run: |
           chmod +x gradlew
-          ./gradlew clean buildRelease
+          ./gradlew clean release
 
       - name: Upload to Release assets
         uses: softprops/action-gh-release@v2

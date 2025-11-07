@@ -38,7 +38,7 @@ application {
 
 defaultTasks('run')
 
-tasks.register('buildRelease', Jar) {
+tasks.register('release', Jar) {
 	group = 'build'
 	description = "Test this project and assemble a release JAR file."
 

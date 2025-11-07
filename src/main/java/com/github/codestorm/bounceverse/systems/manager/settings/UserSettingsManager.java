@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.settings;
+package com.github.codestorm.bounceverse.systems.manager.settings;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.logging.Logger;
@@ -16,8 +16,8 @@ import java.nio.file.Paths;
  * <h1>{@link UserSettingsManager}</h1>
  *
  * Quản lý {@link UserSettings}. <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
  *
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  * @see GameSettingsManager
  */
 public final class UserSettingsManager extends SettingsManager {

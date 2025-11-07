@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.paint.Color;
@@ -8,10 +8,11 @@ import javafx.scene.paint.Color;
  *
  * <h1>{@link UISystem}</h1>
  *
- * {@link System} quản lý Giao diện trong game. <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
+ * {@link InitialSystem} quản lý Giao diện trong game. <br>
+ *
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  */
-public final class UISystem extends System {
+public final class UISystem extends InitialSystem {
     public static UISystem getInstance() {
         return UISystem.Holder.INSTANCE;
     }

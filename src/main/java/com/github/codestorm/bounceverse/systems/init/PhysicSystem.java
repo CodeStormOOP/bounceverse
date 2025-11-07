@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -14,12 +14,12 @@ import java.util.List;
  *
  * <h1>{@link PhysicSystem}</h1>
  *
- * {@link System} quản lý Vật lý trong game. <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
+ * {@link InitialSystem} quản lý Vật lý trong game. <br>
  *
- * @see System
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
+ * @see InitialSystem
  */
-public final class PhysicSystem extends System {
+public final class PhysicSystem extends InitialSystem {
     private PhysicSystem() {}
 
     public static PhysicSystem getInstance() {

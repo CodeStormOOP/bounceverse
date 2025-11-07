@@ -3,7 +3,7 @@ package com.github.codestorm.bounceverse.scenes;
 import com.almasb.fxgl.app.scene.IntroScene;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.logging.Logger;
-import com.github.codestorm.bounceverse.Assets;
+import com.github.codestorm.bounceverse.AssetsPath;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 
@@ -24,7 +24,7 @@ public final class Intro extends IntroScene {
         setCursorInvisible();
 
         // Video
-        final var path = FXGL.getAssetLoader().getURL(Assets.Video.INTRO);
+        final var path = FXGL.getAssetLoader().getURL(AssetsPath.Video.INTRO);
         final var view = FXGL.getAssetLoader().loadVideo(path);
         final var player = view.getMediaPlayer();
         final var media = player.getMedia();

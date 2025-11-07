@@ -8,7 +8,6 @@ import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
 import java.io.*;
 import java.util.*;
 import javafx.geometry.Rectangle2D;

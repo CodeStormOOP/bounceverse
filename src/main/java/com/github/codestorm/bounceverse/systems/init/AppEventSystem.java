@@ -1,17 +1,19 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.github.codestorm.bounceverse.core.settings.UserSettingsManager;
+import com.github.codestorm.bounceverse.systems.manager.metrics.LeaderboardManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 
 /**
  *
  *
  * <h1>{@link AppEventSystem}</h1>
  *
- * {@link System} quản lý các sự kiện trên {@link GameApplication} <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
+ * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication} <br>
+ *
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  */
-public final class AppEventSystem extends System {
+public final class AppEventSystem extends InitialSystem {
     private AppEventSystem() {}
 
     public static AppEventSystem getInstance() {
@@ -23,8 +25,12 @@ public final class AppEventSystem extends System {
     }
 
     private void onExit() {
+        // Settings
         UserSettingsManager.getInstance().sync();
         UserSettingsManager.getInstance().save();
+
+        // Leaderboard
+        LeaderboardManager.getInstance().save();
     }
 
     @Override

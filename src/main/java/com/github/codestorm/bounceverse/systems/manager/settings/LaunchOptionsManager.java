@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.settings;
+package com.github.codestorm.bounceverse.systems.manager.settings;
 
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.typing.records.LaunchOptions;

@@ -2,10 +2,10 @@ package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.github.codestorm.bounceverse.core.settings.GameSettingsManager;
-import com.github.codestorm.bounceverse.core.settings.LaunchOptionsManager;
-import com.github.codestorm.bounceverse.core.settings.UserSettingsManager;
-import com.github.codestorm.bounceverse.core.systems.*;
+import com.github.codestorm.bounceverse.systems.init.*;
+import com.github.codestorm.bounceverse.systems.manager.settings.GameSettingsManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 import java.io.IOException;
 

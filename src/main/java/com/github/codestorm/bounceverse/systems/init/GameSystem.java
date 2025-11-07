@@ -1,11 +1,11 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.github.codestorm.bounceverse.factory.entities.*;
 import org.jetbrains.annotations.NotNull;
 
-public final class GameSystem extends System {
+public final class GameSystem extends InitialSystem {
     private GameSystem() {}
 
     public static GameSystem getInstance() {
