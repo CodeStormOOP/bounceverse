@@ -15,8 +15,8 @@ public final class AssetsPath {
     public static final class Video {
         private Video() {}
 
-        private static final String ROOT = AssetsPath.ROOT + "/video";
+        private static final String ROOT = AssetsPath.ROOT + "/videos";
 
-        public static final String INTRO = ROOT + "/intro.mp4";
+        public static final String INTRO = "intro.mp4";
     }
 }

@@ -25,43 +25,21 @@ public final class Intro extends IntroScene {
         setCursorInvisible();
 
         // Video
-        final var path = FXGL.getAssetLoader().getURL(AssetsPath.Video.INTRO);
-        final var view = FXGL.getAssetLoader().loadVideo(path);
-        final var player = view.getMediaPlayer();
-        final var media = player.getMedia();
+        final var video = FXGL.getAssetLoader().loadVideo(AssetsPath.Video.INTRO);
+        video.setFitWidth(FXGL.getAppWidth());
+        video.setFitHeight(FXGL.getAppHeight());
+        addChild(video);
 
-        getContentRoot().getChildren().add(view);
-
-        player.setAutoPlay(true);
+        final var player = video.getMediaPlayer();
         player.setOnEndOfMedia(
                 () -> {
                     player.dispose();
                     finishIntro();
                 });
-        media.setOnError(
-                () -> {
-                    Logger.get(Intro.class).fatalf("Cannot load video: %s", media.getError());
-                    player.getOnEndOfMedia().run();
-                });
         player.setOnError(
                 () -> {
-                    Logger.get(Intro.class).fatalf("Cannot play video: %s", player.getError());
+                    Logger.get(Intro.class).fatal("Cannot play intro video", player.getError());
                     player.getOnEndOfMedia().run();
-                });
-        player.setOnReady(
-                () -> {
-                    final var screenW = getAppWidth();
-                    final var screenH = getAppHeight();
-                    final var videoW = media.getWidth();
-                    final var videoH = media.getHeight();
-
-                    var fitW = videoW * ((double) screenW / videoW);
-                    var fitH = videoH * ((double) screenH / videoH);
-
-                    view.setFitWidth(fitW);
-                    view.setFitHeight(fitH);
-                    view.setX((screenW - fitW) / 2);
-                    view.setY((screenH - fitH) / 2);
                 });
 
         getContentRoot()
@@ -71,5 +49,7 @@ public final class Intro extends IntroScene {
                                 player.getOnEndOfMedia().run();
                             }
                         });
+
+        player.setOnReady(player::play);
     }
 }
