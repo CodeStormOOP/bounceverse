@@ -4,6 +4,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
+
 import java.util.List;
 
 /**
@@ -24,8 +25,8 @@ public final class Explosion extends Attack {
     @Override
     public void execute(List<Object> data) {
         final var attributes = entity.getComponent(Attributes.class);
-        final double cx = getEntity().getCenter().getX();
-        final double cy = getEntity().getCenter().getY();
+        final var cx = getEntity().getCenter().getX();
+        final var cy = getEntity().getCenter().getY();
 
         final var nearEntities = Utilities.Geometric.getEntityInCircle(cx, cy, radius);
         super.execute(nearEntities.stream().map(e -> (Object) e).toList());

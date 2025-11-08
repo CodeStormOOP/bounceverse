@@ -7,10 +7,12 @@ import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-import java.io.*;
-import java.util.*;
+
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Circle;
+
+import java.io.*;
+import java.util.*;
 
 /** Utilities. */
 public final class Utilities {
@@ -28,12 +30,12 @@ public final class Utilities {
          * @throws IOException if an error occurred when reading from the input stream.
          */
         public static Properties loadProperties(String path) throws IOException {
-            InputStream fileStream = IO.class.getResourceAsStream(path);
+            var fileStream = IO.class.getResourceAsStream(path);
             if (fileStream == null) {
                 throw new IOException("Cannot open InputStream on " + path);
             }
 
-            Properties prop = new Properties();
+            var prop = new Properties();
             prop.load(fileStream);
             fileStream.close();
             return prop;
@@ -57,16 +59,16 @@ public final class Utilities {
                 HashMap<String, String> defaults,
                 HashMap<String, String> whiteList) {
             // HashMap allows null values
-            HashMap<String, String> res = new HashMap<>();
+            var res = new HashMap<String, String>();
             if (defaults != null) {
-                for (Map.Entry<String, String> e : defaults.entrySet()) {
+                for (var e : defaults.entrySet()) {
                     if (e.getValue() != null) {
                         res.put(e.getKey(), e.getValue());
                     }
                 }
             }
-            for (String s : args) {
-                String[] kv = s.split("=", 2);
+            for (var s : args) {
+                var kv = s.split("=", 2);
                 if (whiteList != null && !whiteList.containsKey(kv[0])) {
                     continue;
                 }
@@ -124,17 +126,16 @@ public final class Utilities {
          * @return Các entity
          */
         public static List<Entity> getEntityInCircle(double cx, double cy, double radius) {
-            final Rectangle2D outRect =
-                    new Rectangle2D(cx - radius, cy - radius, 2 * radius, 2 * radius);
+            final var outRect = new Rectangle2D(cx - radius, cy - radius, 2 * radius, 2 * radius);
             return FXGL.getGameWorld().getEntitiesInRange(outRect).stream()
                     .filter(
                             e -> {
-                                double nearestX =
+                                var nearestX =
                                         Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
-                                double nearestY =
+                                var nearestY =
                                         Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
-                                double dx = cx - nearestX;
-                                double dy = cy - nearestY;
+                                var dx = cx - nearestX;
+                                var dy = cy - nearestY;
                                 return (dx * dx + dy * dy) <= radius * radius;
                             })
                     .toList();

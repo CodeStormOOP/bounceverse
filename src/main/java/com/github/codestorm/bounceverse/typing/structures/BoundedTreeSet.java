@@ -53,7 +53,7 @@ public class BoundedTreeSet<T> extends TreeSet<T> {
 
     @Override
     public boolean add(T t) {
-        boolean changed = super.add(t);
+        var changed = super.add(t);
         if (changed) {
             adjust();
         }
@@ -62,7 +62,7 @@ public class BoundedTreeSet<T> extends TreeSet<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        boolean changed = super.addAll(c);
+        var changed = super.addAll(c);
         if (changed) {
             adjust();
         }

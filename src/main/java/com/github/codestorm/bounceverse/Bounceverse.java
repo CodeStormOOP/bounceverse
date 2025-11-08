@@ -7,6 +7,7 @@ import com.github.codestorm.bounceverse.systems.manager.settings.GameSettingsMan
 import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
 import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
+
 import java.io.IOException;
 
 /**

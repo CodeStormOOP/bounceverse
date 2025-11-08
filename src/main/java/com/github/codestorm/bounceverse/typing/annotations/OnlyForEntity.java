@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse.typing.annotations;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

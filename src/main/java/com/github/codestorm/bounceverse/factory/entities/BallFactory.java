@@ -11,6 +11,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -39,7 +40,7 @@ public final class BallFactory extends EntityFactory {
 
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
+        var physics = new PhysicsComponent();
 
         var fixture = new FixtureDef();
         fixture.setDensity(1.0f);
@@ -68,9 +69,9 @@ public final class BallFactory extends EntityFactory {
 
     @Spawns("ball")
     public Entity spawnBall(SpawnData data) {
-        final Point2D pos = Utilities.Typing.getOr(data, "pos", DEFAULT_POS);
+        final var pos = Utilities.Typing.getOr(data, "pos", DEFAULT_POS);
         final double radius = Utilities.Typing.getOr(data, "radius", DEFAULT_RADIUS);
-        final Color color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
+        final var color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
 
         final var bbox = new Circle(radius, color);
 

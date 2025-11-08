@@ -31,10 +31,7 @@ import com.almasb.fxgl.profile.SaveFile;
 import com.almasb.fxgl.scene.SubScene;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FontType;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
@@ -60,6 +57,10 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.function.Supplier;
+
 /**
  *
  *
@@ -70,7 +71,6 @@ import javafx.util.StringConverter;
  *
  * @see FXGLDefaultMenu
  */
-@SuppressWarnings("ALL")
 public class Menu extends FXGLMenu {
     private static final Logger log = Logger.get(Menu.class);
 
@@ -79,7 +79,7 @@ public class Menu extends FXGLMenu {
     private final SimpleObjectProperty<Color> titleColor = new SimpleObjectProperty<>(Color.WHITE);
     private final Pane menuRoot = new Pane();
     private final Pane menuContentRoot = new Pane();
-    private final MenuContent EMPTY = new MenuContent();
+    private final MenuContent defaultContent = new MenuContent();
     private final PressAnyKeyState pressAnyKeyState = new PressAnyKeyState();
     private final MenuBox menu;
     private final List<Animation<?>> animations = new ArrayList<>();
@@ -98,8 +98,8 @@ public class Menu extends FXGLMenu {
             menu = createMenuBodyGameMenu();
         }
 
-        double menuX = 50.0;
-        double menuY = getAppHeight() / 2.0 - menu.getLayoutHeight() / 2.0;
+        var menuX = 50.0;
+        var menuY = getAppHeight() / 2.0 - menu.getLayoutHeight() / 2.0;
 
         menuRoot.setTranslateX(menuX);
         menuRoot.setTranslateY(menuY);
@@ -110,12 +110,12 @@ public class Menu extends FXGLMenu {
         initParticles();
 
         menuRoot.getChildren().add(menu);
-        menuContentRoot.getChildren().add(EMPTY);
+        menuContentRoot.getChildren().add(defaultContent);
 
         getContentRoot()
                 .getChildren()
                 .addAll(
-                        createBackground((double) getAppWidth(), (double) getAppHeight()),
+                        createBackground(getAppWidth(), getAppHeight()),
                         createTitleView(FXGL.getSettings().getTitle()),
                         createVersionView(makeVersionString()),
                         particleSystem.getPane(),
@@ -134,11 +134,11 @@ public class Menu extends FXGLMenu {
         emitter.setNumParticles(10);
         emitter.setEmissionRate(0.01);
         emitter.setVelocityFunction(
-                (n) -> new Point2D(FXGL.random() * 2.5, -FXGL.random() * FXGL.random(80, 120)));
-        emitter.setExpireFunction((n) -> Duration.seconds(FXGL.random(4, 7)));
-        emitter.setScaleFunction((n) -> new Point2D(0.15, 0.10));
+                (_) -> new Point2D(FXGL.random() * 2.5, -FXGL.random() * FXGL.random(80, 120)));
+        emitter.setExpireFunction((_) -> Duration.seconds(FXGL.random(4, 7)));
+        emitter.setScaleFunction((_) -> new Point2D(0.15, 0.10));
         emitter.setSpawnPointFunction(
-                (n) -> new Point2D(FXGL.random(0.0, getAppWidth() - 200.0), 120.0));
+                (_) -> new Point2D(FXGL.random(0.0, getAppWidth() - 200.0), 120.0));
 
         particleSystem.addParticleEmitter(emitter, 0.0, FXGL.getAppHeight());
     }
@@ -147,13 +147,13 @@ public class Menu extends FXGLMenu {
     public void onCreate() {
         animations.clear();
 
-        MenuBox menuBox = (MenuBox) menuRoot.getChildren().getFirst();
+        var menuBox = (MenuBox) menuRoot.getChildren().getFirst();
 
-        for (int i = 0; i < menuBox.getChildren().size(); i++) {
-            Node node = menuBox.getChildren().get(i);
+        for (var i = 0; i < menuBox.getChildren().size(); i++) {
+            var node = menuBox.getChildren().get(i);
             node.setTranslateX(-250.0);
 
-            Animation<?> animation =
+            var animation =
                     FXGL.animationBuilder()
                             .delay(Duration.seconds(i * 0.07))
                             .interpolator(Interpolators.EXPONENTIAL.EASE_OUT())
@@ -175,7 +175,7 @@ public class Menu extends FXGLMenu {
         // the scene is no longer active so reset everything
         // so that next time scene is active everything is loaded properly
         switchMenuTo(menu);
-        switchMenuContentTo(EMPTY);
+        switchMenuContentTo(defaultContent);
     }
 
     @Override
@@ -188,36 +188,36 @@ public class Menu extends FXGLMenu {
 
         animations.forEach((a) -> a.onUpdate(tpf));
 
-        double frequency = 1.7;
+        var frequency = 1.7;
 
         t += tpf * frequency;
 
         particleSystem.onUpdate(tpf);
 
-        Color color = Color.color(1.0, 1.0, 1.0, FXGLMath.noise1D(t));
+        var color = Color.color(1.0, 1.0, 1.0, FXGLMath.noise1D(t));
         titleColor.set(color);
     }
 
-    private Node createBackground(double width, double height) {
-        Rectangle bg = new Rectangle(width, height);
+    private Rectangle createBackground(double width, double height) {
+        var bg = new Rectangle(width, height);
         bg.setFill(Color.rgb(10, 1, 1, getType() == MenuType.GAME_MENU ? 0.5 : 1.0));
         return bg;
     }
 
-    private Node createTitleView(String title) {
-        Text text = FXGL.getUIFactoryService().newText(title.substring(0, 1), 50.0);
+    private StackPane createTitleView(String title) {
+        var text = FXGL.getUIFactoryService().newText(title.substring(0, 1), 50.0);
         text.setFill(null);
         text.strokeProperty().bind(titleColor);
         text.setStrokeWidth(1.5);
 
-        Text text2 = FXGL.getUIFactoryService().newText(title.substring(1), 50.0);
+        var text2 = FXGL.getUIFactoryService().newText(title.substring(1), 50.0);
         text2.setFill(null);
         text2.setStroke(titleColor.get());
         text2.setStrokeWidth(1.5);
 
-        double textWidth = text.getLayoutBounds().getWidth() + text2.getLayoutBounds().getWidth();
+        var textWidth = text.getLayoutBounds().getWidth() + text2.getLayoutBounds().getWidth();
 
-        Rectangle border = new Rectangle(textWidth + 30, 65.0, null);
+        var border = new Rectangle(textWidth + 30, 65.0, null);
         border.setStroke(Color.WHITE);
         border.setStrokeWidth(4.0);
         border.setArcWidth(25.0);
@@ -235,16 +235,16 @@ public class Menu extends FXGLMenu {
                     if (i % 2 == 0) return new Point2D(FXGL.random(-10.0, 0.0), 0.0);
                     else return new Point2D(FXGL.random(0.0, 10.0), 0.0);
                 });
-        emitter.setExpireFunction((i) -> Duration.seconds(FXGL.random(4.0, 6.0)));
-        emitter.setScaleFunction((i) -> new Point2D(-0.03, -0.03));
-        emitter.setSpawnPointFunction((i) -> new Point2D(0, 0));
+        emitter.setExpireFunction((_) -> Duration.seconds(FXGL.random(4.0, 6.0)));
+        emitter.setScaleFunction((_) -> new Point2D(-0.03, -0.03));
+        emitter.setSpawnPointFunction((_) -> new Point2D(0, 0));
         emitter.setAccelerationFunction(
                 () -> new Point2D(FXGL.random(-1.0, 1.0), FXGL.random(0.0, 0.0)));
 
-        HBox box = new HBox(text, text2);
+        var box = new HBox(text, text2);
         box.setAlignment(Pos.CENTER);
 
-        StackPane titleRoot = new StackPane(border, box);
+        var titleRoot = new StackPane(border, box);
         titleRoot.setTranslateX(getAppWidth() / 2.0 - (textWidth + 30) / 2.0);
         titleRoot.setTranslateY(50.0);
 
@@ -257,8 +257,8 @@ public class Menu extends FXGLMenu {
         return titleRoot;
     }
 
-    private Node createVersionView(String version) {
-        Text view = FXGL.getUIFactoryService().newText(version);
+    private Text createVersionView(String version) {
+        var view = FXGL.getUIFactoryService().newText(version);
         view.setTranslateY(getAppHeight() - 2.0);
         return view;
     }
@@ -266,26 +266,26 @@ public class Menu extends FXGLMenu {
     private MenuBox createMenuBodyMainMenu() {
         log.debug("createMenuBodyMainMenu()");
 
-        MenuBox box = new MenuBox();
+        var box = new MenuBox();
 
         Set<MenuItem> enabledItems = FXGL.getSettings().getEnabledMenuItems();
 
-        MenuButton itemNewGame = new MenuButton("menu.newGame");
-        itemNewGame.setOnAction(e -> fireNewGame());
+        var itemNewGame = new MenuButton("menu.newGame");
+        itemNewGame.setOnAction(_ -> fireNewGame());
         box.add(itemNewGame);
 
-        MenuButton itemOptions = new MenuButton("menu.options");
+        var itemOptions = new MenuButton("menu.options");
         itemOptions.setChild(createOptionsMenu());
         box.add(itemOptions);
 
         if (enabledItems.contains(MenuItem.EXTRA)) {
-            MenuButton itemExtra = new MenuButton("menu.extra");
+            var itemExtra = new MenuButton("menu.extra");
             itemExtra.setChild(createExtraMenu());
             box.add(itemExtra);
         }
 
-        MenuButton itemExit = new MenuButton("menu.exit");
-        itemExit.setOnAction(e -> fireExit());
+        var itemExit = new MenuButton("menu.exit");
+        itemExit.setOnAction(_ -> fireExit());
         box.add(itemExit);
 
         return box;
@@ -294,42 +294,42 @@ public class Menu extends FXGLMenu {
     private MenuBox createMenuBodyGameMenu() {
         log.debug("createMenuBodyGameMenu()");
 
-        MenuBox box = new MenuBox();
+        var box = new MenuBox();
 
-        Set<MenuItem> enabledItems = FXGL.getSettings().getEnabledMenuItems();
+        var enabledItems = FXGL.getSettings().getEnabledMenuItems();
 
-        MenuButton itemResume = new MenuButton("menu.resume");
-        itemResume.setOnAction(e -> fireResume());
+        var itemResume = new MenuButton("menu.resume");
+        itemResume.setOnAction(_ -> fireResume());
         box.add(itemResume);
 
         if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
-            MenuButton itemSave = new MenuButton("menu.save");
-            itemSave.setOnAction(e -> fireSave());
+            var itemSave = new MenuButton("menu.save");
+            itemSave.setOnAction(_ -> fireSave());
 
-            MenuButton itemLoad = new MenuButton("menu.load");
-            itemLoad.setMenuContent(() -> createContentLoad(), false);
+            var itemLoad = new MenuButton("menu.load");
+            itemLoad.setMenuContent(this::createContentLoad, false);
 
             box.add(itemSave);
             box.add(itemLoad);
         }
 
-        MenuButton itemOptions = new MenuButton("menu.options");
+        var itemOptions = new MenuButton("menu.options");
         itemOptions.setChild(createOptionsMenu());
         box.add(itemOptions);
 
         if (enabledItems.contains(MenuItem.EXTRA)) {
-            MenuButton itemExtra = new MenuButton("menu.extra");
+            var itemExtra = new MenuButton("menu.extra");
             itemExtra.setChild(createExtraMenu());
             box.add(itemExtra);
         }
 
         if (FXGL.getSettings().isMainMenuEnabled()) {
-            MenuButton itemExit = new MenuButton("menu.mainMenu");
-            itemExit.setOnAction(e -> fireExitToMainMenu());
+            var itemExit = new MenuButton("menu.mainMenu");
+            itemExit.setOnAction(_ -> fireExitToMainMenu());
             box.add(itemExit);
         } else {
-            MenuButton itemExit = new MenuButton("menu.exit");
-            itemExit.setOnAction(e -> fireExit());
+            var itemExit = new MenuButton("menu.exit");
+            itemExit.setOnAction(_ -> fireExit());
             box.add(itemExit);
         }
 
@@ -339,58 +339,63 @@ public class Menu extends FXGLMenu {
     private MenuBox createOptionsMenu() {
         log.debug("createOptionsMenu()");
 
-        MenuButton itemGameplay = new MenuButton("menu.gameplay");
-        itemGameplay.setMenuContent(() -> createContentGameplay());
+        var itemGameplay = new MenuButton("menu.gameplay");
+        itemGameplay.setMenuContent(this::createContentGameplay);
 
-        MenuButton itemControls = new MenuButton("menu.controls");
-        itemControls.setMenuContent(() -> createContentControls());
+        var itemControls = new MenuButton("menu.controls");
+        itemControls.setMenuContent(this::createContentControls);
 
-        MenuButton itemVideo = new MenuButton("menu.video");
-        itemVideo.setMenuContent(() -> createContentVideo());
-        MenuButton itemAudio = new MenuButton("menu.audio");
-        itemAudio.setMenuContent(() -> createContentAudio());
+        var itemVideo = new MenuButton("menu.video");
+        itemVideo.setMenuContent(this::createContentVideo);
+        var itemAudio = new MenuButton("menu.audio");
+        itemAudio.setMenuContent(this::createContentAudio);
 
-        MenuButton btnRestore = new MenuButton("menu.restore");
-        btnRestore.setOnAction(
-                evt -> {
-                    FXGL.getDialogService()
-                            .showConfirmationBox(
-                                    FXGL.localize("menu.settingsRestore"),
-                                    yes -> {
-                                        if (yes) {
-                                            switchMenuContentTo(EMPTY);
-                                            restoreDefaultSettings();
-                                        }
-                                    });
-                });
+        var btnRestore = createRestoreButton();
 
         return new MenuBox(itemGameplay, itemControls, itemVideo, itemAudio, btnRestore);
+    }
+
+    private MenuButton createRestoreButton() {
+        var btnRestore = new MenuButton("menu.restore");
+        btnRestore.setOnAction(
+                _ ->
+                        FXGL.getDialogService()
+                                .showConfirmationBox(
+                                        FXGL.localize("menu.settingsRestore"),
+                                        yes -> {
+                                            if (yes) {
+                                                switchMenuContentTo(defaultContent);
+                                                // TODO: Restore Default Settings
+                                                restoreDefaultSettings();
+                                            }
+                                        }));
+        return btnRestore;
     }
 
     private MenuBox createExtraMenu() {
         log.debug("createExtraMenu()");
 
-        MenuButton itemAchievements = new MenuButton("menu.trophies");
-        itemAchievements.setMenuContent(() -> createContentAchievements());
+        var itemAchievements = new MenuButton("menu.trophies");
+        itemAchievements.setMenuContent(this::createContentAchievements);
 
-        MenuButton itemCredits = new MenuButton("menu.credits");
-        itemCredits.setMenuContent(() -> createContentCredits());
+        var itemCredits = new MenuButton("menu.credits");
+        itemCredits.setMenuContent(this::createContentCredits);
 
         return new MenuBox(itemAchievements, itemCredits);
     }
 
     private void switchMenuTo(Node menuNode) {
-        Node oldMenu = menuRoot.getChildren().get(0);
+        var oldMenu = menuRoot.getChildren().getFirst();
 
-        FadeTransition ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
+        var ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
         ft.setToValue(0.0);
         ft.setOnFinished(
-                e -> {
+                _ -> {
                     menuNode.setOpacity(0.0);
                     menuRoot.getChildren().set(0, menuNode);
                     oldMenu.setOpacity(1.0);
 
-                    FadeTransition ft2 = new FadeTransition(Duration.seconds(0.33), menuNode);
+                    var ft2 = new FadeTransition(Duration.seconds(0.33), menuNode);
                     ft2.setToValue(1.0);
                     ft2.play();
                 });
@@ -417,11 +422,11 @@ public class Menu extends FXGLMenu {
 
         ListView<SaveFile> list = FXGL.getUIFactoryService().newListView();
 
-        final double FONT_SIZE = 16.0;
+        final var FONT_SIZE = 16.0;
 
         list.setCellFactory(
-                param ->
-                        new ListCell<SaveFile>() {
+                _ ->
+                        new ListCell<>() {
                             @Override
                             protected void updateItem(SaveFile item, boolean empty) {
                                 super.updateItem(item, empty);
@@ -430,7 +435,7 @@ public class Menu extends FXGLMenu {
                                     setText(null);
                                     setGraphic(null);
                                 } else {
-                                    String nameDate =
+                                    var nameDate =
                                             String.format(
                                                     "%-25.25s %s",
                                                     item.getName(),
@@ -439,7 +444,7 @@ public class Menu extends FXGLMenu {
                                                                     DateTimeFormatter.ofPattern(
                                                                             "dd-MM-yyyy HH-mm")));
 
-                                    Text text =
+                                    var text =
                                             FXGL.getUIFactoryService()
                                                     .newText(
                                                             nameDate,
@@ -461,27 +466,27 @@ public class Menu extends FXGLMenu {
 
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(FONT_SIZE).add(16));
 
-        Button btnLoad =
+        var btnLoad =
                 FXGL.getUIFactoryService().newButton(FXGL.localizedStringProperty("menu.load"));
         btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnLoad.setOnAction(
-                e -> {
-                    SaveFile saveFile = list.getSelectionModel().getSelectedItem();
+                _ -> {
+                    var saveFile = list.getSelectionModel().getSelectedItem();
                     fireLoad(saveFile);
                 });
 
-        Button btnDelete =
+        var btnDelete =
                 FXGL.getUIFactoryService().newButton(FXGL.localizedStringProperty("menu.delete"));
         btnDelete.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnDelete.setOnAction(
-                e -> {
-                    SaveFile saveFile = list.getSelectionModel().getSelectedItem();
+                _ -> {
+                    var saveFile = list.getSelectionModel().getSelectedItem();
                     fireDelete(saveFile);
                 });
 
-        HBox hbox = new HBox(50.0, btnLoad, btnDelete);
+        var hbox = new HBox(50.0, btnLoad, btnDelete);
         hbox.setAlignment(Pos.CENTER);
 
         return new MenuContent(list, hbox);
@@ -496,7 +501,7 @@ public class Menu extends FXGLMenu {
     protected MenuContent createContentControls() {
         log.debug("createContentControls()");
 
-        GridPane grid = new GridPane();
+        var grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10.0);
         grid.setVgap(10.0);
@@ -512,24 +517,24 @@ public class Menu extends FXGLMenu {
             addNewInputBinding(e.getKey(), e.getValue(), grid);
         }
 
-        FXGLScrollPane scroll = new FXGLScrollPane(grid);
+        var scroll = new FXGLScrollPane(grid);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scroll.setMaxHeight(getAppHeight() / 2.5);
 
-        HBox hbox = new HBox(scroll);
+        var hbox = new HBox(scroll);
         hbox.setAlignment(Pos.CENTER);
 
         return new MenuContent(hbox);
     }
 
     private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
-        Text actionName = FXGL.getUIFactoryService().newText(action.getName(), Color.WHITE, 18.0);
+        var actionName = FXGL.getUIFactoryService().newText(action.getName(), Color.WHITE, 18.0);
 
-        TriggerView triggerView = new TriggerView(trigger);
+        var triggerView = new TriggerView(trigger);
         triggerView.triggerProperty().bind(FXGL.getInput().triggerProperty(action));
 
         triggerView.setOnMouseClicked(
-                evt -> {
+                _ -> {
                     if (pressAnyKeyState.isActive) return;
 
                     pressAnyKeyState.isActive = true;
@@ -537,12 +542,12 @@ public class Menu extends FXGLMenu {
                     FXGL.getSceneService().pushSubScene(pressAnyKeyState);
                 });
 
-        HBox hBox = new HBox();
+        var hBox = new HBox();
         hBox.setPrefWidth(100.0);
         hBox.setAlignment(Pos.CENTER);
         hBox.getChildren().add(triggerView);
 
-        int controlsRow = (int) grid.getUserData();
+        var controlsRow = (int) grid.getUserData();
         grid.addRow(controlsRow++, actionName, hBox);
         grid.setUserData(controlsRow);
     }
@@ -550,7 +555,7 @@ public class Menu extends FXGLMenu {
     protected MenuContent createContentVideo() {
         log.debug("createContentVideo()");
 
-        ChoiceBox<Language> languageBox =
+        var languageBox =
                 FXGL.getUIFactoryService()
                         .newChoiceBox(
                                 FXCollections.observableArrayList(
@@ -574,10 +579,10 @@ public class Menu extends FXGLMenu {
 
         FXGL.getSettings().getLanguage().bindBidirectional(languageBox.valueProperty());
 
-        VBox vbox = new VBox();
+        var vbox = new VBox();
 
         if (FXGL.getSettings().isFullScreenAllowed()) {
-            CheckBox cbFullScreen = FXGL.getUIFactoryService().newCheckBox();
+            var cbFullScreen = FXGL.getUIFactoryService().newCheckBox();
             cbFullScreen.selectedProperty().bindBidirectional(FXGL.getSettings().getFullScreen());
 
             vbox.getChildren()
@@ -601,37 +606,37 @@ public class Menu extends FXGLMenu {
     protected MenuContent createContentAudio() {
         log.debug("createContentAudio()");
 
-        Slider sliderMusic = FXGL.getUIFactoryService().newSlider();
+        var sliderMusic = FXGL.getUIFactoryService().newSlider();
         sliderMusic.setMin(0.0);
         sliderMusic.setMax(1.0);
         sliderMusic
                 .valueProperty()
                 .bindBidirectional(FXGL.getSettings().globalMusicVolumeProperty());
 
-        Text textMusic =
+        var textMusic =
                 FXGL.getUIFactoryService()
                         .newText(FXGL.localizedStringProperty("menu.music.volume").concat(": "));
-        Text percentMusic = FXGL.getUIFactoryService().newText("");
+        var percentMusic = FXGL.getUIFactoryService().newText("");
         percentMusic
                 .textProperty()
                 .bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"));
 
-        Slider sliderSound = FXGL.getUIFactoryService().newSlider();
+        var sliderSound = FXGL.getUIFactoryService().newSlider();
         sliderSound.setMin(0.0);
         sliderSound.setMax(1.0);
         sliderSound
                 .valueProperty()
                 .bindBidirectional(FXGL.getSettings().globalSoundVolumeProperty());
 
-        Text textSound =
+        var textSound =
                 FXGL.getUIFactoryService()
                         .newText(FXGL.localizedStringProperty("menu.sound.volume").concat(": "));
-        Text percentSound = FXGL.getUIFactoryService().newText("");
+        var percentSound = FXGL.getUIFactoryService().newText("");
         percentSound
                 .textProperty()
                 .bind(sliderSound.valueProperty().multiply(100).asString("%.0f"));
 
-        GridPane gridPane = new GridPane();
+        var gridPane = new GridPane();
         gridPane.setHgap(15.0);
         gridPane.addRow(0, textMusic, sliderMusic, percentMusic);
         gridPane.addRow(1, textSound, sliderSound, percentSound);
@@ -642,23 +647,23 @@ public class Menu extends FXGLMenu {
     protected MenuContent createContentCredits() {
         log.debug("createContentCredits()");
 
-        FXGLScrollPane pane = new FXGLScrollPane();
+        var pane = new FXGLScrollPane();
         pane.setPrefWidth(500.0);
         pane.setPrefHeight(getAppHeight() / 2.0);
         pane.setStyle("-fx-background:black;");
 
-        VBox vbox = new VBox();
+        var vbox = new VBox();
         vbox.setAlignment(Pos.CENTER_LEFT);
         vbox.setPrefWidth(pane.getPrefWidth() - 15);
 
-        ArrayList<String> credits = new ArrayList<>(FXGL.getSettings().getCredits());
+        var credits = new ArrayList<>(FXGL.getSettings().getCredits());
         credits.add("");
         credits.add("Powered by FXGL " + FXGL.getVersion());
         credits.add("Author: Almas Baimagambetov");
         credits.add("https://github.com/AlmasB/FXGL");
         credits.add("");
 
-        for (String credit : credits) {
+        for (var credit : credits) {
             if (credit.length() > 45) {
                 log.warning("Credit name length > 45: " + credit);
             }
@@ -674,23 +679,23 @@ public class Menu extends FXGLMenu {
     protected MenuContent createContentAchievements() {
         log.debug("createContentAchievements()");
 
-        MenuContent content = new MenuContent();
+        var content = new MenuContent();
 
         FXGL.getAchievementService()
                 .getAchievementsCopy()
                 .forEach(
                         a -> {
-                            CheckBox checkBox = new CheckBox();
+                            var checkBox = new CheckBox();
                             checkBox.setDisable(true);
                             checkBox.selectedProperty().bind(a.achievedProperty());
 
-                            Text text = FXGL.getUIFactoryService().newText(a.getName());
-                            Tooltip tooltip = new Tooltip(a.getDescription());
+                            var text = FXGL.getUIFactoryService().newText(a.getName());
+                            var tooltip = new Tooltip(a.getDescription());
                             tooltip.setShowDelay(Duration.seconds(0.1));
 
                             Tooltip.install(text, tooltip);
 
-                            HBox box = new HBox(25.0, text, checkBox);
+                            var box = new HBox(25.0, text, checkBox);
                             box.setAlignment(Pos.CENTER_RIGHT);
 
                             content.getChildren().add(box);
@@ -703,32 +708,30 @@ public class Menu extends FXGLMenu {
         ChoiceBox<String> profilesBox =
                 FXGL.getUIFactoryService().newChoiceBox(FXCollections.observableArrayList());
 
-        Button btnNew =
+        var btnNew =
                 FXGL.getUIFactoryService()
                         .newButton(FXGL.localizedStringProperty("multiplayer.new"));
-        Button btnSelect =
+        var btnSelect =
                 FXGL.getUIFactoryService()
                         .newButton(FXGL.localizedStringProperty("multiplayer.select"));
         btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull());
-        Button btnDelete =
+        var btnDelete =
                 FXGL.getUIFactoryService().newButton(FXGL.localizedStringProperty("menu.delete"));
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull());
 
         btnNew.setOnAction(
-                evt -> {
-                    FXGL.getDialogService()
-                            .showInputBox(
-                                    FXGL.localize("profile.new"),
-                                    InputPredicates.ALPHANUM,
-                                    (Consumer<String>)
-                                            name -> {
-                                                // TODO: implement profile creation tasks if needed
-                                            });
-                });
+                _ ->
+                        FXGL.getDialogService()
+                                .showInputBox(
+                                        FXGL.localize("profile.new"),
+                                        InputPredicates.ALPHANUM,
+                                        _ -> {
+                                            // TODO: implement profile creation tasks if needed
+                                        }));
 
         btnSelect.setOnAction(
-                evt -> {
-                    String name = profilesBox.getValue();
+                _ -> {
+                    var name = profilesBox.getValue();
                     FXGL.getSettings().getProfileName().set(name);
                     // TODO: load profile details
                 });
@@ -766,19 +769,19 @@ public class Menu extends FXGLMenu {
             if (items != null && items.length > 0) {
                 maxW = (int) items[0].getLayoutBounds().getWidth();
 
-                for (Node n : items) {
-                    int w = (int) n.getLayoutBounds().getWidth();
+                for (var n : items) {
+                    var w = (int) n.getLayoutBounds().getWidth();
                     if (w > maxW) maxW = w;
                 }
 
-                for (Node item : items) {
+                for (var item : items) {
                     getChildren().addAll(item);
                 }
             }
 
             sceneProperty()
                     .addListener(
-                            (obs, oldS, newS) -> {
+                            (_, _, newS) -> {
                                 if (newS != null) {
                                     onOpen();
                                 } else {
@@ -806,7 +809,6 @@ public class Menu extends FXGLMenu {
 
     private class MenuButton extends Pane {
         public final Button btn;
-        private final Polygon p = new Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0);
         private MenuBox parent;
         private MenuContent cachedContent;
         private boolean isAnimating = false;
@@ -816,9 +818,10 @@ public class Menu extends FXGLMenu {
             btn.setAlignment(Pos.CENTER_LEFT);
             btn.setStyle("-fx-background-color: transparent");
 
+            final var p = new Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0);
             p.setMouseTransparent(true);
 
-            LinearGradient g =
+            var g =
                     new LinearGradient(
                             0.0,
                             1.0,
@@ -848,9 +851,9 @@ public class Menu extends FXGLMenu {
 
             btn.focusedProperty()
                     .addListener(
-                            (obs, oldV, isFocused) -> {
+                            (_, _, isFocused) -> {
                                 if (isFocused) {
-                                    boolean isOK =
+                                    var isOK =
                                             animations.stream().noneMatch(Animation::isAnimating)
                                                     && !isAnimating;
                                     if (isOK) {
@@ -880,7 +883,7 @@ public class Menu extends FXGLMenu {
         public void setMenuContent(Supplier<MenuContent> contentSupplier, boolean isCached) {
             btn.addEventHandler(
                     ActionEvent.ACTION,
-                    e -> {
+                    _ -> {
                         if (cachedContent == null || !isCached)
                             cachedContent = contentSupplier.get();
 
@@ -889,12 +892,12 @@ public class Menu extends FXGLMenu {
         }
 
         public void setChild(MenuBox menu) {
-            MenuButton back = new MenuButton("menu.back");
-            menu.getChildren().add(0, back);
+            var back = new MenuButton("menu.back");
+            menu.getChildren().addFirst(back);
 
-            back.addEventHandler(ActionEvent.ACTION, e -> switchMenuTo(this.parent));
+            back.addEventHandler(ActionEvent.ACTION, _ -> switchMenuTo(this.parent));
 
-            btn.addEventHandler(ActionEvent.ACTION, e -> switchMenuTo(menu));
+            btn.addEventHandler(ActionEvent.ACTION, _ -> switchMenuTo(menu));
         }
     }
 
@@ -911,7 +914,7 @@ public class Menu extends FXGLMenu {
                             e -> {
                                 if (Input.isIllegal(e.getCode())) return;
 
-                                boolean rebound =
+                                var rebound =
                                         FXGL.getInput()
                                                 .rebind(
                                                         actionContext,
@@ -928,7 +931,7 @@ public class Menu extends FXGLMenu {
                     .addEventFilter(
                             MouseEvent.MOUSE_PRESSED,
                             e -> {
-                                boolean rebound =
+                                var rebound =
                                         FXGL.getInput()
                                                 .rebind(
                                                         actionContext,
@@ -941,16 +944,16 @@ public class Menu extends FXGLMenu {
                                 }
                             });
 
-            Rectangle rect = new Rectangle(250.0, 100.0);
+            var rect = new Rectangle(250.0, 100.0);
             rect.setStroke(Color.color(0.85, 0.9, 0.9, 0.95));
             rect.setStrokeWidth(10.0);
             rect.setArcWidth(15.0);
             rect.setArcHeight(15.0);
 
-            Text text = FXGL.getUIFactoryService().newText("", 24.0);
+            var text = FXGL.getUIFactoryService().newText("", 24.0);
             text.textProperty().bind(FXGL.localizedStringProperty("menu.pressAnyKey"));
 
-            StackPane pane = new StackPane(rect, text);
+            var pane = new StackPane(rect, text);
             pane.setTranslateX(getAppWidth() / 2.0 - 125);
             pane.setTranslateY(getAppHeight() / 2.0 - 50);
 

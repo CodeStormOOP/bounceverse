@@ -6,6 +6,7 @@ import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.scene.Scene;
 import com.github.codestorm.bounceverse.scenes.Intro;
 import com.github.codestorm.bounceverse.scenes.Menu;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

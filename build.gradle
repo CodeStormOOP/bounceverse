@@ -65,16 +65,23 @@ javafx {
 }
 
 spotless {
-	enforceCheck = false
-	format 'misc', {
-		target '*.gradle', '.gitattributes', '.gitignore'
+    enforceCheck = false
 
-		trimTrailingWhitespace()
-		leadingSpacesToTabs()
-		endWithNewline()
-	}
-	java {
-		googleJavaFormat().aosp().reflowLongStrings()
-		formatAnnotations()
-	}
+    format 'misc', {
+        target '*.gradle', '.gitattributes', '.gitignore'
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    java {
+        target 'src/**/*.java'
+
+        googleJavaFormat()
+                .aosp()
+                .reorderImports(true)
+                .reflowLongStrings(true)
+                .formatJavadoc(true)
+        formatAnnotations()
+        removeUnusedImports()
+    }
 }

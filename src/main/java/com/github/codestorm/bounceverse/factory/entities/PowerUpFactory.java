@@ -13,6 +13,7 @@ import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
 
 /**
@@ -53,7 +54,7 @@ public final class PowerUpFactory extends EntityFactory {
      */
     private Entity newPowerUp(SpawnData data) {
         final double radius = Utilities.Typing.getOr(data, "radius", DEFAULT_RADIUS);
-        final Component[] contains = Utilities.Typing.getOr(data, "contains", new Component[0]);
+        final var contains = Utilities.Typing.getOr(data, "contains", new Component[0]);
         final Point2D pos = data.get("pos");
         final Texture texture = data.get("texture");
 

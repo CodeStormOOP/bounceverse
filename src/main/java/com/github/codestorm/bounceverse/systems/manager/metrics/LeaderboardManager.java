@@ -5,6 +5,7 @@ import com.almasb.fxgl.logging.Logger;
 import com.github.codestorm.bounceverse.typing.records.BlitzScore;
 import com.github.codestorm.bounceverse.typing.records.EndlessScore;
 import com.github.codestorm.bounceverse.typing.structures.BoundedTreeSet;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

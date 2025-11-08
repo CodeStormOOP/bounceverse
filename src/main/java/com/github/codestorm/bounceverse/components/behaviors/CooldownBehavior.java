@@ -2,8 +2,10 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.github.codestorm.bounceverse.typing.interfaces.CanExecute;
 import com.github.codestorm.bounceverse.typing.structures.Cooldown;
-import java.util.List;
+
 import javafx.util.Duration;
+
+import java.util.List;
 
 /**
  *

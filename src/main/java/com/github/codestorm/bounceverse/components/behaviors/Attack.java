@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse.components.behaviors;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
+
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class Attack extends Behavior {
 
     @Override
     public void execute(List<Object> data) {
-        List<Entity> entities =
+        var entities =
                 data.stream().filter(obj -> obj instanceof Entity).map(e -> (Entity) e).toList();
         for (var obj : entities) {
             final var theirHealth = obj.getComponentOptional(HealthIntComponent.class);

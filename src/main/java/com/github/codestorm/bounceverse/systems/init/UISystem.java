@@ -1,6 +1,7 @@
 package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
+
 import javafx.scene.paint.Color;
 
 /**

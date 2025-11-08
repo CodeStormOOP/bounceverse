@@ -4,6 +4,7 @@ import com.almasb.fxgl.app.scene.IntroScene;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.logging.Logger;
 import com.github.codestorm.bounceverse.AssetsPath;
+
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 
@@ -54,8 +55,8 @@ public final class Intro extends IntroScene {
                     final var videoW = media.getWidth();
                     final var videoH = media.getHeight();
 
-                    double fitW = videoW * ((double) screenW / videoW);
-                    double fitH = videoH * ((double) screenH / videoH);
+                    var fitW = videoW * ((double) screenW / videoW);
+                    var fitH = videoH * ((double) screenH / videoH);
 
                     view.setFitWidth(fitW);
                     view.setFitHeight(fitH);

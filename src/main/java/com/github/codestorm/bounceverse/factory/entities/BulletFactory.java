@@ -10,6 +10,7 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -39,7 +40,7 @@ public final class BulletFactory extends EntityFactory {
     public Entity newBullet(SpawnData data) {
         final Point2D pos = data.get("pos");
         final double radius = Utilities.Typing.getOr(data, "radius", DEFAULT_RADIUS);
-        final Color color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
+        final var color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
 
         final var bbox = new Circle(radius, color);
         return getBuilder(data).at(pos).viewWithBBox(bbox).buildAndAttach();

@@ -5,6 +5,7 @@ import com.almasb.fxgl.logging.Logger;
 import com.github.codestorm.bounceverse.typing.records.UserSettings;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -37,7 +38,7 @@ public final class UserSettingsManager extends SettingsManager {
      * @return Tên file
      */
     public static String getSettingsFilename() {
-        final String username = System.getProperty("user.name");
+        final var username = System.getProperty("user.name");
         return String.format("settings.%s.%s", username, FORMAT);
     }
 

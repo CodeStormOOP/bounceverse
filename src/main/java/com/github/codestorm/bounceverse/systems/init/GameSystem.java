@@ -3,6 +3,7 @@ package com.github.codestorm.bounceverse.systems.init;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.github.codestorm.bounceverse.factory.entities.*;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class GameSystem extends InitialSystem {
@@ -26,15 +27,15 @@ public final class GameSystem extends InitialSystem {
     }
 
     private static void spawnBrick() {
-        for (int y = 1; y <= 6; y++) {
-            for (int x = 1; x <= 10; x++) {
+        for (var y = 1; y <= 6; y++) {
+            for (var x = 1; x <= 10; x++) {
                 FXGL.spawn("normalBrick", 85 * x, 35 * y);
             }
         }
     }
 
     private static void spawnPaddle() {
-        double px = FXGL.getAppWidth() / 2.0 - 60;
+        var px = FXGL.getAppWidth() / 2.0 - 60;
         double py = FXGL.getAppHeight() - 40;
         FXGL.spawn("paddle", px, py);
     }

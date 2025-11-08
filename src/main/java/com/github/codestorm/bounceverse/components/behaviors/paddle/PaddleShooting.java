@@ -9,8 +9,10 @@ import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import com.github.codestorm.bounceverse.typing.structures.Cooldown;
-import java.util.List;
+
 import javafx.util.Duration;
+
+import java.util.List;
 
 /**
  *
@@ -41,9 +43,9 @@ public final class PaddleShooting extends Behavior {
         if (!cooldown.getCurrent().isExpired()) {
             return;
         }
-        double leftX = entity.getX() + OFFSET_LEFT;
-        double rightX = entity.getRightX() + OFFSET_RIGHT;
-        double y = entity.getY() + OFFSET_HEIGHT;
+        var leftX = entity.getX() + OFFSET_LEFT;
+        var rightX = entity.getRightX() + OFFSET_RIGHT;
+        var y = entity.getY() + OFFSET_HEIGHT;
 
         final var attack = entity.getComponentOptional(Attack.class);
         if (attack.isEmpty()) {

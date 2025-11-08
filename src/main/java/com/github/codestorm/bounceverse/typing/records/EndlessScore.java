@@ -1,6 +1,7 @@
 package com.github.codestorm.bounceverse.typing.records;
 
 import com.github.codestorm.bounceverse.typing.interfaces.Score;
+
 import java.time.Instant;
 
 /**

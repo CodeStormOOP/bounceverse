@@ -10,6 +10,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.typing.enums.AnchorPoint;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -30,8 +31,8 @@ public final class WallFactory extends EntityFactory {
 
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
-        FixtureDef fixture = new FixtureDef();
+        var physics = new PhysicsComponent();
+        var fixture = new FixtureDef();
 
         fixture.setFriction(0f);
         fixture.setRestitution(1f);

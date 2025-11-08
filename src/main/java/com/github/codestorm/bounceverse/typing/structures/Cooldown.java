@@ -2,6 +2,7 @@ package com.github.codestorm.bounceverse.typing.structures;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.time.TimerAction;
+
 import javafx.util.Duration;
 
 /**

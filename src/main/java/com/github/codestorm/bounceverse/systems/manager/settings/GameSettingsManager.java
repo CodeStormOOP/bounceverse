@@ -7,9 +7,11 @@ import com.almasb.fxgl.app.ReadOnlyGameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
+
+import javafx.stage.StageStyle;
+
 import java.io.IOException;
 import java.util.EnumSet;
-import javafx.stage.StageStyle;
 
 /**
  *
