@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -22,9 +22,10 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
  * <i>Đây là một Singleton, cần lấy instance thông qua
  * {@link #getInstance()}</i>.
  *
- * @see System
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
+ * @see InitialSystem
  */
-public final class PhysicSystem extends System {
+public final class PhysicSystem extends InitialSystem {
 
     private PhysicSystem() {
     }

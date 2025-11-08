@@ -1,9 +1,11 @@
 package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.entity.Entity;
+
+import javafx.geometry.Side;
+
 import java.util.Arrays;
 import java.util.EnumSet;
-import javafx.geometry.Side;
 
 /**
  *

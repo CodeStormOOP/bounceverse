@@ -2,8 +2,9 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
-import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
+import com.github.codestorm.bounceverse.data.types.EntityType;
+
 
 /**
  * Khi brick bị phá thì spawn PowerUp.

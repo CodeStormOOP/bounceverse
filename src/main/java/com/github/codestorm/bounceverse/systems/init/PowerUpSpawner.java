@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.github.codestorm.bounceverse.data.types.PowerUpType;
 import java.util.*;

@@ -1,8 +1,8 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
+import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -36,7 +36,7 @@ import javafx.scene.shape.Circle;
  *
  * @author minngoc1213
  */
-public final class BallFactory implements EntityFactory {
+public final class BallFactory extends EntityFactory {
 
     public static final int DEFAULT_RADIUS = 10;
     public static final Color DEFAULT_COLOR = Color.RED;
@@ -78,6 +78,12 @@ public final class BallFactory implements EntityFactory {
     public Entity spawnBall(SpawnData data) {
         boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
         return buildBall(data, attached);
+    }
+
+    @Override
+    protected EntityBuilder getBuilder(SpawnData data) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getBuilder'");
     }
 
 }

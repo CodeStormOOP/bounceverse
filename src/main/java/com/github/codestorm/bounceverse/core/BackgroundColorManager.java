@@ -1,6 +1,8 @@
 package com.github.codestorm.bounceverse.core;
 
-import com.github.codestorm.bounceverse.core.systems.UISystem;
+
+import com.github.codestorm.bounceverse.systems.init.UISystem;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 

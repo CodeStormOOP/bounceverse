@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.animation.AnimationTimer;
@@ -13,7 +13,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * UISystem với nền synthwave tối, wave neon cyan-magenta chuyển động.
  */
-public final class UISystem extends System {
+public final class UISystem extends InitialSystem {
 
     private Rectangle backgroundRect;
     private Group waveLayer;

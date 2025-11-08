@@ -1,83 +1,70 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
+import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.physics.*;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.Texture;
-import com.github.codestorm.bounceverse.components.properties.powerup.FallingComponent;
+import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.ball.FastBallPowerUp;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.ball.MultipleBallPowerUp;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.ball.SlowBallPowerUp;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.misc.ShieldPowerUp;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.paddle.ExpandPaddlePowerUp;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.paddle.ShrinkPaddlePowerUp;
-import com.github.codestorm.bounceverse.core.systems.PowerUpSpawner;
-import com.github.codestorm.bounceverse.typing.enums.*;
-
-import com.github.codestorm.bounceverse.data.types.PowerUpType;
+import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.geometry.Point2D;
 
 /**
- * Factory để tạo các Entity loại POWER_UP.
+ *
+ *
+ * <h1>{@link PowerUpFactory}</h1>
+ *
+ * Factory để tạo các entity loại {@link EntityType#POWER_UP} trong trò chơi.
+ *
+ * @see EntityFactory
  */
-public final class PowerUpFactory implements EntityFactory {
-
+public final class PowerUpFactory extends EntityFactory {
     public static final double DEFAULT_RADIUS = 10;
-    public static final double DEFAULT_SPEED = 150;
+    public static final double DEFAULT_SPEED = 10;
 
-    private Entity newPowerUp(Point2D pos, Texture texture, Component... components) {
-        var hitbox = new HitBox(BoundingShape.circle(DEFAULT_RADIUS));
+    @Override
+    protected EntityBuilder getBuilder(SpawnData data) {
+        final var velocity = DirectionUnit.DOWN.getVector().mul(DEFAULT_SPEED);
 
-        return FXGL.entityBuilder()
-                .type(EntityType.POWER_UP)
-                .at(pos)
+        final var physics = new PhysicsComponent();
+        physics.setOnPhysicsInitialized(
+                () -> {
+                    physics.setLinearVelocity(velocity.toPoint2D());
+                    physics.setAngularVelocity(0);
+                    physics.getBody().setFixedRotation(true);
+                    physics.getBody().setLinearDamping(0f);
+                    physics.getBody().setAngularDamping(0f);
+                });
+
+        return FXGL.entityBuilder().type(EntityType.POWER_UP).collidable().with(physics);
+    }
+
+    /**
+     * Tạo mới một PowerUp. Đây là một "abstract" method.
+     *
+     * @param data Dữ liệu Spawn
+     * @return Entity PowerUp
+     */
+    private Entity newPowerUp(SpawnData data) {
+        final double radius = Utilities.Typing.getOr(data, "radius", DEFAULT_RADIUS);
+        final var contains = Utilities.Typing.getOr(data, "contains", new Component[0]);
+        final Point2D pos = data.get("pos");
+        final Texture texture = data.get("texture");
+
+        final var hitbox = new HitBox(BoundingShape.circle(radius));
+
+        return getBuilder(data)
                 .bbox(hitbox)
+                .at(pos)
                 .view(texture)
-                .collidable()
-                .with(new FallingComponent(), new PowerUpContainer(components))
+                .with(new PowerUpContainer(contains))
                 .buildAndAttach();
     }
-
-    @Spawns("powerUp")
-    public Entity newRandomPowerUp(SpawnData data) {
-
-        PowerUpType type = PowerUpSpawner.getRandomPowerUpType();
-        Point2D pos = new Point2D(data.getX(), data.getY());
-        Texture texture;
-
-        switch (type) {
-            case EXPAND_PADDLE -> {
-                texture = FXGL.texture("powerups/expand.png");
-                return newPowerUp(pos, texture, new ExpandPaddlePowerUp());
-            }
-            case SHRINK_PADDLE -> {
-                texture = FXGL.texture("powerups/shrink.png");
-                return newPowerUp(pos, texture, new ShrinkPaddlePowerUp());
-            }
-            case MULTI_BALL -> {
-                texture = FXGL.texture("powerups/multiball.png");
-                return newPowerUp(pos, texture, new MultipleBallPowerUp());
-            }
-            case FAST_BALL -> {
-                texture = FXGL.texture("powerups/fast.png");
-                return newPowerUp(pos, texture, new FastBallPowerUp());
-            }
-            case SLOW_BALL -> {
-                texture = FXGL.texture("powerups/slow.png");
-                return newPowerUp(pos, texture, new SlowBallPowerUp());
-            }
-            case SHIELD -> {
-                texture = FXGL.texture("powerups/shield.png");
-                return newPowerUp(pos, texture, new ShieldPowerUp());
-            }
-            default -> {
-                texture = FXGL.texture("powerups/default.png");
-                return newPowerUp(pos, texture);
-            }
-        }
-    }
-
 }

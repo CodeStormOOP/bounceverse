@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
@@ -13,12 +13,11 @@ import javafx.scene.input.KeyCode;
 /**
  * <h1>{@link InputSystem}</h1>
  *
- * {@link System} quản lý Input trong game. <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua
- * {@link #getInstance()}</i>.
+ * {@link InitialSystem} quản lý Input trong game. <br>
+ *
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  */
-public class InputSystem extends System {
-
+public final class InputSystem extends InitialSystem {
     public static InputSystem getInstance() {
         return InputSystem.Holder.INSTANCE;
     }

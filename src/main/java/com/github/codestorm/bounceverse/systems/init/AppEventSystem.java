@@ -1,18 +1,22 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.github.codestorm.bounceverse.core.settings.UserSettingsManager;
+import com.github.codestorm.bounceverse.systems.manager.metrics.LeaderboardManager;
 
 /**
  *
  *
  * <h1>{@link AppEventSystem}</h1>
  *
- * {@link System} quản lý các sự kiện trên {@link GameApplication} <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}</i>.
+ * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication} <br>
+ *
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua
+ *          {@link #getInstance()}.
  */
-public class AppEventSystem extends System {
-    private AppEventSystem() {}
+public final class AppEventSystem extends InitialSystem {
+    private AppEventSystem() {
+    }
 
     public static AppEventSystem getInstance() {
         return Holder.INSTANCE;
@@ -23,7 +27,11 @@ public class AppEventSystem extends System {
     }
 
     private void onExit() {
+        // Settings
         UserSettingsManager.save();
+
+        // Leaderboard
+        LeaderboardManager.getInstance().save();
     }
 
     @Override
@@ -34,7 +42,8 @@ public class AppEventSystem extends System {
 
     /**
      * Lazy-loaded singleton holder. <br>
-     * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Follow <a href=
+     * "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {

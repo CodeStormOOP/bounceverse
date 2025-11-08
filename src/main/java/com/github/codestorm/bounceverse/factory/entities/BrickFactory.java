@@ -1,17 +1,14 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import javax.management.Attribute;
-
 import org.jetbrains.annotations.NotNull;
 
+import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
@@ -43,7 +40,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @see EntityFactory
  */
-public final class BrickFactory implements EntityFactory {
+public final class BrickFactory extends EntityFactory {
 
     private static final int DEFAULT_WIDTH = 80;
     private static final int DEFAULT_HEIGHT = 30;
@@ -174,6 +171,12 @@ public final class BrickFactory implements EntityFactory {
     public static Entity newSpecialBrick(SpawnData data) {
         String tex = SPECIAL_TEXTURES.get(RANDOM.nextInt(SPECIAL_TEXTURES.size()));
         return newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex), new Special());
+    }
+
+    @Override
+    protected EntityBuilder getBuilder(SpawnData data) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getBuilder'");
     }
 
     

@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.core.systems;
+package com.github.codestorm.bounceverse.systems.init;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,10 +14,10 @@ import com.github.codestorm.bounceverse.factory.entities.PowerUpFactory;
 import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
-public final class GameSystem extends System {
+import org.jetbrains.annotations.NotNull;
 
-    private GameSystem() {
-    }
+public final class GameSystem extends InitialSystem {
+    private GameSystem() {}
 
     public static GameSystem getInstance() {
         return GameSystem.Holder.INSTANCE;
@@ -37,15 +37,15 @@ public final class GameSystem extends System {
     }
 
     private static void spawnBrick() {
-        for (int y = 1; y <= 6; y++) {
-            for (int x = 1; x <= 10; x++) {
+        for (var y = 1; y <= 6; y++) {
+            for (var x = 1; x <= 10; x++) {
                 FXGL.spawn("normalBrick", 85 * x, 35 * y);
             }
         }
     }
 
     private static void spawnPaddle() {
-        double px = FXGL.getAppWidth() / 2.0 - 60;
+        var px = FXGL.getAppWidth() / 2.0 - 60;
         double py = FXGL.getAppHeight() - 40;
         FXGL.spawn("paddle", px, py);
     }

@@ -5,11 +5,11 @@ import java.util.List;
 /**
  *
  *
- * <h1>%{@link CanExecute}</h1>
+ * <h1>%{@link Executable}</h1>
  *
  * Có thể thực thi hành động nào đó.
  */
-public interface CanExecute {
+public interface Executable {
     /**
      * Thực thi hành động.
      *

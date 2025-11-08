@@ -4,11 +4,11 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
 
 import java.util.List;
 
-import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import com.github.codestorm.bounceverse.data.types.EntityType;
 
 /**
  *

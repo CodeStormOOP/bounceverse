@@ -1,43 +1,45 @@
-package com.github.codestorm.bounceverse.core.settings;
+package com.github.codestorm.bounceverse.systems.manager.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.app.ReadOnlyGameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.factory.SceneFactory;
-import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
+
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.util.EnumSet;
 
 /**
  *
  *
  * <h1>{@link GameSettingsManager}</h1>
  *
- * Trình quản lý việc loadTo {@link GameSettings}. <br>
+ * Trình quản lý việc apply {@link GameSettings}. <br>
  *
  * @see UserSettingsManager
  */
-public final class GameSettingsManager {
-    private GameSettingsManager() {
-    }
+public final class GameSettingsManager extends SettingsManager {
+    private GameSettingsManager() {}
 
     /**
-     * Tải các settings từ file đã thiết lập vào CTDL. <br>
-     * <b>Chú ý: Cần loadTo {@link LaunchOptionsManager#load(String...)} trước khi
-     * tải.</b>
+     * Tải các settings từ file đã thiết lập vào bộ nhớ. <br>
+     * <b>Cần tải {@link LaunchOptionsManager#load(String...)} và {@link UserSettingsManager#load()}
+     * trước khi dùng.</b>
      *
      * @param settings Nơi tải vào
      * @throws IOException if an error occurred when reading from the input stream.
      */
-    public static void loadTo(GameSettings settings) throws IOException {
+    public static void load(GameSettings settings) throws IOException {
         final var gameSettings = Utilities.IO.loadProperties("/settings.properties");
 
         // ? General
         settings.setTitle(gameSettings.getProperty("general.name"));
         settings.setVersion(gameSettings.getProperty("general.version"));
-        settings.setCredits(Utilities.IO.readTextFile("credits.txt"));
+        settings.setCredits(Utilities.IO.readTextFile("/assets/credits.txt"));
         settings.setApplicationMode(
                 Boolean.parseBoolean(gameSettings.getProperty("general.devMode"))
                         ? ApplicationMode.DEVELOPER
@@ -46,14 +48,19 @@ public final class GameSettingsManager {
                                 : ApplicationMode.RELEASE);
 
         // ? Display
-        settings.setWidth(Integer.parseInt(gameSettings.getProperty("logic.width")));
-        settings.setHeight(Integer.parseInt(gameSettings.getProperty("logic.height")));
+        settings.setWidth(Integer.parseInt(gameSettings.getProperty("video.width")));
+        settings.setHeight(Integer.parseInt(gameSettings.getProperty("video.height")));
+        settings.setStageStyle(StageStyle.DECORATED);
+        settings.setManualResizeEnabled(false);
         settings.setFullScreenAllowed(true);
+        settings.setFullScreenFromStart(
+                UserSettingsManager.getInstance().get().getVideo().isFullscreen());
 
-        // ? In-game
+        // ? Game
         settings.setSceneFactory(new SceneFactory());
         settings.setMainMenuEnabled(true);
         settings.setIntroEnabled(true);
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA, MenuItem.SAVE_LOAD));
     }
 
     /**

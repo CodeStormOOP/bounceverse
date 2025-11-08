@@ -1,17 +1,15 @@
 package com.github.codestorm.bounceverse;
 
-import java.io.IOException;
-
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.github.codestorm.bounceverse.core.settings.GameSettingsManager;
-import com.github.codestorm.bounceverse.core.settings.LaunchOptionsManager;
-import com.github.codestorm.bounceverse.core.systems.AppEventSystem;
-import com.github.codestorm.bounceverse.core.systems.GameSystem;
-import com.github.codestorm.bounceverse.core.systems.InputSystem;
-import com.github.codestorm.bounceverse.core.systems.PhysicSystem;
-import com.github.codestorm.bounceverse.core.systems.UISystem;
+import com.github.codestorm.bounceverse.systems.init.*;
+import com.github.codestorm.bounceverse.systems.manager.settings.GameSettingsManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
+
+import java.io.IOException;
+
 
 /**
  *
@@ -29,14 +27,15 @@ import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 public final class Bounceverse extends GameApplication {
 
     public static void main(String[] args) {
-        LaunchOptionsManager.load(args);
+        LaunchOptionsManager.getInstance().load(args);
         launch(args);
     }
 
     @Override
     protected void initSettings(GameSettings settings) {
+        UserSettingsManager.getInstance().load();
         try {
-            GameSettingsManager.loadTo(settings);
+            GameSettingsManager.load(settings);
         } catch (IOException e) {
             throw new BounceverseException(e);
         }

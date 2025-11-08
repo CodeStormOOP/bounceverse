@@ -3,14 +3,16 @@ package com.github.codestorm.bounceverse.components.behaviors.paddle;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
-import com.github.codestorm.bounceverse.Utilities.Time.Cooldown;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.behaviors.Behavior;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-import java.util.List;
+import com.github.codestorm.bounceverse.typing.structures.Cooldown;
+
 import javafx.util.Duration;
+
+import java.util.List;
 
 /**
  *
@@ -19,8 +21,8 @@ import javafx.util.Duration;
  *
  * Khả năng {@link EntityType#PADDLE} có thể bắn ra {@link EntityType#BULLET}.
  */
-@ForEntity(EntityType.PADDLE)
-public class PaddleShooting extends Behavior {
+@OnlyForEntity(EntityType.PADDLE)
+public final class PaddleShooting extends Behavior {
     private static final double OFFSET_LEFT = 4;
     private static final double OFFSET_RIGHT = -8;
     private static final double OFFSET_HEIGHT = -10;
@@ -38,12 +40,12 @@ public class PaddleShooting extends Behavior {
 
     @Override
     public void execute(List<Object> data) {
-        if (!cooldown.getCurrent().expired()) {
+        if (!cooldown.getCurrent().isExpired()) {
             return;
         }
-        double leftX = entity.getX() + OFFSET_LEFT;
-        double rightX = entity.getRightX() + OFFSET_RIGHT;
-        double y = entity.getY() + OFFSET_HEIGHT;
+        var leftX = entity.getX() + OFFSET_LEFT;
+        var rightX = entity.getRightX() + OFFSET_RIGHT;
+        var y = entity.getY() + OFFSET_HEIGHT;
 
         final var attack = entity.getComponentOptional(Attack.class);
         if (attack.isEmpty()) {
@@ -61,7 +63,7 @@ public class PaddleShooting extends Behavior {
 
         FXGL.spawn("paddleBullet", leftData);
         FXGL.spawn("paddleBullet", rightData);
-        cooldown.getCurrent().makeNew();
+        cooldown.getCurrent().createNew();
     }
 
     public Cooldown getCooldown() {
