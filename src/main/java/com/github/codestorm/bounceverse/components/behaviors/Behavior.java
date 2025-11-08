@@ -3,7 +3,7 @@ package com.github.codestorm.bounceverse.components.behaviors;
 import com.almasb.fxgl.entity.Entity;
 import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.components.properties.Property;
-import com.github.codestorm.bounceverse.typing.interfaces.CanExecute;
+import com.github.codestorm.bounceverse.typing.interfaces.Executable;
 
 /**
  *
@@ -17,4 +17,4 @@ import com.github.codestorm.bounceverse.typing.interfaces.CanExecute;
  *
  * @see Property
  */
-public abstract class Behavior extends Component implements CanExecute {}
+public abstract class Behavior extends Component implements Executable {}

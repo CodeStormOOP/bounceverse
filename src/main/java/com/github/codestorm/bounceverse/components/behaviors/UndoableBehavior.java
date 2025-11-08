@@ -2,7 +2,7 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.time.TimerAction;
-import com.github.codestorm.bounceverse.typing.interfaces.CanUndo;
+import com.github.codestorm.bounceverse.typing.interfaces.Undoable;
 
 import javafx.util.Duration;
 
@@ -15,9 +15,10 @@ import java.util.List;
  *
  * {@link Behavior} có thể thực thi và hoàn tác được.
  *
- * @see CanUndo
+ * @see Undoable
  */
-public abstract class UndoableBehavior extends Behavior implements CanUndo {
+// TODO: Convert to interface
+public abstract class UndoableBehavior extends Behavior implements Undoable {
     protected boolean removeWhenUndo = true;
     protected Duration duration = Duration.INDEFINITE;
     private List<Object> modified = null;
@@ -42,7 +43,7 @@ public abstract class UndoableBehavior extends Behavior implements CanUndo {
     protected abstract List<Object> executeLogic(List<Object> data);
 
     /**
-     * Logic bên trong {@link CanUndo#undo()}.
+     * Logic bên trong {@link Undoable#undo()}.
      *
      * @param data Dữ liệu cần hoàn tác
      * @return {@code true} nếu cho phép hoàn tác, {@code false} nếu không.
