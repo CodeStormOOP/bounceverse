@@ -2,7 +2,6 @@ package com.github.codestorm.bounceverse.components.properties.powerup.types.bal
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
@@ -20,24 +19,24 @@ public final class MultipleBallPowerUp extends PowerUp {
 
     @Override
     public void apply(Entity paddle) {
-        var world = FXGL.getGameWorld();
-        var balls = world.getEntitiesByType(EntityType.BALL);
+        var balls = FXGL.getGameWorld().getEntitiesByType(EntityType.BALL);
 
         for (Entity ball : balls) {
-            var physicsOpt = ball.getComponentOptional(PhysicsComponent.class);
-            if (physicsOpt.isEmpty())
-                continue;
+            ball.getComponentOptional(PhysicsComponent.class).ifPresent(physics -> {
+                Point2D pos = ball.getCenter();
+                Point2D velocity = physics.getLinearVelocity();
 
-            var physics = physicsOpt.get();
-            Point2D pos = ball.getCenter();
-            Point2D velocity = physics.getLinearVelocity();
+                // Offset nhẹ theo hướng bay hiện tại
+                Point2D spawnPos = pos.add(velocity.normalize().multiply(15));
 
-            // Sinh bóng mới gần vị trí bóng gốc
-            Entity newBall = FXGL.spawn("ball", pos.add(10, 0));
+                Entity newBall = FXGL.spawn("ball", spawnPos);
 
-            // Đặt vận tốc lệch góc 30 độ để tách quỹ đạo
-            Point2D rotatedVelocity = rotateVector(velocity, Math.toRadians(30));
-            newBall.getComponent(PhysicsComponent.class).setLinearVelocity(rotatedVelocity);
+                // Lệch góc ±30 độ
+                double angle = Math.toRadians(FXGL.random(-30, 30));
+                Point2D rotatedVelocity = rotateVector(velocity, angle);
+
+                newBall.getComponent(PhysicsComponent.class).setLinearVelocity(rotatedVelocity);
+            });
         }
     }
 

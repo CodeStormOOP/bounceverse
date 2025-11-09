@@ -22,7 +22,8 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
  * <i>Đây là một Singleton, cần lấy instance thông qua
  * {@link #getInstance()}</i>.
  *
- * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua
+ *          {@link #getInstance()}.
  * @see InitialSystem
  */
 public final class PhysicSystem extends InitialSystem {
@@ -203,22 +204,22 @@ public final class PhysicSystem extends InitialSystem {
             }
         });
 
-        // Paddle vs Power Up
+        // Paddle vs PowerUp
         physicWorld.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
             @Override
             protected void onCollisionBegin(Entity paddle, Entity powerUp) {
-                powerUp.getComponentOptional(PowerUpContainer.class).ifPresent(container -> {
-                    container.addTo(paddle);
-
-                    // gọi apply() cho các Power-Up có hành vi kích hoạt
-                    container.getContainer().values().forEach(comp -> {
-                        if (comp instanceof PowerUp effect) {
-                            effect.apply(paddle);
-                        }
+                if (paddle.isActive() && powerUp.isActive()) {
+                    powerUp.getComponentOptional(PowerUpContainer.class).ifPresent(container -> {
+                        container.addTo(paddle);
+                        container.getContainer().values().forEach(comp -> {
+                            if (comp instanceof PowerUp effect) {
+                                effect.apply(paddle);
+                            }
+                        });
                     });
-                });
 
-                powerUp.removeFromWorld();
+                    powerUp.removeFromWorld();
+                }
             }
         });
 

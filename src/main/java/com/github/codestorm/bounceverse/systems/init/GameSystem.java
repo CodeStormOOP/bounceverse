@@ -13,9 +13,6 @@ import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
 import com.github.codestorm.bounceverse.factory.entities.PowerUpFactory;
 import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
-import org.jetbrains.annotations.NotNull;
-
 public final class GameSystem extends InitialSystem {
     private GameSystem() {}
 
