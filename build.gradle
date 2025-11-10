@@ -76,7 +76,7 @@ spotless {
     java {
         target 'src/**/*.java'
 
-        googleJavaFormat('1.32.0')
+        googleJavaFormat('1.17.0')
                 .aosp()
                 .reorderImports(true)
                 .reflowLongStrings(true)

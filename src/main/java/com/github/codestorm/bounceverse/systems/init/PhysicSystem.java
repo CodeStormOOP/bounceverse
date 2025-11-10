@@ -77,14 +77,10 @@ public final class PhysicSystem extends InitialSystem {
                             if (isProtected) {
                                 // Nếu bị chắn, chỉ phản nảy mà không gây damage
                                 switch (dir) {
-                                    case UP, DOWN ->
-                                            physics.setLinearVelocity(
-                                                    physics.getVelocityX(),
-                                                    -physics.getVelocityY());
-                                    case LEFT, RIGHT ->
-                                            physics.setLinearVelocity(
-                                                    -physics.getVelocityX(),
-                                                    physics.getVelocityY());
+                                    case UP, DOWN -> physics.setLinearVelocity(
+                                            physics.getVelocityX(), -physics.getVelocityY());
+                                    case LEFT, RIGHT -> physics.setLinearVelocity(
+                                            -physics.getVelocityX(), physics.getVelocityY());
                                     default -> {}
                                 }
                                 return;
@@ -93,12 +89,10 @@ public final class PhysicSystem extends InitialSystem {
 
                         // Nếu không bị chắn → phản nảy + gây damage
                         switch (dir) {
-                            case UP, DOWN ->
-                                    physics.setLinearVelocity(
-                                            physics.getVelocityX(), -physics.getVelocityY());
-                            case LEFT, RIGHT ->
-                                    physics.setLinearVelocity(
-                                            -physics.getVelocityX(), physics.getVelocityY());
+                            case UP, DOWN -> physics.setLinearVelocity(
+                                    physics.getVelocityX(), -physics.getVelocityY());
+                            case LEFT, RIGHT -> physics.setLinearVelocity(
+                                    -physics.getVelocityX(), physics.getVelocityY());
                             default -> {}
                         }
 
@@ -142,12 +136,10 @@ public final class PhysicSystem extends InitialSystem {
                         var side = wall.getString("side");
 
                         switch (side) {
-                            case "LEFT", "RIGHT" ->
-                                    physics.setLinearVelocity(
-                                            -physics.getVelocityX(), physics.getVelocityY());
-                            case "TOP" ->
-                                    physics.setLinearVelocity(
-                                            physics.getVelocityX(), -physics.getVelocityY());
+                            case "LEFT", "RIGHT" -> physics.setLinearVelocity(
+                                    -physics.getVelocityX(), physics.getVelocityY());
+                            case "TOP" -> physics.setLinearVelocity(
+                                    physics.getVelocityX(), -physics.getVelocityY());
                             case "BOTTOM" -> {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.BALL)
@@ -190,14 +182,10 @@ public final class PhysicSystem extends InitialSystem {
                                         com.github.codestorm.bounceverse.Utilities.Collision
                                                 .getCollisionDirection(ball, wall);
                                 switch (dir) {
-                                    case UP, DOWN ->
-                                            physics.setLinearVelocity(
-                                                    physics.getVelocityX(),
-                                                    -physics.getVelocityY());
-                                    case LEFT, RIGHT ->
-                                            physics.setLinearVelocity(
-                                                    -physics.getVelocityX(),
-                                                    physics.getVelocityY());
+                                    case UP, DOWN -> physics.setLinearVelocity(
+                                            physics.getVelocityX(), -physics.getVelocityY());
+                                    case LEFT, RIGHT -> physics.setLinearVelocity(
+                                            -physics.getVelocityX(), physics.getVelocityY());
                                     default -> {}
                                 }
                             }
@@ -222,8 +210,8 @@ public final class PhysicSystem extends InitialSystem {
 
                         switch (side) {
                             case Side.LEFT -> paddle.setX(wall.getRightX() + thickness);
-                            case Side.RIGHT ->
-                                    paddle.setX(wall.getX() - paddle.getWidth() - thickness);
+                            case Side.RIGHT -> paddle.setX(
+                                    wall.getX() - paddle.getWidth() - thickness);
                         }
                     }
                 });
