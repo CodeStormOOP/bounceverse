@@ -16,26 +16,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-/**
- *
- *
- * <h1>{@link BallFactory}</h1>
- *
- * <p>
- * This class defines and spawns a new {@link EntityType#BALL} entity in the
- * game world.
- *
- * <p>
- * By default, the spawned ball has:
- *
- * <ul>
- * <li>Radius = {@link #DEFAULT_RADIUS}
- * <li>Position: {@link #DEFAULT_POS}
- * <li>Color: {@link #DEFAULT_COLOR}
- * </ul>
- *
- * @author minngoc1213
- */
 public final class BallFactory extends EntityFactory {
 
     public static final int DEFAULT_RADIUS = 10;
@@ -65,25 +45,46 @@ public final class BallFactory extends EntityFactory {
             }
         });
 
-        return FXGL.entityBuilder(data)
+        // ✅ Tùy theo "attached", quyết định có thêm Attachment hay không
+        var builder = FXGL.entityBuilder(data)
                 .type(EntityType.BALL)
                 .at(data.getX(), data.getY())
                 .viewWithBBox(new Circle(DEFAULT_RADIUS, DEFAULT_COLOR))
                 .collidable()
-                .with(physics, new Attack(), new Attachment())
-                .buildAndAttach();
+                .with(physics, new Attack());
+
+        if (attached) {
+            builder.with(new Attachment());
+        }
+
+        return builder.buildAndAttach();
     }
 
     @Spawns("ball")
     public Entity spawnBall(SpawnData data) {
         boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
-        return buildBall(data, attached);
+
+        double spawnX = data.hasKey("x") ? data.get("x") : Double.NaN;
+        double spawnY = data.hasKey("y") ? data.get("y") : Double.NaN;
+
+        if (Double.isNaN(spawnX) || Double.isNaN(spawnY)) {
+            var paddle = FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).stream().findFirst();
+            if (paddle.isPresent()) {
+                var pos = paddle.get().getCenter();
+                spawnX = pos.getX();
+                spawnY = pos.getY();
+            } else {
+                spawnX = 0;
+                spawnY = 0;
+            }
+        }
+
+        System.out.println("[BallFactory] Spawn ball at (" + spawnX + ", " + spawnY + "), attached=" + attached);
+        return buildBall(new SpawnData(spawnX, spawnY).put("attached", attached), attached);
     }
 
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getBuilder'");
     }
-
 }

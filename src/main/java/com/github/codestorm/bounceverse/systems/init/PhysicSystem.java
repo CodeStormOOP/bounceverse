@@ -140,26 +140,32 @@ public final class PhysicSystem extends InitialSystem {
                     case "TOP" ->
                         physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
                     case "BOTTOM" -> {
-                        FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).forEach(Entity::removeFromWorld);
+                        // Xoá riêng quả bóng chạm đáy
+                        ball.removeFromWorld();
 
+                        // Nếu KHÔNG còn bóng nào trên bàn → reset game
                         FXGL.getGameTimer().runOnceAfter(() -> {
-                            var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+                            var remainingBalls = FXGL.getGameWorld().getEntitiesByType(EntityType.BALL);
 
-                            var sizeManager = paddle.getComponentOptional(
-                                    PaddleSizeManager.class);
-                            sizeManager.ifPresent(PaddleSizeManager::resetSize);
+                            if (remainingBalls.isEmpty()) {
+                                var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
 
-                            PowerUpManager.getInstance().clearAll();
+                                var sizeManager = paddle.getComponentOptional(PaddleSizeManager.class);
+                                sizeManager.ifPresent(PaddleSizeManager::resetSize);
 
-                            double x = paddle.getCenter().getX()
-                                    - BallFactory.DEFAULT_RADIUS;
-                            double y = paddle.getY()
-                                    - BallFactory.DEFAULT_RADIUS * 2;
+                                PowerUpManager.getInstance().clearAll();
 
-                            FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
-                            FXGL.set("ballAttached", true);
+                                double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
+                                double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
+
+                                FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
+                                FXGL.set("ballAttached", true);
+                            } else {
+                                System.out.println("[PhysicSystem] Ball lost, remaining = " + remainingBalls.size());
+                            }
                         }, javafx.util.Duration.millis(100));
                     }
+
                     default -> {
                         final var dir = com.github.codestorm.bounceverse.Utilities.Collision.getCollisionDirection(ball,
                                 wall);

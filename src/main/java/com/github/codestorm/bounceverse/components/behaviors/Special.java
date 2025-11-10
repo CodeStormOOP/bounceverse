@@ -1,10 +1,11 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
 import com.github.codestorm.bounceverse.data.types.EntityType;
+import com.github.codestorm.bounceverse.systems.init.PowerUpSpawner;
 import javafx.util.Duration;
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.component.Component;
 
 /**
  * Khi brick bị phá thì spawn PowerUp.
@@ -16,7 +17,7 @@ public class Special extends Component {
     public void onRemoved() {
         var pos = getEntity().getCenter();
 
-        // ✅ Delay spawn 1 frame + offset xuống dưới 10px để tránh overlap brick
-        FXGL.runOnce(() -> FXGL.spawn("powerUp", pos.add(0, 10)), Duration.seconds(0.017));
+        // ✅ Delay 1 frame rồi gọi spawner random
+        FXGL.runOnce(() -> PowerUpSpawner.spawnRandom(pos.add(0, 10)), Duration.seconds(0.017));
     }
 }
