@@ -1,10 +1,12 @@
 package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.entity.Entity;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.components.Property;
+
+import javafx.geometry.Side;
+
 import java.util.Arrays;
 import java.util.EnumSet;
-import javafx.geometry.Side;
 
 /**
  *
@@ -13,8 +15,7 @@ import javafx.geometry.Side;
  *
  * Khiên bảo vệ {@link Entity}. Khiên có thể bảo vệ một hoặc nhiều phía khỏi bị tấn công.
  */
-@ForEntity({})
-public class Shield extends Property {
+public final class Shield extends Property {
     private EnumSet<Side> sides = EnumSet.noneOf(Side.class);
 
     /**

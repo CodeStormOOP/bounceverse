@@ -6,12 +6,11 @@ on:
       - created
       - published
 
-permissions:
-  contents: write
-
 jobs:
   buildRelease:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -22,7 +21,7 @@ jobs:
       - name: Build release
         run: |
           chmod +x gradlew
-          ./gradlew clean buildRelease
+          ./gradlew clean release
 
       - name: Upload to Release assets
         uses: softprops/action-gh-release@v2

@@ -6,6 +6,7 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
 
 public class Attachment extends Component {

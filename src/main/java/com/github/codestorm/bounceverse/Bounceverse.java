@@ -2,14 +2,14 @@ package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.github.codestorm.bounceverse.core.LaunchOptions;
-import com.github.codestorm.bounceverse.core.SettingsManager;
-import com.github.codestorm.bounceverse.core.systems.GameSystem;
-import com.github.codestorm.bounceverse.core.systems.InputSystem;
-import com.github.codestorm.bounceverse.core.systems.PhysicSystem;
-import com.github.codestorm.bounceverse.core.systems.UISystem;
+import com.github.codestorm.bounceverse.systems.init.*;
+import com.github.codestorm.bounceverse.systems.manager.settings.GameSettingsManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
+
 import java.io.IOException;
+import java.util.Map;
 
 /**
  *
@@ -23,29 +23,39 @@ import java.io.IOException;
  * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như vậy?</i>
  */
 public final class Bounceverse extends GameApplication {
-
     public static void main(String[] args) {
-        LaunchOptions.load(args);
+        LaunchOptionsManager.getInstance().load(args);
         launch(args);
     }
 
     @Override
     protected void initSettings(GameSettings settings) {
+        UserSettingsManager.getInstance().load();
         try {
-            SettingsManager.load(settings);
+            GameSettingsManager.load(settings);
         } catch (IOException e) {
             throw new BounceverseException(e);
         }
     }
 
     @Override
-    protected void initGame() {
-        GameSystem.getInstance().apply();
+    protected void initInput() {
+        InputSystem.getInstance().apply();
     }
 
     @Override
-    protected void initInput() {
-        InputSystem.getInstance().apply();
+    protected void onPreInit() {
+        AppEventSystem.getInstance().apply();
+    }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        GameSystem.Variables.loadDefault(vars);
+    }
+
+    @Override
+    protected void initGame() {
+        GameSystem.getInstance().apply();
     }
 
     @Override

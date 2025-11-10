@@ -4,8 +4,9 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
  * <b>Yêu cầu entity có {@link Attributes} trước.</b>
  */
 @Required(Attributes.class)
-@ForEntity({EntityType.BRICK})
+@OnlyForEntity({EntityType.BRICK})
 public final class Explosion extends Attack {
     public static final int DEFAULT_RADIUS = 1;
     private int radius = DEFAULT_RADIUS;
@@ -27,8 +28,8 @@ public final class Explosion extends Attack {
     @Override
     public void execute(List<Object> data) {
         final var attributes = entity.getComponent(Attributes.class);
-        final double cx = getEntity().getCenter().getX();
-        final double cy = getEntity().getCenter().getY();
+        final var cx = getEntity().getCenter().getX();
+        final var cy = getEntity().getCenter().getY();
 
         final var nearEntities = Utilities.Geometric.getEntityInCircle(cx, cy, radius);
         super.execute(nearEntities.stream().map(e -> (Object) e).toList());

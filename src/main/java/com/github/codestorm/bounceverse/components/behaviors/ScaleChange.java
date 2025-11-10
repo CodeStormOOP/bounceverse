@@ -2,7 +2,9 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.TransformComponent;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+
+import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,6 @@ import java.util.List;
  *
  * @see TransformComponent
  */
-@ForEntity({})
 public class ScaleChange extends UndoableBehavior {
     public static final double DONT_CHANGE = 1;
     private double scaleWidth = DONT_CHANGE;
@@ -60,5 +61,9 @@ public class ScaleChange extends UndoableBehavior {
 
     public void setScaleHeight(double scaleHeight) {
         this.scaleHeight = scaleHeight;
+    }
+
+    public ScaleChange(Duration duration) {
+        super(duration, true);
     }
 }
