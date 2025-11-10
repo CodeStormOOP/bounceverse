@@ -38,7 +38,7 @@ public final class UserSettingsManager extends SettingsManager {
      * @return Tên file
      */
     public static String getSettingsFilename() {
-        final var username = System.getProperty("user.color");
+        final var username = System.getProperty("user.name");
         return String.format("settings.%s.%s", username, FORMAT);
     }
 
