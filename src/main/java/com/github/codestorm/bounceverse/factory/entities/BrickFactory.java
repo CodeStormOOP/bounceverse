@@ -12,9 +12,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.AssetsPath;
 import com.github.codestorm.bounceverse.Utilities;
-import com.github.codestorm.bounceverse.components.behaviors.Explosion;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
-import com.github.codestorm.bounceverse.components.behaviors.brick.BrickDropPowerUp;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.components.properties.brick.BrickTextureManager;
@@ -23,6 +21,7 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +47,13 @@ public final class BrickFactory extends EntityFactory {
     private static Color getRandomColor() {
         final var colors = AssetsPath.Textures.Bricks.COLORS.keySet().toArray(new Color[0]);
         return colors[RANDOM.nextInt(colors.length)];
+    }
+
+    private static Node makeView(String texturePath, int width, int height) {
+        var view = FXGL.getAssetLoader().loadTexture(texturePath, width, height);
+        view.setSmooth(false);
+        view.setPreserveRatio(false);
+        return view;
     }
 
     /**
@@ -113,22 +119,25 @@ public final class BrickFactory extends EntityFactory {
         if (!data.hasKey("hp")) {
             data.put("hp", DEFAULT_HP + 1);
         }
+        data.put("type", BrickType.SHIELD);
         final var shield = new Shield(Side.LEFT, Side.RIGHT, Side.BOTTOM);
 
         return getBuilder(data).with(shield).build();
     }
 
-    @Spawns("explodingBrick")
-    public Entity newExplodingBrick(SpawnData data) {
-        final var explosion = new Explosion(120);
-
-        return getBuilder(data).with(explosion).build();
-    }
-
-    @Spawns("specialBrick")
-    public Entity newSpecialBrick(SpawnData data) {
-        final var dropPowerUp = new BrickDropPowerUp();
-
-        return getBuilder(data).with(dropPowerUp).build();
-    }
+    //    @Spawns("explodingBrick")
+    //    public Entity newExplodingBrick(SpawnData data) {
+    //        final var explosion = new Explosion(120);
+    //
+    //        data.put("type", BrickType.EXPLODING);
+    //        return getBuilder(data).with(explosion).build();
+    //    }
+    //
+    //    @Spawns("specialBrick")
+    //    public Entity newSpecialBrick(SpawnData data) {
+    //        final var dropPowerUp = new BrickDropPowerUp();
+    //
+    //        data.put("type", BrickType.SPECIAL);
+    //        return getBuilder(data).with(dropPowerUp).build();
+    //    }
 }

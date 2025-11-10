@@ -11,7 +11,6 @@ import com.github.codestorm.bounceverse.typing.enums.BrickType;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 /**
@@ -26,6 +25,7 @@ import javafx.scene.paint.Color;
 @OnlyForEntity({EntityType.BRICK})
 public final class BrickTextureManager extends Property {
     private String oldTexturePath;
+    private Node oldTexture;
     public final BrickType brickType;
     public final Color color;
 
@@ -35,9 +35,7 @@ public final class BrickTextureManager extends Property {
     }
 
     private static Node makeView(String texturePath, int width, int height) {
-        var view = new ImageView(FXGL.image(texturePath));
-        view.setFitWidth(width);
-        view.setFitHeight(height);
+        var view = FXGL.getAssetLoader().loadTexture(texturePath, width, height);
         view.setSmooth(false);
         view.setPreserveRatio(false);
         return view;
@@ -46,21 +44,23 @@ public final class BrickTextureManager extends Property {
     @Override
     public void onUpdate(double tpf) {
         final var health = entity.getComponent(HealthIntComponent.class);
-        final var percent = health.getValuePercent();
+        final var percent = health.getValuePercent() / 100;
 
         final var colorTextures = AssetsPath.Textures.Bricks.COLORS.get(color);
         final var texturePath = colorTextures.getTexture(brickType, percent);
 
-        final var views = entity.getViewComponent().getChildren();
+        final var views = entity.getViewComponent();
         if (oldTexturePath == null) {
-            views.add(makeView(texturePath, (int) entity.getWidth(), (int) entity.getHeight()));
             oldTexturePath = texturePath;
+            oldTexture = makeView(texturePath, (int) entity.getWidth(), (int) entity.getHeight());
+            views.addChild(oldTexture);
         } else {
             if (!oldTexturePath.equals(texturePath)) {
+                views.removeChild(oldTexture);
                 oldTexturePath = texturePath;
-                views.set(
-                        1,
-                        makeView(texturePath, (int) entity.getWidth(), (int) entity.getHeight()));
+                oldTexture =
+                        makeView(texturePath, (int) entity.getWidth(), (int) entity.getHeight());
+                views.addChild(oldTexture);
             }
         }
     }

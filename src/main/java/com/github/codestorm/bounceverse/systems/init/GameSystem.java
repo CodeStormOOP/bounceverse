@@ -12,6 +12,8 @@ import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
 import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
+import javafx.geometry.Point2D;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -61,8 +63,8 @@ public final class GameSystem extends InitialSystem {
     }
 
     private static void spawnBrick() {
-        int rows = 6;
-        int cols = 10;
+        var rows = 6;
+        var cols = 10;
         double startX = 85;
         double startY = 50;
         double brickWidth = 80;
@@ -70,22 +72,25 @@ public final class GameSystem extends InitialSystem {
         double spacingX = 5;
         double spacingY = 5;
 
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
-                double posX = startX + x * (brickWidth + spacingX);
-                double posY = startY + y * (brickHeight + spacingY);
+        for (var y = 0; y < rows; y++) {
+            for (var x = 0; x < cols; x++) {
+                var posX = startX + x * (brickWidth + spacingX);
+                var posY = startY + y * (brickHeight + spacingY);
 
                 // Xác định loại brick theo hàng (bạn có thể chỉnh lại tuỳ ý)
                 String type;
                 switch (y) {
                     case 0 -> type = "shieldBrick"; // Hàng đầu có khiên
-                    case 1 -> type = "explodingBrick"; // Hàng thứ 2 nổ
-                    case 2 -> type = "specialBrick"; // Hàng thứ 3 rơi power-up
+                        //                    case 1 -> type = "explodingBrick"; // Hàng thứ 2 nổ
+                        //                    case 2 -> type = "specialBrick"; // Hàng thứ 3 rơi
+                        // power-up
                     case 3 -> type = "strongBrick"; // Hàng thứ 4 trâu
                     default -> type = "normalBrick"; // Còn lại là thường
                 }
 
-                FXGL.spawn(type, posX, posY);
+                var data = new SpawnData();
+                data.put("pos", new Point2D(posX, posY));
+                FXGL.spawn(type, data);
             }
         }
     }
@@ -93,17 +98,17 @@ public final class GameSystem extends InitialSystem {
     private static void spawnPaddle() {
         FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).forEach(Entity::removeFromWorld);
 
-        double px = FXGL.getAppWidth() / 2.0 - 60;
+        var px = FXGL.getAppWidth() / 2.0 - 60;
         double py = FXGL.getAppHeight() - 40;
         FXGL.spawn("paddle", px, py);
     }
 
     private static void spawnBall() {
         if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
-            Entity paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+            var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
 
-            double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
-            double y = paddle.getY() - BallFactory.DEFAULT_RADIUS + 1;
+            var x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
+            var y = paddle.getY() - BallFactory.DEFAULT_RADIUS + 1;
 
             FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
             FXGL.set("ballAttached", true);

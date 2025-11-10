@@ -85,7 +85,7 @@ public final class AssetsPath {
         public static final class Bricks {
             private Bricks() {}
 
-            private static final String ROOT = Textures.ROOT + "/bricks";
+            private static final String ROOT = "bricks";
 
             public static final Map<Color, ColorAssets> COLORS;
 
@@ -162,7 +162,7 @@ public final class AssetsPath {
                                 case SHIELD -> SHIELD;
                                 case STRONG -> STRONG;
                             };
-                    return getRoot() + map.ceilingEntry(hpPercent).getValue();
+                    return getRoot() + map.floorEntry(hpPercent).getValue();
                 }
 
                 public Color color() {

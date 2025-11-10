@@ -10,5 +10,7 @@ package com.github.codestorm.bounceverse.typing.enums;
 public enum BrickType {
     NORMAL,
     STRONG,
-    SHIELD
+    SHIELD,
+    //    EXPLODING,
+    //    SPECIAL
 }

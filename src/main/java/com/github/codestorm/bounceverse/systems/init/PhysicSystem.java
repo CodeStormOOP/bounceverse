@@ -133,14 +133,14 @@ public final class PhysicSystem extends InitialSystem {
                     @Override
                     protected void onCollisionBegin(Entity ball, Entity wall) {
                         final var physics = ball.getComponent(PhysicsComponent.class);
-                        var side = wall.getString("side");
+                        Side side = wall.getObject("side");
 
                         switch (side) {
-                            case "LEFT", "RIGHT" -> physics.setLinearVelocity(
+                            case Side.LEFT, Side.RIGHT -> physics.setLinearVelocity(
                                     -physics.getVelocityX(), physics.getVelocityY());
-                            case "TOP" -> physics.setLinearVelocity(
+                            case Side.TOP -> physics.setLinearVelocity(
                                     physics.getVelocityX(), -physics.getVelocityY());
-                            case "BOTTOM" -> {
+                            case Side.BOTTOM -> {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.BALL)
                                         .forEach(Entity::removeFromWorld);
@@ -193,9 +193,9 @@ public final class PhysicSystem extends InitialSystem {
 
                         final var eps = 0.5;
                         switch (side) {
-                            case "LEFT" -> ball.translateX(eps);
-                            case "RIGHT" -> ball.translateX(-eps);
-                            case "TOP" -> ball.translateY(eps);
+                            case Side.LEFT -> ball.translateX(eps);
+                            case Side.RIGHT -> ball.translateX(-eps);
+                            case Side.TOP -> ball.translateY(eps);
                         }
                     }
                 });
