@@ -7,8 +7,9 @@ import com.almasb.fxgl.core.math.Vec2;
  *
  * <h1>#{@link DirectionUnit}</h1>
  *
- * Vector đơn vị đại diện cho hướng di chuyển.
+ * Vector đơn vị đại diện cho <b>hướng di chuyển</b>.
  *
+ * @apiNote Tránh nhầm lẫn với {@link javafx.geometry.Side}
  * @see Vec2
  */
 public enum DirectionUnit {

@@ -3,7 +3,7 @@ package com.github.codestorm.bounceverse.components.properties.powerup;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.CoreComponent;
-import com.github.codestorm.bounceverse.components.properties.Property;
+import com.github.codestorm.bounceverse.components.Property;
 import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import com.google.common.collect.MutableClassToInstanceMap;

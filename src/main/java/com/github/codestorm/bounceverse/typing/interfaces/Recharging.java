@@ -28,6 +28,7 @@ public interface Recharging extends Executable {
      * @deprecated Viết logic lên {@link #executeLogic(List)} thay vì method này.
      * @param data Dữ liệu truyền vào
      */
+    @Deprecated
     @Override
     default void execute(List<Object> data) {
         if (!getCooldown().getCurrent().isExpired()) {

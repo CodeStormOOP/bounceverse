@@ -2,6 +2,7 @@ package com.github.codestorm.bounceverse.components.behaviors;
 
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
+import com.github.codestorm.bounceverse.components.Behavior;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 
 import java.util.List;

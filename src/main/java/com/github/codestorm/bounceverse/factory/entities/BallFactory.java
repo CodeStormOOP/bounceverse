@@ -9,6 +9,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.Utilities;
+import com.github.codestorm.bounceverse.components.behaviors.Attachment;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
@@ -34,37 +35,42 @@ import javafx.scene.shape.Circle;
  * @author minngoc1213
  */
 public final class BallFactory extends EntityFactory {
-    public static final double DEFAULT_RADIUS = 10;
     public static final Point2D DEFAULT_POS = new Point2D(400, 500);
+    public static final double DEFAULT_RADIUS = 10;
     public static final Color DEFAULT_COLOR = Color.RED;
 
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
+        final boolean attached = Utilities.Typing.getOr(data, "attached", false);
+
         var physics = new PhysicsComponent();
 
         var fixture = new FixtureDef();
         fixture.setDensity(1.0f);
-        fixture.setFriction(0f);
-        fixture.setRestitution(1f);
+        fixture.setFriction(0.0f);
+        fixture.setRestitution(1.0f);
 
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.DYNAMIC);
 
-        // set ball doesn't rotate
         physics.setOnPhysicsInitialized(
                 () -> {
-                    physics.setLinearVelocity(200, 200);
-                    physics.setAngularVelocity(0);
+                    physics.getBody().setGravityScale(0f);
                     physics.getBody().setFixedRotation(true);
                     physics.getBody().setLinearDamping(0f);
                     physics.getBody().setAngularDamping(0f);
+
+                    if (attached) {
+                        physics.setLinearVelocity(Point2D.ZERO);
+                    } else {
+                        physics.setLinearVelocity(200, -200);
+                    }
                 });
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.BALL)
                 .collidable()
-                .anchorFromCenter()
-                .with(physics);
+                .with(physics, new Attack(), new Attachment());
     }
 
     @Spawns("ball")
@@ -74,7 +80,6 @@ public final class BallFactory extends EntityFactory {
         final var color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
 
         final var bbox = new Circle(radius, color);
-
-        return getBuilder(data).at(pos).viewWithBBox(bbox).with(new Attack()).buildAndAttach();
+        return getBuilder(data).at(pos).viewWithBBox(bbox).buildAndAttach();
     }
 }

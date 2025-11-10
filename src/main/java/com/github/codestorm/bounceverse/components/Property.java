@@ -1,8 +1,6 @@
-package com.github.codestorm.bounceverse.components.properties;
+package com.github.codestorm.bounceverse.components;
 
 import com.almasb.fxgl.entity.Entity;
-import com.github.codestorm.bounceverse.components.Component;
-import com.github.codestorm.bounceverse.components.behaviors.Behavior;
 
 /**
  *
@@ -16,4 +14,4 @@ import com.github.codestorm.bounceverse.components.behaviors.Behavior;
  *
  * @see Behavior
  */
-public abstract class Property extends Component {}
+public abstract non-sealed class Property extends Component {}

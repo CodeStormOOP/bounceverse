@@ -2,6 +2,8 @@ package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.github.codestorm.bounceverse.components.behaviors.Attachment;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
@@ -21,8 +23,11 @@ public final class InputSystem extends InitialSystem {
         return InputSystem.Holder.INSTANCE;
     }
 
+    public static final double NORMAL_SPEED = 10.0;
+
     @Override
     public void apply() {
+        // --- Paddle - Move Left ---
         FXGL.getInput()
                 .addAction(
                         new UserAction("Move Left") {
@@ -31,15 +36,17 @@ public final class InputSystem extends InitialSystem {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.PADDLE)
                                         .forEach(
-                                                e ->
-                                                        e.translate(
-                                                                DirectionUnit.LEFT
-                                                                        .getVector()
-                                                                        .mul(10)));
+                                                paddle -> {
+                                                    paddle.translate(
+                                                            DirectionUnit.LEFT
+                                                                    .getVector()
+                                                                    .mul(NORMAL_SPEED));
+                                                });
                             }
                         },
                         KeyCode.LEFT);
 
+        // --- Paddle - Move Right ---
         FXGL.getInput()
                 .addAction(
                         new UserAction("Move Right") {
@@ -48,19 +55,76 @@ public final class InputSystem extends InitialSystem {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.PADDLE)
                                         .forEach(
-                                                e ->
-                                                        e.translate(
-                                                                DirectionUnit.RIGHT
-                                                                        .getVector()
-                                                                        .mul(10)));
+                                                paddle -> {
+                                                    paddle.translate(
+                                                            DirectionUnit.RIGHT
+                                                                    .getVector()
+                                                                    .mul(NORMAL_SPEED));
+                                                });
                             }
                         },
                         KeyCode.RIGHT);
+
+        // --- Ball - Launch ---
+        FXGL.getInput()
+                .addAction(
+                        new UserAction("Launch Ball") {
+                            @Override
+                            protected void onActionBegin() {
+                                FXGL.getGameWorld()
+                                        .getEntitiesByType(EntityType.BALL)
+                                        .forEach(
+                                                ball -> {
+                                                    var attachment =
+                                                            ball.getComponentOptional(
+                                                                    Attachment.class);
+                                                    attachment.ifPresent(
+                                                            a -> {
+                                                                if (a.isAttached()) {
+                                                                    a.releaseBall();
+                                                                }
+                                                            });
+                                                });
+                            }
+                        },
+                        KeyCode.SPACE);
+
+        // --- Keep Ball Attached to Paddle ---
+        FXGL.getGameTimer()
+                .runAtInterval(
+                        () -> {
+                            if (FXGL.getb("ballAttached")) {
+                                var paddleOpt =
+                                        FXGL.getGameWorld().getSingletonOptional(EntityType.PADDLE);
+                                var ballOpt =
+                                        FXGL.getGameWorld().getSingletonOptional(EntityType.BALL);
+
+                                if (paddleOpt.isPresent() && ballOpt.isPresent()) {
+                                    var paddle = paddleOpt.get();
+                                    var ball = ballOpt.get();
+
+                                    var paddleBBox = paddle.getBoundingBoxComponent();
+                                    var ballBBox = ball.getBoundingBoxComponent();
+
+                                    double x =
+                                            paddleBBox.getCenterWorld().getX()
+                                                    - ballBBox.getWidth() / 2;
+                                    double y = paddleBBox.getMinYWorld() - ballBBox.getHeight() - 4;
+
+                                    ball.setPosition(x, y);
+
+                                    var physics = ball.getComponent(PhysicsComponent.class);
+                                    physics.setLinearVelocity(0, 0);
+                                    physics.getBody().setAwake(false);
+                                }
+                            }
+                        },
+                        javafx.util.Duration.millis(16));
     }
 
     /**
-     * Lazy-loaded singleton holder. <br>
-     * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Lazy-loaded singleton holder. <a
+     * href="https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {
