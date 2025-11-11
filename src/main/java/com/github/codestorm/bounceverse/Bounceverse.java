@@ -9,6 +9,7 @@ import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsMan
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 /**
@@ -49,6 +50,11 @@ public final class Bounceverse extends GameApplication {
     @Override
     protected void onPreInit() {
         AppEventSystem.getInstance().apply();
+    }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        GameSystem.Variables.loadDefault(vars);
     }
 
     @Override

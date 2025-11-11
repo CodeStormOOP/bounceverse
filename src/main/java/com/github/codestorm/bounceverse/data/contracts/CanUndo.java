@@ -1,7 +1,5 @@
 package com.github.codestorm.bounceverse.data.contracts;
 
-import com.github.codestorm.bounceverse.components.behaviors.UndoableBehavior;
-
 /**
  *
  *

@@ -8,27 +8,32 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Attachment;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+/**
+ * Factory tạo bóng trong trò chơi.
+ * Hỗ trợ spawn bóng gắn (attached) hoặc tự do (free).
+ */
 public final class BallFactory extends EntityFactory {
 
-    public static final int DEFAULT_RADIUS = 10;
+    public static final double DEFAULT_RADIUS = 10;
     public static final Color DEFAULT_COLOR = Color.RED;
 
-    private Entity buildBall(SpawnData data, boolean attached) {
-        var physics = new PhysicsComponent();
+    @Override
+    protected EntityBuilder getBuilder(SpawnData data) {
+        final boolean attached = Utilities.Typing.getOr(data, "attached", false);
 
+        var physics = new PhysicsComponent();
         var fixture = new FixtureDef();
         fixture.setDensity(1.0f);
         fixture.setFriction(0.0f);
         fixture.setRestitution(1.0f);
-
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.DYNAMIC);
 
@@ -45,10 +50,8 @@ public final class BallFactory extends EntityFactory {
             }
         });
 
-        // ✅ Tùy theo "attached", quyết định có thêm Attachment hay không
         var builder = FXGL.entityBuilder(data)
                 .type(EntityType.BALL)
-                .at(data.getX(), data.getY())
                 .viewWithBBox(new Circle(DEFAULT_RADIUS, DEFAULT_COLOR))
                 .collidable()
                 .with(physics, new Attack());
@@ -57,34 +60,26 @@ public final class BallFactory extends EntityFactory {
             builder.with(new Attachment());
         }
 
-        return builder.buildAndAttach();
+        return builder;
     }
 
     @Spawns("ball")
     public Entity spawnBall(SpawnData data) {
-        boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
+        final boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
 
-        double spawnX = data.hasKey("x") ? data.get("x") : Double.NaN;
-        double spawnY = data.hasKey("y") ? data.get("y") : Double.NaN;
+        double x = data.hasKey("x") ? data.get("x") : 0;
+        double y = data.hasKey("y") ? data.get("y") : 0;
 
-        if (Double.isNaN(spawnX) || Double.isNaN(spawnY)) {
-            var paddle = FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).stream().findFirst();
-            if (paddle.isPresent()) {
-                var pos = paddle.get().getCenter();
-                spawnX = pos.getX();
-                spawnY = pos.getY();
-            } else {
-                spawnX = 0;
-                spawnY = 0;
+        if (x == 0 && y == 0) {
+            var paddleOpt = FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).stream().findFirst();
+            if (paddleOpt.isPresent()) {
+                var paddle = paddleOpt.get();
+                x = paddle.getCenter().getX() - DEFAULT_RADIUS;
+                y = paddle.getY() - DEFAULT_RADIUS * 2;
             }
         }
 
-        System.out.println("[BallFactory] Spawn ball at (" + spawnX + ", " + spawnY + "), attached=" + attached);
-        return buildBall(new SpawnData(spawnX, spawnY).put("attached", attached), attached);
-    }
-
-    @Override
-    protected EntityBuilder getBuilder(SpawnData data) {
-        throw new UnsupportedOperationException("Unimplemented method 'getBuilder'");
+        System.out.println("[BallFactory] Spawn ball at (" + x + ", " + y + "), attached=" + attached);
+        return getBuilder(new SpawnData(x, y).put("attached", attached)).buildAndAttach();
     }
 }

@@ -1,6 +1,6 @@
 package com.github.codestorm.bounceverse.typing.records;
 
-import com.github.codestorm.bounceverse.typing.interfaces.Score;
+import com.github.codestorm.bounceverse.typing.interfaces.ScoreLike;
 
 import java.time.Instant;
 
@@ -15,4 +15,5 @@ import java.time.Instant;
  * @param score Số điểm
  * @param timestamp Thời điểm ghi điểm
  */
-public record BlitzScore(String name, long score, Instant timestamp) implements Score<BlitzScore> {}
+public record BlitzScore(String name, long score, Instant timestamp)
+        implements ScoreLike<BlitzScore> {}

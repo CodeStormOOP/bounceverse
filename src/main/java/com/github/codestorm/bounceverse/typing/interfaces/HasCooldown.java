@@ -7,13 +7,13 @@ import java.util.List;
 /**
  *
  *
- * <h1>%{@link Recharging}</h1>
+ * <h1>%{@link HasCooldown}</h1>
  *
  * {@link Executable} nhưng bị giới hạn hồi chiêu ({@link Cooldown})
  *
  * @see Cooldown
  */
-public interface Recharging extends Executable {
+public interface HasCooldown extends Executable {
     Cooldown getCooldown();
 
     /**
@@ -28,6 +28,7 @@ public interface Recharging extends Executable {
      * @deprecated Viết logic lên {@link #executeLogic(List)} thay vì method này.
      * @param data Dữ liệu truyền vào
      */
+    @Deprecated
     @Override
     default void execute(List<Object> data) {
         if (!getCooldown().getCurrent().isExpired()) {

@@ -1,14 +1,14 @@
 package com.github.codestorm.bounceverse.typing.enums;
 
 import com.almasb.fxgl.core.math.Vec2;
+import javafx.geometry.Side;
 
 /**
+ * <h1>{@link DirectionUnit}</h1>
  *
+ * Vector đơn vị đại diện cho <b>hướng di chuyển</b>.
  *
- * <h1>#{@link DirectionUnit}</h1>
- *
- * Vector đơn vị đại diện cho hướng di chuyển.
- *
+ * @apiNote Tránh nhầm lẫn với {@link javafx.geometry.Side}
  * @see Vec2
  */
 public enum DirectionUnit {
@@ -26,10 +26,27 @@ public enum DirectionUnit {
 
     /**
      * Lấy vector {@link Vec2} tương ứng.
-     *
-     * @return Vector
      */
     public Vec2 getVector() {
         return vector;
+    }
+
+    /**
+     * Chuyển hướng logic (DirectionUnit) sang hướng hình học (Side). Dùng trong
+     * PhysicSystem để kiểm tra va chạm với Shield.
+     */
+    public Side toSide() {
+        return switch (this) {
+            case UP ->
+                Side.TOP;
+            case DOWN ->
+                Side.BOTTOM;
+            case LEFT ->
+                Side.LEFT;
+            case RIGHT ->
+                Side.RIGHT;
+            case STAND ->
+                null;
+        };
     }
 }

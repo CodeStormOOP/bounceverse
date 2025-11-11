@@ -1,6 +1,7 @@
 package com.github.codestorm.bounceverse.components.properties;
 
 import com.almasb.fxgl.entity.Entity;
+import com.github.codestorm.bounceverse.components.Property;
 
 import javafx.geometry.Side;
 
@@ -14,7 +15,7 @@ import java.util.EnumSet;
  *
  * Khiên bảo vệ {@link Entity}. Khiên có thể bảo vệ một hoặc nhiều phía khỏi bị tấn công.
  */
-public class Shield extends Property {
+public final class Shield extends Property {
     private EnumSet<Side> sides = EnumSet.noneOf(Side.class);
 
     /**

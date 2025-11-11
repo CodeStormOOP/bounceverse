@@ -14,7 +14,8 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
  *
  * @see com.almasb.fxgl.entity.component.Component
  */
-public abstract class Component extends com.almasb.fxgl.entity.component.Component {
+public abstract sealed class Component extends com.almasb.fxgl.entity.component.Component
+        permits Behavior, Property {
     @Override
     public void onAdded() {
         Utilities.Compatibility.throwIfNotCompatible((EntityType) entity.getType(), this);

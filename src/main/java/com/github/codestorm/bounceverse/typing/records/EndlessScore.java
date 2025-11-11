@@ -1,6 +1,6 @@
 package com.github.codestorm.bounceverse.typing.records;
 
-import com.github.codestorm.bounceverse.typing.interfaces.Score;
+import com.github.codestorm.bounceverse.typing.interfaces.ScoreLike;
 
 import java.time.Instant;
 
@@ -17,4 +17,4 @@ import java.time.Instant;
  * @param timestamp Thời điểm ghi điểm
  */
 public record EndlessScore(String name, long score, int level, Instant timestamp)
-        implements Score<EndlessScore> {}
+        implements ScoreLike<EndlessScore> {}

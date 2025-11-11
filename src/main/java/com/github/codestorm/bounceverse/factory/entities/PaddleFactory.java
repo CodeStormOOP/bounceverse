@@ -5,25 +5,24 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
- *
- *
  * <h1>{@link PaddleFactory}</h1>
- *
  * Factory để tạo các entity loại {@link EntityType#PADDLE} trong trò chơi.
  *
  * @see EntityFactory
  */
 public final class PaddleFactory extends EntityFactory {
+
     private static final double DEFAULT_WIDTH = 150;
     private static final double DEFAULT_HEIGHT = 20;
     private static final double DEFAULT_ARC_WIDTH = 14;
@@ -33,7 +32,9 @@ public final class PaddleFactory extends EntityFactory {
 
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
-        return FXGL.entityBuilder(data).type(EntityType.PADDLE).collidable();
+        return FXGL.entityBuilder(data)
+                .type(EntityType.PADDLE)
+                .collidable();
     }
 
     @Spawns("paddle")
@@ -48,12 +49,15 @@ public final class PaddleFactory extends EntityFactory {
         view.setArcWidth(arcWidth);
         view.setArcHeight(arcHeight);
 
+        // ⚙️ Physics cho Paddle
+        var physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.KINEMATIC);
+
         return getBuilder(data)
                 .viewWithBBox(view)
-                .collidable()
+                .with(physics)
                 .with(new PaddleShooting(DEFAULT_SHOOT_COOLDOWN))
                 .with(new PaddleSizeManager())
                 .build();
-        // TODO: Thêm Dashing
     }
 }

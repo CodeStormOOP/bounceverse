@@ -7,83 +7,72 @@ import com.github.codestorm.bounceverse.components.behaviors.Attachment;
 import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
 /**
- * <h1>{@link InputSystem}</h1>
- *
- * {@link InitialSystem} quản lý Input trong game. <br>
- *
- * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
+ * Quản lý Input cho game.
  */
 public final class InputSystem extends InitialSystem {
+
+    private static final double MOVE_SPEED = 10.0;
+    private static final double WALL_THICKNESS = WallFactory.DEFAULT_THICKNESS;
+
     public static InputSystem getInstance() {
-        return InputSystem.Holder.INSTANCE;
+        return Holder.INSTANCE;
     }
 
     @Override
     public void apply() {
-
-        final double MOVE_SPEED = 10.0;
-        final double WALL_THICKNESS = WallFactory.DEFAULT_THICKNESS;
-
         // --- Paddle Move Left ---
         FXGL.getInput().addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                FXGL.getGameWorld()
-                        .getEntitiesByType(EntityType.PADDLE)
-                        .forEach(paddle -> {
-                            // Di chuyển sang trái
-                            paddle.translate(DirectionUnit.LEFT.getVector().mul(MOVE_SPEED));
+                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
+                        .forEach(paddle -> paddle.getComponentOptional(PhysicsComponent.class)
+                        .ifPresent(phys -> phys.setLinearVelocity(-MOVE_SPEED * 20, 0)));
+            }
 
-                            // Giới hạn biên trái
-                            double minX = WALL_THICKNESS;
-                            if (paddle.getX() < minX) {
-                                paddle.setX(minX);
-                            }
-                        });
+            @Override
+            protected void onActionEnd() {
+                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
+                        .forEach(paddle -> paddle.getComponentOptional(PhysicsComponent.class)
+                        .ifPresent(phys -> phys.setLinearVelocity(0, 0)));
             }
         }, KeyCode.LEFT);
 
-        // --- Paddle Move Right ---
+// --- Paddle Move Right ---
         FXGL.getInput().addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                FXGL.getGameWorld()
-                        .getEntitiesByType(EntityType.PADDLE)
-                        .forEach(paddle -> {
-                            // Di chuyển sang phải
-                            paddle.translate(DirectionUnit.RIGHT.getVector().mul(MOVE_SPEED));
+                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
+                        .forEach(paddle -> paddle.getComponentOptional(PhysicsComponent.class)
+                        .ifPresent(phys -> phys.setLinearVelocity(MOVE_SPEED * 20, 0)));
+            }
 
-                            // Giới hạn biên phải
-                            double maxX = FXGL.getAppWidth() - paddle.getWidth() - WALL_THICKNESS;
-                            if (paddle.getX() > maxX) {
-                                paddle.setX(maxX);
-                            }
-                        });
+            @Override
+            protected void onActionEnd() {
+                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
+                        .forEach(paddle -> paddle.getComponentOptional(PhysicsComponent.class)
+                        .ifPresent(phys -> phys.setLinearVelocity(0, 0)));
             }
         }, KeyCode.RIGHT);
 
-        // --- Launch Ball ---
+        // Launch Ball
         FXGL.getInput().addAction(new UserAction("Launch Ball") {
             @Override
             protected void onActionBegin() {
-                FXGL.getGameWorld()
-                        .getEntitiesByType(EntityType.BALL)
-                        .forEach(ball -> {
-                            var attachment = ball.getComponentOptional(Attachment.class);
-                            attachment.ifPresent(a -> {
-                                if (a.isAttached()) {
-                                    a.releaseBall();
-                                }
-                            });
-                        });
+                FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).forEach(ball
+                        -> ball.getComponentOptional(Attachment.class).ifPresent(a -> {
+                            if (a.isAttached()) {
+                                a.releaseBall();
+                            }
+                        })
+                );
             }
         }, KeyCode.SPACE);
 
-        // --- Keep Ball Attached to Paddle ---
+        // Keep ball attached to paddle
         FXGL.getGameTimer().runAtInterval(() -> {
             if (FXGL.getb("ballAttached")) {
                 var paddleOpt = FXGL.getGameWorld().getSingletonOptional(EntityType.PADDLE);
@@ -100,22 +89,17 @@ public final class InputSystem extends InitialSystem {
                     double y = paddleBBox.getMinYWorld() - ballBBox.getHeight() - 4;
 
                     ball.setPosition(x, y);
-
-                    var physics = ball.getComponent(PhysicsComponent.class);
-                    physics.setLinearVelocity(0, 0);
-                    physics.getBody().setAwake(false);
+                    ball.getComponentOptional(PhysicsComponent.class).ifPresent(phys -> {
+                        phys.setLinearVelocity(0, 0);
+                        phys.getBody().setAwake(false);
+                    });
                 }
             }
         }, javafx.util.Duration.millis(16));
     }
 
-    /**
-     * Lazy-loaded singleton holder.
-     * <a href=
-     * "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
-     * Initialization-on-demand holder idiom</a>.
-     */
     private static final class Holder {
+
         static final InputSystem INSTANCE = new InputSystem();
     }
 }

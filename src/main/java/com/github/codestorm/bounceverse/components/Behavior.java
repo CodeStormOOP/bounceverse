@@ -1,8 +1,6 @@
-package com.github.codestorm.bounceverse.components.behaviors;
+package com.github.codestorm.bounceverse.components;
 
 import com.almasb.fxgl.entity.Entity;
-import com.github.codestorm.bounceverse.components.Component;
-import com.github.codestorm.bounceverse.components.properties.Property;
 import com.github.codestorm.bounceverse.typing.interfaces.Executable;
 
 /**
@@ -17,4 +15,4 @@ import com.github.codestorm.bounceverse.typing.interfaces.Executable;
  *
  * @see Property
  */
-public abstract class Behavior extends Component implements Executable {}
+public abstract non-sealed class Behavior extends Component implements Executable {}

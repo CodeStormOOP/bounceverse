@@ -1,23 +1,49 @@
 package com.github.codestorm.bounceverse.systems.init;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.SpawnData;
 import com.github.codestorm.bounceverse.core.BackgroundColorManager;
-import com.github.codestorm.bounceverse.factory.entities.BallFactory;
-import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
-import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
-import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
-import com.github.codestorm.bounceverse.factory.entities.PowerUpFactory;
-import com.github.codestorm.bounceverse.factory.entities.WallFactory;
+import com.github.codestorm.bounceverse.factory.entities.*;
+import com.github.codestorm.bounceverse.typing.enums.BrickType;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+
+/**
+ * Quản lý việc spawn các hệ thống chính của game.
+ */
 public final class GameSystem extends InitialSystem {
-    private GameSystem() {}
+
+    private GameSystem() {
+    }
 
     public static GameSystem getInstance() {
-        return GameSystem.Holder.INSTANCE;
+        return Holder.INSTANCE;
+    }
+
+    /**
+     * Biến toàn cục của game.
+     */
+    public static final class Variables {
+
+        private Variables() {
+        }
+
+        public static final int MAX_LIVES = 5;
+        public static final int DEFAULT_LIVES = 3;
+        public static final long DEFAULT_SCORE = 0L;
+
+        public static void loadDefault(Map<String, Object> vars) {
+            var health = new HealthIntComponent(MAX_LIVES);
+            health.setValue(DEFAULT_LIVES);
+            vars.clear();
+            vars.put("lives", health);
+            vars.put("score", DEFAULT_SCORE);
+        }
     }
 
     private static void addFactory(@NotNull EntityFactory... factories) {
@@ -33,22 +59,71 @@ public final class GameSystem extends InitialSystem {
         FXGL.spawn("wallRight");
     }
 
-    private static void spawnBrick() {
-        for (var y = 1; y <= 6; y++) {
-            for (var x = 1; x <= 10; x++) {
-                FXGL.spawn("normalBrick", 85 * x, 35 * y);
+    /**
+     * Spawn ngẫu nhiên các loại Brick với màu khác nhau.
+     */
+    private void spawnBricks() {
+        final int rows = 6;
+        final int cols = 10;
+        final double startX = 50;
+        final double startY = 50;
+        final double gap = 4;
+        final double brickWidth = 80;
+        final double brickHeight = 30;
+
+        // 🎨 Danh sách màu khả dụng
+        String[] colorKeys = {"blue", "green", "orange", "pink", "red", "yellow"};
+
+        // 🔢 Danh sách loại Brick
+        var types = BrickType.values();
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                double x = startX + col * (brickWidth + gap);
+                double y = startY + row * (brickHeight + gap);
+
+                // 🎲 Random loại Brick và màu
+                BrickType randomType = types[FXGL.random(0, types.length - 1)];
+                String randomColorKey = colorKeys[FXGL.random(0, colorKeys.length - 1)];
+
+                // 🔹 Spawn Brick tương ứng
+                FXGL.spawn(
+                        switch (randomType) {
+                    case STRONG ->
+                        "strongBrick";
+                    case SHIELD ->
+                        "shieldBrick";
+                    case EXPLODING ->
+                        "explodingBrick";
+                    case SPECIAL ->
+                        "specialBrick";
+                    default ->
+                        "normalBrick";
+                },
+                        new SpawnData(x, y)
+                                .put("color", randomColorKey)
+                                .put("width", brickWidth)
+                                .put("height", brickHeight)
+                );
             }
         }
     }
 
     private static void spawnPaddle() {
-        var px = FXGL.getAppWidth() / 2.0 - 60;
+        FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).forEach(Entity::removeFromWorld);
+        double px = FXGL.getAppWidth() / 2.0 - 60;
         double py = FXGL.getAppHeight() - 40;
         FXGL.spawn("paddle", px, py);
     }
 
     private static void spawnBall() {
-        FXGL.spawn("ball");
+        if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
+            var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+            double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
+            double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
+            FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
+            FXGL.set("ballAttached", true);
+        }
     }
 
     @Override
@@ -59,78 +134,17 @@ public final class GameSystem extends InitialSystem {
                 new BulletFactory(),
                 new PaddleFactory(),
                 new BallFactory(),
-                new PowerUpFactory());
+                new PowerUpFactory()
+        );
 
         spawnWalls();
-
-        // Brick
-        int rows = 6;
-        int cols = 10;
-        double startX = 85;
-        double startY = 50;
-        double brickWidth = 80;
-        double brickHeight = 30;
-        double spacingX = 5;
-        double spacingY = 5;
-
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
-                double posX = startX + x * (brickWidth + spacingX);
-                double posY = startY + y * (brickHeight + spacingY);
-
-                // Xác định loại brick theo hàng (bạn có thể chỉnh lại tuỳ ý)
-                String type;
-                switch (y) {
-                    case 0 ->
-                        type = "shieldBrick"; // Hàng đầu có khiên
-                    case 1 ->
-                        type = "explodingBrick"; // Hàng thứ 2 nổ
-                    case 2 ->
-                        type = "specialBrick"; // Hàng thứ 3 rơi power-up
-                    case 3 ->
-                        type = "strongBrick"; // Hàng thứ 4 trâu
-                    default ->
-                        type = "normalBrick"; // Còn lại là thường
-                }
-
-                FXGL.spawn(type, posX, posY);
-            }
-        }
-
-        int totalBricks = FXGL.getGameWorld()
-                .getEntitiesByType(EntityType.BRICK)
-                .size();
-        BackgroundColorManager.init(totalBricks);
-
-        // Paddle
-        FXGL.getGameWorld()
-                .getEntitiesByType(EntityType.PADDLE)
-                .forEach(Entity::removeFromWorld);
-
-        double px = FXGL.getAppWidth() / 2.0 - 60;
-        double py = FXGL.getAppHeight() - 40;
-        FXGL.spawn("paddle", px, py);
-
-        // Ball
-        if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
-            Entity paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-
-            double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
-            double y = paddle.getY() - BallFactory.DEFAULT_RADIUS + 1;
-
-            FXGL.spawn("ball", new com.almasb.fxgl.entity.SpawnData(x, y).put("attached", true));
-            FXGL.set("ballAttached", true);
-        }
-
+        spawnBricks();
+        BackgroundColorManager.init(
+                FXGL.getGameWorld().getEntitiesByType(EntityType.BRICK).size());
+        spawnPaddle();
+        spawnBall();
     }
 
-    /**
-     * Lazy-loaded singleton holder. <br>
-     * Follow
-     * <a href=
-     * "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
-     * Initialization-on-demand holder idiom</a>.
-     */
     private static final class Holder {
 
         static final GameSystem INSTANCE = new GameSystem();

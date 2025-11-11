@@ -9,6 +9,9 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.geometry.Point2D;
 
+/**
+ * Gắn bóng vào paddle và điều khiển khi người chơi chưa bắn ra.
+ */
 public class Attachment extends Component {
 
     private Entity paddle;
@@ -45,13 +48,11 @@ public class Attachment extends Component {
 
             if (move) {
                 currentOffset += direction * moveSpeed * tpf;
-
                 if (Math.abs(currentOffset) > maxOffset) {
                     direction *= -1;
                 }
             }
 
-            // tính vị trí mới
             double x = paddleCenterX - entity.getWidth() / 2 + currentOffset + 10;
             double y = paddleTopY - BallFactory.DEFAULT_RADIUS * 2 + 5;
 
@@ -61,9 +62,7 @@ public class Attachment extends Component {
     }
 
     public void releaseBall() {
-        if (!attached) {
-            return;
-        }
+        if (!attached) return;
 
         attached = false;
         physics.overwritePosition(entity.getPosition());
@@ -71,18 +70,15 @@ public class Attachment extends Component {
 
         double ballCenterX = entity.getCenter().getX();
         double paddleCenterX = paddle.getCenter().getX();
-
         double dir = (ballCenterX >= paddleCenterX) ? 1 : -1;
 
-        double angle = Math.toRadians(45);   
-        double speed = 350;                 
+        double angle = Math.toRadians(45);
+        double speed = 350;
 
-        // Tính vận tốc thành phần
         double vx = speed * Math.sin(angle) * dir;
         double vy = -speed * Math.cos(angle);
 
         physics.setLinearVelocity(new Point2D(vx, vy));
-
         move = false;
     }
 

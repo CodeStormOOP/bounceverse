@@ -1,44 +1,29 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
-import java.util.List;
-import java.util.Random;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import com.github.codestorm.bounceverse.AssetsPath;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Explosion;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
 import com.github.codestorm.bounceverse.components.behaviors.Special;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.components.properties.Shield;
+import com.github.codestorm.bounceverse.typing.enums.BrickType;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
-import javafx.scene.Node;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
- *
- *
- * <h1>{@link BrickFactory}</h1>
- *
- * <br>
- * Factory để tạo các entity loại {@link EntityType#BRICK} trong trò chơi.
- *
- * @see EntityFactory
+ * Factory sinh ra các loại gạch (Brick) trong trò chơi.
  */
 public final class BrickFactory extends EntityFactory {
 
@@ -46,53 +31,31 @@ public final class BrickFactory extends EntityFactory {
     private static final int DEFAULT_HEIGHT = 30;
     private static final int DEFAULT_HP = 1;
 
-    private static final Random RANDOM = new Random();
+    @Override
+    protected EntityBuilder getBuilder(SpawnData data) {
+        int hp = ((Number) Utilities.Typing.getOr(data, "hp", DEFAULT_HP)).intValue();
+        int width = ((Number) Utilities.Typing.getOr(data, "width", DEFAULT_WIDTH)).intValue();
+        int height = ((Number) Utilities.Typing.getOr(data, "height", DEFAULT_HEIGHT)).intValue();
 
-    private static final List<String> NORMAL_TEXTURES = List.of(
-            "bricks/normalBrick/06_test11.png",
-            "bricks/normalBrick/07_test11.png",
-            "bricks/normalBrick/08_test11.png",
-            "bricks/normalBrick/09_test11.png",
-            "bricks/normalBrick/10_test11.png",
-            "bricks/normalBrick/11_test11.png");
+        // 🔹 Không dùng "pos" nữa — tự tạo từ x, y
+        Point2D pos = new Point2D(data.getX(), data.getY());
 
-    private static final List<String> STRONG_TEXTURES = List.of(
-            "bricks/strongBrick/12_test11.png");
+        String colorKey = Utilities.Typing.getOr(data, "color", "blue");
+        var colorAsset = AssetsPath.Textures.Bricks.COLORS.get(colorKey);
+        if (colorAsset == null) {
+            colorAsset = AssetsPath.Textures.Bricks.COLORS.values().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No ColorAssets available for bricks"));
+        }
 
-    private static final List<String> SHIELD_TEXTURES = List.of(
-            "bricks/shieldBrick/00_test11.png");
+        BrickType type = Utilities.Typing.getOr(data, "type", BrickType.NORMAL);
 
-    private static final List<String> EXPLODING_TEXTURES = List.of(
-            "bricks/shieldBrick/00_test11.png");
+        double hpPercent = 1.0;
+        String texturePath = colorAsset.getTexture(type, hpPercent);
 
-    private static final List<String> SPECIAL_TEXTURES = List.of(
-            "bricks/specialBrick/special_01.png");
-
-    private static Node makeView(String texturePath) {
-        ImageView view = new ImageView(FXGL.image(texturePath));
-        view.setFitWidth(DEFAULT_WIDTH);
-        view.setFitHeight(DEFAULT_HEIGHT);
-        view.setSmooth(false);
-        view.setPreserveRatio(false);
-        return view;
-    }
-
-    private static Node makeColorView(Color color) {
-        return new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, color);
-    }
-
-    /**
-     * Tạo mới một entity brick.
-     *
-     * @param pos        Vị trí
-     * @param hp         HP
-     * @param view       Khung nhìn
-     * @param components Các components thêm vào
-     * @return Entity Brick mới tạo
-     */
-    @NotNull
-    private static Entity newBrick(Point2D pos, int hp, Node view, Component... components) {
-        Utilities.Compatibility.throwIfNotCompatible(EntityType.BRICK, components);
+        var texture = FXGL.texture(texturePath);
+        texture.setFitWidth(width);
+        texture.setFitHeight(height);
 
         var physics = new PhysicsComponent();
         var fixture = new FixtureDef();
@@ -101,83 +64,65 @@ public final class BrickFactory extends EntityFactory {
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);
 
-        var builder = FXGL.entityBuilder()
+        return FXGL.entityBuilder(data)
                 .type(EntityType.BRICK)
+                .bbox(BoundingShape.box(width, height))
+                .viewWithBBox(texture)
                 .at(pos)
-                .viewWithBBox(view)
                 .collidable()
                 .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath());
-
-        if (components != null && components.length > 0)
-            builder.with(components);
-
-        return builder.build();
     }
 
     /**
-     * Tạo entity Brick bình thường.
-     *
-     * @param pos Vị trí
-     * @return Entity Brick mới tạo
+     * Gạch thường
      */
     @Spawns("normalBrick")
-    public static Entity newNormalBrick(SpawnData data) {
-        String tex = NORMAL_TEXTURES.get(RANDOM.nextInt(NORMAL_TEXTURES.size()));
-        return newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex));
+    public Entity newNormalBrick(SpawnData data) {
+        data.put("type", BrickType.NORMAL);
+        data.put("hp", (double) DEFAULT_HP);
+        return getBuilder(data).buildAndAttach();
     }
 
     /**
-     * Tạo entity Brick với nhiều hp hơn
-     *
-     * @param pos Vị trí
-     * @return Entity Brick mới tạo
+     * Gạch trâu (HP cao hơn)
      */
     @Spawns("strongBrick")
-    public static Entity newStrongBrick(SpawnData data) {
-        String tex = STRONG_TEXTURES.get(RANDOM.nextInt(STRONG_TEXTURES.size()));
-        return newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP + 2, makeView(tex));
+    public Entity newStrongBrick(SpawnData data) {
+        data.put("type", BrickType.STRONG);
+        data.put("hp", (double) (DEFAULT_HP + 2));
+        return getBuilder(data).buildAndAttach();
     }
 
     /**
-     * Tạo entity Shield Brick chỉ được phá từ trên xuống
-     *
-     * @param pos Vị trí
-     * @return Entity Brick
+     * Gạch có khiên bảo vệ 3 phía (chỉ phá từ trên xuống)
      */
-    @NotNull
     @Spawns("shieldBrick")
-    public static Entity newShieldBrick(SpawnData data) {
-        String tex = SHIELD_TEXTURES.get(RANDOM.nextInt(SHIELD_TEXTURES.size()));
-        var shield = new Shield();
-        shield.addSide(Side.LEFT, Side.RIGHT, Side.BOTTOM);
-        var brick = newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP + 1, makeView(tex));
-        brick.addComponent(shield);
-        return brick;
+    public Entity newShieldBrick(SpawnData data) {
+        data.put("type", BrickType.SHIELD);
+        data.put("hp", (double) (DEFAULT_HP + 1));
+        var shield = new Shield(Side.LEFT, Side.RIGHT, Side.BOTTOM);
+        return getBuilder(data).with(shield).buildAndAttach();
     }
 
     /**
-     * Tạo entity Exploding Brick
-     *
-     * Exploding Brick – nổ phá gạch lân cận
+     * Gạch nổ — khi bị phá sẽ kích hoạt Explosion gây sát thương lan
      */
     @Spawns("explodingBrick")
-    public static Entity newExplodingBrick(SpawnData data) {
-        String tex = EXPLODING_TEXTURES.get(RANDOM.nextInt(EXPLODING_TEXTURES.size()));
-        var explosion = new Explosion(120);
-        return newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex), explosion);
+    public Entity newExplodingBrick(SpawnData data) {
+        data.put("type", BrickType.EXPLODING);
+        data.put("hp", (double) DEFAULT_HP);
+        var explosion = new Explosion(120); // bán kính 120 px
+        return getBuilder(data).with(explosion).buildAndAttach();
     }
 
+    /**
+     * Gạch đặc biệt — rơi PowerUp khi bị phá
+     */
     @Spawns("specialBrick")
-    public static Entity newSpecialBrick(SpawnData data) {
-        String tex = SPECIAL_TEXTURES.get(RANDOM.nextInt(SPECIAL_TEXTURES.size()));
-        return newBrick(new Point2D(data.getX(), data.getY()), DEFAULT_HP, makeView(tex), new Special());
+    public Entity newSpecialBrick(SpawnData data) {
+        data.put("type", BrickType.SPECIAL);
+        data.put("hp", (double) DEFAULT_HP);
+        var special = new Special();
+        return getBuilder(data).with(special).buildAndAttach();
     }
-
-    @Override
-    protected EntityBuilder getBuilder(SpawnData data) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBuilder'");
-    }
-
-    
 }

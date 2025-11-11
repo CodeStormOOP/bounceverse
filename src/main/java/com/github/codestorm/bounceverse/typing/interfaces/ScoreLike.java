@@ -6,13 +6,13 @@ import java.time.Instant;
 /**
  *
  *
- * <h1>%{@link Score}</h1>
+ * <h1>%{@link ScoreLike}</h1>
  *
- * Điểm số trong trò chơi.
+ * Giống Điểm số trong trò chơi.
  *
  * @param <T> Loại Điểm số
  */
-public interface Score<T extends Score<T>> extends Serializable, Comparable<T> {
+public interface ScoreLike<T extends ScoreLike<T>> extends Serializable, Comparable<T> {
     long score();
 
     Instant timestamp();

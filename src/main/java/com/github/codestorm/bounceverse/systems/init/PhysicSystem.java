@@ -5,6 +5,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.github.codestorm.bounceverse.Utilities;
+import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
@@ -12,24 +14,11 @@ import com.github.codestorm.bounceverse.components.properties.powerup.types.Powe
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import javafx.geometry.Side;
 
-/**
- *
- *
- * <h1>{@link PhysicSystem}</h1>
- *
- * {@link System} quản lý Vật lý trong game. <br>
- * <i>Đây là một Singleton, cần lấy instance thông qua
- * {@link #getInstance()}</i>.
- *
- * @apiNote Đây là một Singleton, cần lấy instance thông qua
- *          {@link #getInstance()}.
- * @see InitialSystem
- */
 public final class PhysicSystem extends InitialSystem {
 
-    private PhysicSystem() {
-    }
+    private PhysicSystem() {}
 
     public static PhysicSystem getInstance() {
         return Holder.INSTANCE;
@@ -37,205 +26,118 @@ public final class PhysicSystem extends InitialSystem {
 
     @Override
     public void apply() {
-        final var physicWorld = FXGL.getPhysicsWorld();
-        physicWorld.setGravity(0, 0);
+        var world = FXGL.getPhysicsWorld();
+        world.setGravity(0, 0);
 
         // Bullet vs Brick
-        physicWorld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BRICK) {
+        world.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BRICK) {
             @Override
             protected void onCollisionBegin(Entity bullet, Entity brick) {
-                final var atk = bullet
-                        .getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class);
-                atk.ifPresent(a -> a.execute(java.util.List.of(brick)));
+                bullet.getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class)
+                        .ifPresent(a -> a.execute(java.util.List.of(brick)));
             }
         });
 
         // Ball vs Brick
-        physicWorld.addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.BRICK) {
+        world.addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.BRICK) {
             @Override
             protected void onCollisionBegin(Entity ball, Entity brick) {
-                // An toàn khi thiếu PhysicsComponent
-                final var physicsOpt = ball.getComponentOptional(PhysicsComponent.class);
-                if (physicsOpt.isEmpty()) {
+                var physics = ball.getComponent(PhysicsComponent.class);
+                var dir = Utilities.Collision.getCollisionDirection(ball, brick);
+
+                // Shield check
+                var shieldOpt = brick.getComponentOptional(Shield.class);
+                if (shieldOpt.isPresent() && shieldOpt.get().hasSide(dir.toSide())) {
+                    bounce(physics, dir);
                     return;
                 }
-                final var physics = physicsOpt.get();
 
-                // Xác định hướng va chạm
-                final var dir = com.github.codestorm.bounceverse.Utilities.Collision.getCollisionDirection(ball, brick);
-
-                // Kiểm tra shield (nếu có)
-                var shieldOpt = brick
-                        .getComponentOptional(com.github.codestorm.bounceverse.components.properties.Shield.class);
-                if (shieldOpt.isPresent()) {
-                    var shield = shieldOpt.get();
-
-                    boolean isProtected = (dir == DirectionUnit.UP && shield.hasSide(javafx.geometry.Side.TOP))
-                            || (dir == DirectionUnit.DOWN && shield.hasSide(javafx.geometry.Side.BOTTOM))
-                            || (dir == DirectionUnit.LEFT && shield.hasSide(javafx.geometry.Side.LEFT))
-                            || (dir == DirectionUnit.RIGHT && shield.hasSide(javafx.geometry.Side.RIGHT));
-
-                    if (isProtected) {
-                        // Nếu bị chắn, chỉ phản nảy mà không gây damage
-                        switch (dir) {
-                            case UP, DOWN ->
-                                physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
-                            case LEFT, RIGHT ->
-                                physics.setLinearVelocity(-physics.getVelocityX(), physics.getVelocityY());
-                            default -> {
-                            }
-                        }
-                        return;
-                    }
-                }
-
-                // Nếu không bị chắn → phản nảy + gây damage
-                switch (dir) {
-                    case UP, DOWN ->
-                        physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
-                    case LEFT, RIGHT ->
-                        physics.setLinearVelocity(-physics.getVelocityX(), physics.getVelocityY());
-                    default -> {
-                    }
-                }
-
-                // Thực thi attack (gây damage)
-                final var atkOpt = ball
-                        .getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class);
-                atkOpt.ifPresent(a -> a.execute(java.util.List.of(brick)));
+                bounce(physics, dir);
+                ball.getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class)
+                        .ifPresent(a -> a.execute(java.util.List.of(brick)));
             }
         });
 
         // Ball vs Paddle
-        physicWorld.addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.PADDLE) {
+        world.addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.PADDLE) {
             @Override
             protected void onCollisionBegin(Entity ball, Entity paddle) {
                 var physics = ball.getComponent(PhysicsComponent.class);
-
-                double paddleCenterX = paddle.getCenter().getX();
-                double ballX = ball.getCenter().getX();
-                double offset = (ballX - paddleCenterX) / (paddle.getWidth() / 2.0);
+                double offset = (ball.getCenter().getX() - paddle.getCenter().getX()) / (paddle.getWidth() / 2.0);
                 offset = Math.max(-1.0, Math.min(1.0, offset));
-
                 double angle = Math.toRadians(90 - 45 * offset);
                 double speed = 300;
-
-                double vx = speed * Math.cos(angle);
-                double vy = -speed * Math.sin(angle);
-
-                physics.setLinearVelocity(vx, vy);
+                physics.setLinearVelocity(speed * Math.cos(angle), -speed * Math.sin(angle));
             }
         });
 
         // Ball vs Wall
-        physicWorld.addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.WALL) {
+        world.addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.WALL) {
             @Override
             protected void onCollisionBegin(Entity ball, Entity wall) {
-                final var physics = ball.getComponent(PhysicsComponent.class);
-                String side = wall.getString("side");
+                var physics = ball.getComponent(PhysicsComponent.class);
+                Side side = wall.getObject("side");
 
                 switch (side) {
-                    case "LEFT", "RIGHT" ->
-                        physics.setLinearVelocity(-physics.getVelocityX(), physics.getVelocityY());
-                    case "TOP" ->
-                        physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
-                    case "BOTTOM" -> {
-                        // Xoá riêng quả bóng chạm đáy
+                    case LEFT, RIGHT -> physics.setLinearVelocity(-physics.getVelocityX(), physics.getVelocityY());
+                    case TOP -> physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
+                    case BOTTOM -> {
                         ball.removeFromWorld();
-
-                        // Nếu KHÔNG còn bóng nào trên bàn → reset game
                         FXGL.getGameTimer().runOnceAfter(() -> {
-                            var remainingBalls = FXGL.getGameWorld().getEntitiesByType(EntityType.BALL);
-
-                            if (remainingBalls.isEmpty()) {
+                            if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
                                 var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-
-                                var sizeManager = paddle.getComponentOptional(PaddleSizeManager.class);
-                                sizeManager.ifPresent(PaddleSizeManager::resetSize);
-
+                                paddle.getComponentOptional(PaddleSizeManager.class)
+                                        .ifPresent(PaddleSizeManager::resetSize);
                                 PowerUpManager.getInstance().clearAll();
 
                                 double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
                                 double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
-
                                 FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
                                 FXGL.set("ballAttached", true);
-                            } else {
-                                System.out.println("[PhysicSystem] Ball lost, remaining = " + remainingBalls.size());
                             }
                         }, javafx.util.Duration.millis(100));
                     }
-
-                    default -> {
-                        final var dir = com.github.codestorm.bounceverse.Utilities.Collision.getCollisionDirection(ball,
-                                wall);
-                        switch (dir) {
-                            case UP, DOWN ->
-                                physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
-                            case LEFT, RIGHT ->
-                                physics.setLinearVelocity(-physics.getVelocityX(), physics.getVelocityY());
-                            default -> {
-                            }
-                        }
-                    }
-                }
-
-                final double eps = 0.5;
-                switch (side) {
-                    case "LEFT" ->
-                        ball.translateX(eps);
-                    case "RIGHT" ->
-                        ball.translateX(-eps);
-                    case "TOP" ->
-                        ball.translateY(eps);
                 }
             }
         });
 
         // Paddle vs Wall
-        physicWorld.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.WALL) {
+        world.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.WALL) {
             @Override
             protected void onCollision(Entity paddle, Entity wall) {
-                String side = wall.getString("side");
-                final double eps = 0.5;
-
-                switch (side) {
-                    case "LEFT" ->
-                        paddle.setX(wall.getRightX() + eps);
-                    case "RIGHT" ->
-                        paddle.setX(wall.getX() - paddle.getWidth() - eps);
-                    default -> {
-                    }
-                }
+                Side side = wall.getObject("side");
+                if (side == Side.LEFT)
+                    paddle.setX(wall.getRightX());
+                else if (side == Side.RIGHT)
+                    paddle.setX(wall.getX() - paddle.getWidth());
             }
         });
 
         // Paddle vs PowerUp
-        physicWorld.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
+        world.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
             @Override
             protected void onCollisionBegin(Entity paddle, Entity powerUp) {
                 if (paddle.isActive() && powerUp.isActive()) {
                     powerUp.getComponentOptional(PowerUpContainer.class).ifPresent(container -> {
                         container.addTo(paddle);
-                        container.getContainer().values().forEach(comp -> {
-                            if (comp instanceof PowerUp effect) {
-                                effect.apply(paddle);
-                            }
+                        container.getContainer().values().forEach(c -> {
+                            if (c instanceof PowerUp p) p.apply(paddle);
                         });
                     });
-
                     powerUp.removeFromWorld();
                 }
             }
         });
-
     }
 
-    /**
-     * Lazy-loaded singleton holder.
-     */
-    private static final class Holder {
+    private static void bounce(PhysicsComponent phys, DirectionUnit dir) {
+        switch (dir) {
+            case UP, DOWN -> phys.setLinearVelocity(phys.getVelocityX(), -phys.getVelocityY());
+            case LEFT, RIGHT -> phys.setLinearVelocity(-phys.getVelocityX(), phys.getVelocityY());
+        }
+    }
 
+    private static final class Holder {
         static final PhysicSystem INSTANCE = new PhysicSystem();
     }
 }
