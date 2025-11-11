@@ -7,7 +7,7 @@ import com.almasb.fxgl.entity.component.Component;
  */
 public final class FallingComponent extends Component {
 
-    private static final double SPEED = 150; 
+    private static final double SPEED = 150;
 
     @Override
     public void onUpdate(double tpf) {

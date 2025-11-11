@@ -39,6 +39,8 @@ public final class BrickFactory extends EntityFactory {
     private static final Random RANDOM = new Random();
     private static final List<String> COLORS = List.of("blue", "green", "orange", "pink", "red", "yellow");
 
+    // ... (Các phương thức getBuilder, newNormalBrick, newStrongBrick,
+    // newShieldBrick giữ nguyên)
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
         int hp = ((Number) Utilities.Typing.getOr(data, "hp", DEFAULT_HP)).intValue();
@@ -47,12 +49,10 @@ public final class BrickFactory extends EntityFactory {
 
         Point2D pos = new Point2D(data.getX(), data.getY());
 
-        // 🔹 Nếu không truyền color, chọn random từ 6 màu
         String colorKey = Utilities.Typing.getOr(data, "color", COLORS.get(RANDOM.nextInt(COLORS.size())));
 
         var colorAsset = AssetsPath.Textures.Bricks.COLORS.get(colorKey);
         if (colorAsset == null) {
-            // fallback an toàn nếu không tồn tại
             colorAsset = AssetsPath.Textures.Bricks.COLORS.values().stream()
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No ColorAssets available for bricks"));
@@ -83,7 +83,6 @@ public final class BrickFactory extends EntityFactory {
                 .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath());
     }
 
-    /** Gạch thường */
     @Spawns("normalBrick")
     public Entity newNormalBrick(SpawnData data) {
         data.put("type", BrickType.NORMAL);
@@ -91,13 +90,11 @@ public final class BrickFactory extends EntityFactory {
         return getBuilder(data).buildAndAttach();
     }
 
-    /** Gạch trâu (HP cao hơn) */
     @Spawns("strongBrick")
     public Entity newStrongBrick(SpawnData data) {
         data.put("type", BrickType.STRONG);
         data.put("hp", DEFAULT_HP + 2);
 
-        // Xác định màu
         String colorKey = Utilities.Typing.getOr(data, "color", COLORS.get(RANDOM.nextInt(COLORS.size())));
         var color = switch (colorKey) {
             case "green" -> Color.GREEN;
@@ -113,7 +110,6 @@ public final class BrickFactory extends EntityFactory {
                 .buildAndAttach();
     }
 
-    /** Gạch có khiên bảo vệ 3 phía (chỉ phá từ trên xuống) */
     @Spawns("shieldBrick")
     public Entity newShieldBrick(SpawnData data) {
         data.put("type", BrickType.SHIELD);
@@ -127,24 +123,22 @@ public final class BrickFactory extends EntityFactory {
     public Entity newExplodingBrick(SpawnData data) {
         data.put("type", BrickType.EXPLODING);
         data.put("hp", (double) DEFAULT_HP);
-        var explosion = new Explosion(120);
+        double explosionWidth = DEFAULT_WIDTH * 1.5; // 80 * 1.5 = 120
+        double explosionHeight = DEFAULT_HEIGHT * 2.5; // 30 * 2.5 = 75
+
+        var explosion = new Explosion(explosionWidth, explosionHeight);
+        // ------------------------------------
+
         return getBuilder(data).with(explosion).buildAndAttach();
     }
 
-    /**
-     * Gạch khóa (Key Brick) — loại đặc biệt rơi PowerUp khi bị phá
-     */
     @Spawns("keyBrick")
     public Entity newKeyBrick(SpawnData data) {
         data.put("type", BrickType.KEY);
         data.put("hp", (double) DEFAULT_HP);
-
-        // Gắn component Special để rơi power-up khi bị phá
         var special = new Special();
-
         return getBuilder(data)
                 .with(special)
                 .buildAndAttach();
     }
-
 }

@@ -1,12 +1,14 @@
 package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.components.behaviors.Attachment;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.ReverseControlComponent;
 import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
 /**
@@ -14,59 +16,81 @@ import javafx.scene.input.KeyCode;
  */
 public final class InputSystem extends InitialSystem {
 
-    private static final double MOVE_SPEED = 20.0;
+    private static final double MOVE_SPEED = 400.0;
     private static final double WALL_THICKNESS = WallFactory.DEFAULT_THICKNESS;
 
     public static InputSystem getInstance() {
         return Holder.INSTANCE;
     }
 
+    /**
+     * Hàm di chuyển paddle tập trung, xử lý mọi logic va chạm và đảo ngược.
+     * 
+     * @param inputDirection Hướng nhận từ bàn phím (-1 cho trái, 1 cho phải).
+     */
+    private void movePaddle(double inputDirection) {
+        Entity paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+        PhysicsComponent physics = paddle.getComponent(PhysicsComponent.class);
+
+        // 1. Xác định hướng di chuyển thực sự dựa trên power-up
+        boolean isReversed = paddle.hasComponent(ReverseControlComponent.class);
+        double actualMoveDirection = isReversed ? -inputDirection : inputDirection;
+
+        // 2. Lấy các giá trị biên
+        double paddleWidth = paddle.getWidth();
+        double minX = WALL_THICKNESS;
+        double maxX = FXGL.getAppWidth() - WALL_THICKNESS - paddleWidth;
+
+        // 3. Kiểm tra va chạm dựa trên hướng di chuyển THỰC SỰ
+        if (actualMoveDirection < 0) { // Đang cố di chuyển sang TRÁI
+            if (paddle.getX() <= minX) {
+                physics.overwritePosition(new Point2D(minX, paddle.getY()));
+                physics.setVelocityX(0);
+                return;
+            }
+        } else { // Đang cố di chuyển sang PHẢI (actualMoveDirection > 0)
+            if (paddle.getX() >= maxX) {
+                physics.overwritePosition(new Point2D(maxX, paddle.getY()));
+                physics.setVelocityX(0);
+                return;
+            }
+        }
+
+        // 4. Nếu không có va chạm, đặt vận tốc
+        physics.setVelocityX(actualMoveDirection * MOVE_SPEED);
+    }
+
     @Override
     public void apply() {
 
-        // --- Paddle Move Left ---
+        // --- Các hành động giờ đây chỉ gọi hàm di chuyển tập trung ---
         FXGL.getInput().addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(paddle -> {
-                            double direction = paddle.hasComponent(ReverseControlComponent.class) ? 1 : -1;
-
-                            paddle.getComponentOptional(PhysicsComponent.class)
-                                    .ifPresent(phys -> phys.setLinearVelocity(direction * MOVE_SPEED * 20, 0));
-                        });
+                movePaddle(-1.0); // -1 đại diện cho phím trái
             }
 
             @Override
             protected void onActionEnd() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(paddle -> paddle.getComponentOptional(PhysicsComponent.class)
-                                .ifPresent(phys -> phys.setLinearVelocity(0, 0)));
+                FXGL.getGameWorld().getSingleton(EntityType.PADDLE).getComponent(PhysicsComponent.class)
+                        .setVelocityX(0);
             }
         }, KeyCode.LEFT);
 
-        // --- Paddle Move Right ---
         FXGL.getInput().addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(paddle -> {
-                            double direction = paddle.hasComponent(ReverseControlComponent.class) ? -1 : 1;
-
-                            paddle.getComponentOptional(PhysicsComponent.class)
-                                    .ifPresent(phys -> phys.setLinearVelocity(direction * MOVE_SPEED * 20, 0));
-                        });
+                movePaddle(1.0); // 1 đại diện cho phím phải
             }
 
             @Override
             protected void onActionEnd() {
-                FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE)
-                        .forEach(paddle -> paddle.getComponentOptional(PhysicsComponent.class)
-                                .ifPresent(phys -> phys.setLinearVelocity(0, 0)));
+                FXGL.getGameWorld().getSingleton(EntityType.PADDLE).getComponent(PhysicsComponent.class)
+                        .setVelocityX(0);
             }
         }, KeyCode.RIGHT);
 
-        // --- Launch Ball ---
+        // --- Logic phóng bóng (giữ nguyên) ---
         FXGL.getInput().addAction(new UserAction("Launch Ball") {
             @Override
             protected void onActionBegin() {
@@ -74,67 +98,11 @@ public final class InputSystem extends InitialSystem {
                         .forEach(ball -> ball.getComponentOptional(Attachment.class).ifPresent(a -> {
                             if (a.isAttached()) {
                                 a.releaseBall();
+                                FXGL.set("ballAttached", false);
                             }
                         }));
             }
         }, KeyCode.SPACE);
-
-        // --- Keep Ball Attached to Paddle ---
-        FXGL.getGameTimer().runAtInterval(() -> {
-            if (FXGL.getb("ballAttached")) {
-                var paddleOpt = FXGL.getGameWorld().getSingletonOptional(EntityType.PADDLE);
-                var ballOpt = FXGL.getGameWorld().getSingletonOptional(EntityType.BALL);
-
-                if (paddleOpt.isPresent() && ballOpt.isPresent()) {
-                    var paddle = paddleOpt.get();
-                    var ball = ballOpt.get();
-
-                    var paddleBBox = paddle.getBoundingBoxComponent();
-                    var ballBBox = ball.getBoundingBoxComponent();
-
-                    double x = paddleBBox.getCenterWorld().getX() - ballBBox.getWidth() / 2;
-                    double y = paddleBBox.getMinYWorld() - ballBBox.getHeight() - 4;
-
-                    ball.setPosition(x, y);
-                    ball.getComponentOptional(PhysicsComponent.class).ifPresent(phys -> {
-                        phys.setLinearVelocity(0, 0);
-                        phys.getBody().setAwake(false);
-                    });
-                }
-            }
-        }, javafx.util.Duration.millis(16));
-
-        // --- Giới hạn paddle trong biên ---
-        FXGL.getGameTimer().runAtInterval(() -> {
-            var paddleOpt = FXGL.getGameWorld().getSingletonOptional(EntityType.PADDLE);
-            if (paddleOpt.isEmpty())
-                return;
-
-            var paddle = paddleOpt.get();
-
-            // LẤY WIDTH THỰC TẾ MỖI FRAME (cập nhật sau khi expand/shrink)
-            double paddleWidth = paddle.getWidth();
-            // hoặc nếu width không đổi nhưng shape thay đổi:
-            // double paddleWidth = paddle.getBoundingBoxComponent().getWidth();
-
-            // Biên trái / phải thực tế
-            double minX = WALL_THICKNESS;
-            double maxX = FXGL.getAppWidth() - WALL_THICKNESS - paddleWidth;
-
-            double x = paddle.getX();
-
-            // Giới hạn X
-            if (x < minX) {
-                paddle.setX(minX);
-                paddle.getComponentOptional(PhysicsComponent.class)
-                        .ifPresent(phys -> phys.setLinearVelocity(0, 0));
-            } else if (x > maxX) {
-                paddle.setX(maxX);
-                paddle.getComponentOptional(PhysicsComponent.class)
-                        .ifPresent(phys -> phys.setLinearVelocity(0, 0));
-            }
-        }, javafx.util.Duration.millis(16));
-
     }
 
     private static final class Holder {

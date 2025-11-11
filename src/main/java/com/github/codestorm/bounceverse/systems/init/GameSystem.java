@@ -119,7 +119,7 @@ public final class GameSystem extends InitialSystem {
                         type = "shieldBrick";
                     }
                     // 🔑 Hàng thứ 4 (index = 3) là keyBrick để test PowerUp
-                    else if (y == 3) {
+                    else if (y == 4) {
                         type = "keyBrick";
                     }
                     // 💣 Hàng cuối (index = 5) là explodingBrick để test nổ lan

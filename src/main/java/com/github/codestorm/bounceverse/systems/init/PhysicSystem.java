@@ -54,7 +54,6 @@ public final class PhysicSystem extends InitialSystem {
                 var physics = ball.getComponent(PhysicsComponent.class);
                 var dir = Utilities.Collision.getCollisionDirection(ball, brick);
 
-                // Shield check
                 var shieldOpt = brick.getComponentOptional(Shield.class);
                 if (shieldOpt.isPresent() && shieldOpt.get().hasSide(dir.toSide())) {
                     bounce(physics, dir);
@@ -101,46 +100,47 @@ public final class PhysicSystem extends InitialSystem {
                 double eps = 0.5; // khoảng đệm nhỏ
 
                 switch (side) {
-                    case LEFT -> {
+                    case LEFT: {
                         ball.setX(wall.getRightX() + eps);
                         phys.setLinearVelocity(Math.abs(v.getX()), v.getY());
+                        break;
                     }
-                    case RIGHT -> {
+                    case RIGHT: {
                         ball.setX(wall.getX() - ball.getWidth() - eps);
                         phys.setLinearVelocity(-Math.abs(v.getX()), v.getY());
+                        break;
                     }
-                    case TOP -> {
+                    case TOP: {
                         ball.setY(wall.getBottomY() + eps);
                         phys.setLinearVelocity(v.getX(), Math.abs(v.getY()));
+                        break;
                     }
-                    case BOTTOM -> {
-                        // 🔹 Khi bóng rơi xuống: trừ mạng, remove bóng và respawn nếu còn mạng
-                        HealthIntValue lives = FXGL.getWorldProperties().getObject("lives");
-                        lives.damage(1);
-
+                    case BOTTOM: {
                         ball.removeFromWorld();
 
-                        FXGL.getGameTimer().runOnceAfter(() -> {
-                            // Nếu vẫn còn mạng → respawn bóng
-                            if (lives.getValue() > 0 && FXGL.getGameWorld()
-                                    .getEntitiesByType(EntityType.BALL).isEmpty()) {
+                        if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
+                            HealthIntValue lives = FXGL.getWorldProperties().getObject("lives");
+                            lives.damage(1);
 
-                                var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-                                paddle.getComponentOptional(PaddleSizeManager.class)
-                                        .ifPresent(PaddleSizeManager::resetSize);
+                            FXGL.getGameTimer().runOnceAfter(() -> {
+                                if (lives.getValue() > 0) {
+                                    var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+                                    paddle.getComponentOptional(PaddleSizeManager.class)
+                                            .ifPresent(PaddleSizeManager::resetSize);
 
-                                PowerUpManager.getInstance().clearAll();
+                                    PowerUpManager.getInstance().clearAll();
 
-                                double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
-                                double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
-                                FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
-                                FXGL.set("ballAttached", true);
-                            }
-                        }, javafx.util.Duration.millis(100));
+                                    double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
+                                    double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
+                                    FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
+                                    FXGL.set("ballAttached", true);
+                                }
+                            }, javafx.util.Duration.millis(100));
+                        }
+                        break;
                     }
                 }
 
-                // Clamp tốc độ để tránh bóng bị kẹt
                 var newV = phys.getLinearVelocity();
                 double speed = newV.magnitude();
                 double MIN_SPEED = 220;
@@ -153,17 +153,8 @@ public final class PhysicSystem extends InitialSystem {
             }
         });
 
-        // Paddle vs Wall
-        world.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.WALL) {
-            @Override
-            protected void onCollision(Entity paddle, Entity wall) {
-                Side side = wall.getObject("side");
-                if (side == Side.LEFT)
-                    paddle.setX(wall.getRightX());
-                else if (side == Side.RIGHT)
-                    paddle.setX(wall.getX() - paddle.getWidth());
-            }
-        });
+        // Va chạm giữa Paddle và Tường đã được GỠ BỎ để tránh xung đột.
+        // Logic này giờ được xử lý hoàn toàn trong InputSystem.
 
         // Paddle vs PowerUp
         world.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
@@ -183,12 +174,25 @@ public final class PhysicSystem extends InitialSystem {
         });
     }
 
-    /** Đảo hướng vận tốc theo hướng va chạm. */
+    /**
+     * Đảo hướng vận tốc theo hướng va chạm.
+     * 
+     * @param phys a {@link PhysicsComponent}
+     * @param dir  a {@link DirectionUnit}
+     */
     private static void bounce(PhysicsComponent phys, DirectionUnit dir) {
+        if (dir == null)
+            return;
+
         switch (dir) {
-            case UP, DOWN -> phys.setLinearVelocity(phys.getVelocityX(), -phys.getVelocityY());
-            case LEFT, RIGHT -> phys.setLinearVelocity(-phys.getVelocityX(), phys.getVelocityY());
-            default -> throw new IllegalArgumentException("Unexpected value: " + dir);
+            case UP, DOWN:
+                phys.setLinearVelocity(phys.getVelocityX(), -phys.getVelocityY());
+                break;
+            case LEFT, RIGHT:
+                phys.setLinearVelocity(-phys.getVelocityX(), phys.getVelocityY());
+                break;
+            default:
+                break;
         }
     }
 

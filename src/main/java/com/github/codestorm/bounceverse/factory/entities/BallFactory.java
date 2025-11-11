@@ -43,6 +43,9 @@ public final class BallFactory extends EntityFactory {
             physics.getBody().setLinearDamping(0f);
             physics.getBody().setAngularDamping(0f);
 
+            // Bật chế độ Continuous Collision Detection để chống "xuyên tường".
+            physics.getBody().setBullet(true);
+
             if (attached) {
                 physics.setLinearVelocity(Point2D.ZERO);
             } else {
@@ -81,14 +84,17 @@ public final class BallFactory extends EntityFactory {
                 pos = new Point2D(
                         paddle.getCenter().getX() - DEFAULT_RADIUS,
                         paddle.getY() - DEFAULT_RADIUS * 2);
+            } else {
+                // Fallback an toàn nếu không tìm thấy paddle
+                pos = new Point2D(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0);
             }
         }
 
-        // giữ nguyên SpawnData gốc để không mất thông tin pos
         data.put("attached", attached);
-        data.put("x", pos.getX());
-        data.put("y", pos.getY());
+        if (pos != null) {
+            data.put("x", pos.getX());
+            data.put("y", pos.getY());
+        }
         return getBuilder(data).buildAndAttach();
     }
-
 }

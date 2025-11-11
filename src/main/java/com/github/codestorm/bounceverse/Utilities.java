@@ -9,26 +9,21 @@ import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.geometry.Rectangle2D;
-import javafx.scene.shape.Circle;
 
 import java.io.*;
 import java.util.*;
 
 /** Utilities. */
 public final class Utilities {
-    private Utilities() {}
+    private Utilities() {
+    }
 
     /** Input/Output utilities. */
     public static final class IO {
-        private IO() {}
+        // ... (Nội dung của lớp IO giữ nguyên, không cần thay đổi)
+        private IO() {
+        }
 
-        /**
-         * Load .properties file.
-         *
-         * @param path Relative path
-         * @return Parsed properties
-         * @throws IOException if an error occurred when reading from the input stream.
-         */
         public static Properties loadProperties(String path) throws IOException {
             var fileStream = IO.class.getResourceAsStream(path);
             if (fileStream == null) {
@@ -41,24 +36,10 @@ public final class Utilities {
             return prop;
         }
 
-        /**
-         * Convert an array of key=value pairs into a hashmap. The string "key=" maps key onto "",
-         * while just "key" maps key onto null. The value may contain '=' characters, only the first
-         * "=" is a delimiter. <br>
-         * Source code from <a href="https://stackoverflow.com/a/52940215/16410937">here</a>.
-         *
-         * @param args command-line arguments in the key=value format (or just key= or key)
-         * @param defaults a map of default values, may be null. Mappings to null are not copied to
-         *     the resulting map.
-         * @param whiteList if not null, the keys not present in this map cause an exception (and
-         *     keys mapped to null are ok)
-         * @return a map that maps these keys onto the corresponding values.
-         */
         public static HashMap<String, String> parseArgs(
                 String[] args,
                 HashMap<String, String> defaults,
                 HashMap<String, String> whiteList) {
-            // HashMap allows null values
             var res = new HashMap<String, String>();
             if (defaults != null) {
                 for (var e : defaults.entrySet()) {
@@ -77,13 +58,6 @@ public final class Utilities {
             return res;
         }
 
-        /**
-         * Read text file (txt) and put all lines into {@link List}.
-         *
-         * @param path File path
-         * @return All lines in text file
-         * @throws FileNotFoundException if an I/O error occurs.
-         */
         public static List<String> readTextFile(String path) throws IOException {
             final var res = new ArrayList<String>();
             final var stream = IO.class.getResourceAsStream(path);
@@ -101,27 +75,14 @@ public final class Utilities {
     }
 
     public static final class Geometric {
-        private Geometric() {}
-
-        /**
-         * Lọc các Entity trong phạm vi Hình tròn.
-         *
-         * @param circle Hình tròn
-         * @return Các entity
-         */
-        public static List<Entity> getEntityInCircle(Circle circle) {
-            final var cx = circle.getCenterX();
-            final var cy = circle.getCenterY();
-            final var radius = circle.getRadius();
-
-            return getEntityInCircle(cx, cy, radius);
+        private Geometric() {
         }
 
         /**
          * Lọc các Entity trong phạm vi Hình tròn.
          *
-         * @param cx Tâm X
-         * @param cy Tâm Y
+         * @param cx     Tâm X
+         * @param cy     Tâm Y
          * @param radius Bán kính
          * @return Các entity
          */
@@ -130,30 +91,43 @@ public final class Utilities {
             return FXGL.getGameWorld().getEntitiesInRange(outRect).stream()
                     .filter(
                             e -> {
-                                var nearestX =
-                                        Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
-                                var nearestY =
-                                        Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
+                                var nearestX = Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
+                                var nearestY = Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
                                 var dx = cx - nearestX;
                                 var dy = cy - nearestY;
                                 return (dx * dx + dy * dy) <= radius * radius;
                             })
                     .toList();
         }
+
+        /**
+         * Lọc các Entity trong phạm vi Hình chữ nhật.
+         *
+         * @param centerX Tâm X của hình chữ nhật
+         * @param centerY Tâm Y của hình chữ nhật
+         * @param width   Chiều rộng của hình chữ nhật
+         * @param height  Chiều cao của hình chữ nhật
+         * @return Danh sách các entity nằm trong khu vực đó
+         */
+        public static List<Entity> getEntitiesInRectangle(double centerX, double centerY, double width, double height) {
+            double topLeftX = centerX - width / 2;
+            double topLeftY = centerY - height / 2;
+            Rectangle2D explosionArea = new Rectangle2D(topLeftX, topLeftY, width, height);
+            return FXGL.getGameWorld().getEntitiesInRange(explosionArea);
+        }
     }
 
+    // ... (Các lớp Collision, Compatibility, Typing giữ nguyên, không cần thay đổi)
     public static final class Collision {
-        private Collision() {}
+        private Collision() {
+        }
 
         public static DirectionUnit getCollisionDirection(Entity source, Entity target) {
             var fromBox = source.getBoundingBoxComponent();
             var toBox = target.getBoundingBoxComponent();
-
             var fCenter = fromBox.getCenterWorld();
             var tCenter = toBox.getCenterWorld();
-
             var direction = tCenter.subtract(fCenter);
-
             return Math.abs(direction.getX()) > Math.abs(direction.getY())
                     ? direction.getX() > 0 ? DirectionUnit.RIGHT : DirectionUnit.LEFT
                     : direction.getY() > 0 ? DirectionUnit.DOWN : DirectionUnit.UP;
@@ -161,22 +135,16 @@ public final class Utilities {
     }
 
     public static final class Compatibility {
-        private Compatibility() {}
+        private Compatibility() {
+        }
 
-        /**
-         * Throw {@link IllegalArgumentException} nếu như có component trong {@code params} không
-         * phù hợp với {@code entityType}.
-         *
-         * @param entityType {@link EntityType} muốn kiểm tra tương thích
-         * @param components Các component cần kiểm tra
-         */
-        public static void throwIfNotCompatible(EntityType entityType, com.almasb.fxgl.entity.component.Component... components) {
+        public static void throwIfNotCompatible(EntityType entityType,
+                com.almasb.fxgl.entity.component.Component... components) {
             for (var param : components) {
                 final var annotation = param.getClass().getAnnotation(OnlyForEntity.class);
                 if (annotation == null) {
                     continue;
                 }
-
                 final var paramEntityTypeSet = EnumSet.copyOf(Arrays.asList(annotation.value()));
                 if (!paramEntityTypeSet.contains(entityType)) {
                     throw new IllegalArgumentException(
@@ -188,13 +156,6 @@ public final class Utilities {
             }
         }
 
-        /**
-         * {@link #throwIfNotCompatible(EntityType, Component...)} nhưng không throw exception.
-         *
-         * @param entityType {@link EntityType} muốn kiểm tra tương thích
-         * @param params Các component cần kiểm tra
-         * @return {@code true} nếu tất cả tương thích, ngược lại {@code false}.
-         */
         public static boolean isCompatible(EntityType entityType, Component... params) {
             try {
                 throwIfNotCompatible(entityType, params);
@@ -206,17 +167,9 @@ public final class Utilities {
     }
 
     public static final class Typing {
-        private Typing() {}
+        private Typing() {
+        }
 
-        /**
-         * Xử lý nhanh lấy data từ {@link SpawnData}.
-         *
-         * @param data Dữ liệu cần lấy
-         * @param key Khóa cần lấy
-         * @param ifNot Nếu không có thì trả về cái này
-         * @return Giá trị
-         * @param <T> Kiểu của Giá trị
-         */
         public static <T> T getOr(SpawnData data, String key, T ifNot) {
             if (data.hasKey(key)) {
                 return data.get(key);
@@ -224,13 +177,6 @@ public final class Utilities {
             return ifNot;
         }
 
-        /**
-         * Hợp nhanh varargs sang Array.
-         *
-         * @param varargs Varargs
-         * @return Array tương ứng
-         * @param <T> Kiểu của Giá trị
-         */
         @SafeVarargs
         public static <T> T[] toArray(T... varargs) {
             return varargs;
