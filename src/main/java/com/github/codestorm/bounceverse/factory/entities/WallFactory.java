@@ -85,7 +85,7 @@ public final class WallFactory extends EntityFactory {
     /**
      * Create Top {@link EntityType#WALL}. `
      *
-     * @param data Spawn data
+     * @param data EntitySpawn data
      * @return Top wall
      */
     @Spawns("wallTop")
@@ -97,7 +97,7 @@ public final class WallFactory extends EntityFactory {
     /**
      * Create Bottom {@link EntityType#WALL}. `
      *
-     * @param data Spawn data
+     * @param data EntitySpawn data
      * @return Botton wall
      */
     @Spawns("wallBottom")
@@ -109,7 +109,7 @@ public final class WallFactory extends EntityFactory {
     /**
      * Create Left {@link EntityType#WALL}. `
      *
-     * @param data Spawn data
+     * @param data EntitySpawn data
      * @return Left wall
      */
     @Spawns("wallLeft")
@@ -121,7 +121,7 @@ public final class WallFactory extends EntityFactory {
     /**
      * Create Right {@link EntityType#WALL}. `
      *
-     * @param data Spawn data
+     * @param data EntitySpawn data
      * @return Left wall
      */
     @Spawns("wallRight")

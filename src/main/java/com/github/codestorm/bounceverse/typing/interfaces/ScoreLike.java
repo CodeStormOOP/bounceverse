@@ -13,14 +13,14 @@ import java.time.Instant;
  * @param <T> Loại Điểm số
  */
 public interface ScoreLike<T extends ScoreLike<T>> extends Serializable, Comparable<T> {
-    long score();
+    int score();
 
     Instant timestamp();
 
     @Override
     default int compareTo(T o) {
         if (score() != o.score()) {
-            return Long.compare(score(), o.score());
+            return Integer.compare(score(), o.score());
         }
         return -timestamp().compareTo(o.timestamp());
     }

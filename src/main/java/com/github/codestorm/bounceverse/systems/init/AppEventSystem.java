@@ -1,6 +1,7 @@
 package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.systems.manager.metrics.LeaderboardManager;
 import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 
@@ -21,7 +22,11 @@ public final class AppEventSystem extends InitialSystem {
     }
 
     private void onStart() {
+        // User Settings
         UserSettingsManager.getInstance().apply();
+
+        // Save load
+        FXGL.getSaveLoadService().addHandler(GameSystem.Variables.SAVE_LOAD_HANDLER);
     }
 
     private void onExit() {
