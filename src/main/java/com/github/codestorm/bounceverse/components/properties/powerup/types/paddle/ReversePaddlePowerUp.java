@@ -22,8 +22,17 @@ public final class ReversePaddlePowerUp extends PowerUp {
         PowerUpManager.getInstance().activate(
                 name,
                 DURATION,
-                () -> paddle.addComponent(new ReverseControlComponent()),
-                () -> paddle.removeComponent(ReverseControlComponent.class)
-        );
+                () -> {
+                    // Nếu paddle chưa có component thì thêm
+                    if (!paddle.hasComponent(ReverseControlComponent.class)) {
+                        paddle.addComponent(new ReverseControlComponent());
+                    }
+                },
+                () -> {
+                    // Khi hết hạn thì gỡ component nếu còn
+                    if (paddle.hasComponent(ReverseControlComponent.class)) {
+                        paddle.removeComponent(ReverseControlComponent.class);
+                    }
+                });
     }
 }

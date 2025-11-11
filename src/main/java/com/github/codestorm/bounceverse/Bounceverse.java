@@ -2,28 +2,19 @@ package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.FXGL;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.systems.init.*;
 import com.github.codestorm.bounceverse.systems.manager.settings.GameSettingsManager;
 import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
 import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
-
 import java.io.IOException;
 import java.util.Map;
 
-
 /**
- *
- *
  * <h1>{@link Bounceverse}</h1>
- *
- * Phần Hệ thống Chương trình chính của game, nơi mà mọi thứ bắt đầu từ
- * {@link #main(String[])}...
- * <br>
- * <i>Game {@link Bounceverse} được lấy cảm hứng từ game Arkanoid nổi tiếng, nơi
- * người chơi điều khiển một thanh để đỡ bóng và phá vỡ các viên gạch. Mục tiêu
- * của game là phá vỡ tất cả các viên gạch và dành được điểm số cao nhất. Nhưng
- * liệu mọi thứ chỉ đơn giản như vậy?</i>
+ * Game chính — quản lý vòng đời khởi tạo và vòng lặp của trò chơi.
  */
 public final class Bounceverse extends GameApplication {
 
@@ -70,5 +61,12 @@ public final class Bounceverse extends GameApplication {
     @Override
     protected void initUI() {
         UISystem.getInstance().apply();
+
+        FXGL.getGameScene().getRoot().getStylesheets().add("assets/ui/powerup.css");
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        PowerUpManager.getInstance().onUpdate(tpf);
     }
 }

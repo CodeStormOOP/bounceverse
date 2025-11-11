@@ -20,7 +20,6 @@ public final class PowerUpSpawner {
 
     private static final Logger LOGGER = Logger.get(PowerUpSpawner.class);
 
-    // ✅ Chỉ giữ loại đã có class
     private static final Map<PowerUpType, Double> WEIGHTS = Map.ofEntries(
             Map.entry(PowerUpType.EXPAND_PADDLE, 0.15),
             Map.entry(PowerUpType.SHRINK_PADDLE, 0.10),
@@ -29,8 +28,7 @@ public final class PowerUpSpawner {
             Map.entry(PowerUpType.FAST_BALL, 0.10),
             Map.entry(PowerUpType.SHIELD, 0.10),
             Map.entry(PowerUpType.GUN, 0.10),
-            Map.entry(PowerUpType.MAGNET, 0.10),
-            Map.entry(PowerUpType.REVERSE_PADDLE, 0.15) // ✅ bạn vừa tạo
+            Map.entry(PowerUpType.REVERSE_PADDLE, 0.15)
     );
 
     private static final Random RANDOM = new Random();
@@ -55,22 +53,21 @@ public final class PowerUpSpawner {
     /** Tạo instance Power-Up */
     public static PowerUp getPowerUpInstance(PowerUpType type) {
         return switch (type) {
-            // 🧱 Paddle
+            // Paddle
             case EXPAND_PADDLE -> new ExpandPaddlePowerUp();
             case SHRINK_PADDLE -> new ShrinkPaddlePowerUp();
             case GUN -> new GunPowerUp();
-            case MAGNET -> new MagnetPowerUp();
             case REVERSE_PADDLE -> new ReversePaddlePowerUp();
 
-            // 🟣 Ball
+            // Ball
             case MULTI_BALL -> new MultipleBallPowerUp();
             case SLOW_BALL -> new SlowBallPowerUp();
             case FAST_BALL -> new FastBallPowerUp();
 
-            // 🟢 Misc
+            // Misc
             case SHIELD -> new ShieldPowerUp();
 
-            // ⚙️ Loại chưa có class — fallback
+            // Loại chưa có class — fallback
             default -> {
                 LOGGER.warning("⚠️ PowerUp chưa được triển khai: " + type);
                 yield new ExpandPaddlePowerUp();
@@ -85,7 +82,6 @@ public final class PowerUpSpawner {
             case EXPAND_PADDLE -> "power/paddle/Expand Paddle.png";
             case SHRINK_PADDLE -> "power/paddle/Shrink Paddle.png";
             case GUN -> "power/paddle/Gun.png";
-            case MAGNET -> "power/paddle/Magnet.png";
             case REVERSE_PADDLE -> "power/paddle/Reverse Paddle.png";
 
             // 🟣 Ball

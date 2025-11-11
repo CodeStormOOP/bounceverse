@@ -11,14 +11,18 @@ import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeM
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
+import com.github.codestorm.bounceverse.data.types.PowerUpType;
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
+import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 
 public final class PhysicSystem extends InitialSystem {
 
-    private PhysicSystem() {}
+    private PhysicSystem() {
+    }
 
     public static PhysicSystem getInstance() {
         return Holder.INSTANCE;
@@ -71,32 +75,80 @@ public final class PhysicSystem extends InitialSystem {
             }
         });
 
+        // Ball vs Shield
+        world.addCollisionHandler(new CollisionHandler(EntityType.BALL, PowerUpType.SHIELD) {
+            @Override
+            protected void onCollisionBegin(Entity ball, Entity shield) {
+                ball.getComponentOptional(PhysicsComponent.class).ifPresent(phys -> {
+                    Point2D velocity = phys.getLinearVelocity();
+                    // Đảo hướng Y để bóng nảy lên
+                    phys.setLinearVelocity(new Point2D(velocity.getX(), -Math.abs(velocity.getY())));
+                });
+            }
+        });
+
         // Ball vs Wall
         world.addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.WALL) {
             @Override
             protected void onCollisionBegin(Entity ball, Entity wall) {
-                var physics = ball.getComponent(PhysicsComponent.class);
+                var phys = ball.getComponent(PhysicsComponent.class);
+                var v = phys.getLinearVelocity();
                 Side side = wall.getObject("side");
 
+                // đẩy bóng ra khỏi tường để không kẹt / lọt
+                double eps = 0.5; // khoảng đệm nhỏ để tách rời
+
                 switch (side) {
-                    case LEFT, RIGHT -> physics.setLinearVelocity(-physics.getVelocityX(), physics.getVelocityY());
-                    case TOP -> physics.setLinearVelocity(physics.getVelocityX(), -physics.getVelocityY());
+                    case LEFT -> {
+                        // đặt bóng ngay sát mép trong của tường trái
+                        ball.setX(wall.getRightX() + eps);
+                        // bật lại theo trục X (sang phải)
+                        phys.setLinearVelocity(Math.abs(v.getX()), v.getY());
+                    }
+                    case RIGHT -> {
+                        ball.setX(wall.getX() - ball.getWidth() - eps);
+                        phys.setLinearVelocity(-Math.abs(v.getX()), v.getY());
+                    }
+                    case TOP -> {
+                        ball.setY(wall.getBottomY() + eps);
+                        phys.setLinearVelocity(v.getX(), Math.abs(v.getY()));
+                    }
                     case BOTTOM -> {
+                        // như bạn đã làm: remove + respawn khi hết bóng
                         ball.removeFromWorld();
                         FXGL.getGameTimer().runOnceAfter(() -> {
                             if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
                                 var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-                                paddle.getComponentOptional(PaddleSizeManager.class)
-                                        .ifPresent(PaddleSizeManager::resetSize);
-                                PowerUpManager.getInstance().clearAll();
+                                paddle.getComponentOptional(
+                                        com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager.class)
+                                        .ifPresent(
+                                                com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager::resetSize);
+                                com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager
+                                        .getInstance().clearAll();
 
-                                double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
-                                double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
+                                double x = paddle.getCenter().getX()
+                                        - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS;
+                                double y = paddle.getY()
+                                        - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS
+                                                * 2;
                                 FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
                                 FXGL.set("ballAttached", true);
                             }
                         }, javafx.util.Duration.millis(100));
                     }
+                }
+
+                // đảm bảo tốc độ không quá nhỏ (tránh kẹt mép) và giữ ổn định
+                var newV = phys.getLinearVelocity();
+                double speed = newV.magnitude();
+                double MIN_SPEED = 220; // tùy game
+                double MAX_SPEED = 450; // nếu bạn muốn clamp trên
+                if (speed < MIN_SPEED) {
+                    var dir = newV.normalize();
+                    phys.setLinearVelocity(dir.multiply(MIN_SPEED));
+                } else if (speed > MAX_SPEED) {
+                    var dir = newV.normalize();
+                    phys.setLinearVelocity(dir.multiply(MAX_SPEED));
                 }
             }
         });
@@ -121,7 +173,8 @@ public final class PhysicSystem extends InitialSystem {
                     powerUp.getComponentOptional(PowerUpContainer.class).ifPresent(container -> {
                         container.addTo(paddle);
                         container.getContainer().values().forEach(c -> {
-                            if (c instanceof PowerUp p) p.apply(paddle);
+                            if (c instanceof PowerUp p)
+                                p.apply(paddle);
                         });
                     });
                     powerUp.removeFromWorld();
@@ -134,6 +187,7 @@ public final class PhysicSystem extends InitialSystem {
         switch (dir) {
             case UP, DOWN -> phys.setLinearVelocity(phys.getVelocityX(), -phys.getVelocityY());
             case LEFT, RIGHT -> phys.setLinearVelocity(-phys.getVelocityX(), phys.getVelocityY());
+            default -> throw new IllegalArgumentException("Unexpected value: " + dir);
         }
     }
 

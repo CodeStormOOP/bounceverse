@@ -4,17 +4,8 @@ import com.almasb.fxgl.entity.component.Component;
 
 /**
  * Component đảo ngược điều khiển của paddle trong thời gian ngắn.
+ * Chỉ đóng vai trò "flag" để PaddleMovement đọc và đảo hướng.
  */
 public final class ReverseControlComponent extends Component {
-
-    /** Nếu true thì đảo ngược hướng điều khiển. */
-    private boolean reversed = true;
-
-    public boolean isReversed() {
-        return reversed;
-    }
-
-    public void setReversed(boolean reversed) {
-        this.reversed = reversed;
-    }
+    // Mặc định: đảo ngược điều khiển
 }
