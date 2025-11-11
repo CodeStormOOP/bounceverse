@@ -124,7 +124,7 @@ public final class GameSystem extends InitialSystem {
                     }
                     // 💣 Hàng cuối (index = 5) là explodingBrick để test nổ lan
                     else if (y == 5) {
-                        type = "explodingBrick";
+                        type = "strongBrick";
                     }
                     // 💎 Các hàng còn lại là gạch thường
                     else {

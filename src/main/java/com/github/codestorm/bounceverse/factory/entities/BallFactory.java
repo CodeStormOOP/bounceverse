@@ -67,19 +67,26 @@ public final class BallFactory extends EntityFactory {
     public Entity spawnBall(SpawnData data) {
         final boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
 
-        double x = data.hasKey("x") ? data.get("x") : 0;
-        double y = data.hasKey("y") ? data.get("y") : 0;
+        // ✅ Ưu tiên dùng vị trí từ SpawnData nếu có
+        Point2D pos;
+        if (data.hasKey("x") && data.hasKey("y")) {
+            pos = new Point2D(data.getX(), data.getY());
+        } else if (data.hasKey("position")) {
+            pos = (Point2D) data.get("position");
+        } else {
+            pos = null;
+        }
 
-        if (x == 0 && y == 0) {
+        if (pos == null || (pos.getX() == 0 && pos.getY() == 0)) {
             var paddleOpt = FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).stream().findFirst();
             if (paddleOpt.isPresent()) {
                 var paddle = paddleOpt.get();
-                x = paddle.getCenter().getX() - DEFAULT_RADIUS;
-                y = paddle.getY() - DEFAULT_RADIUS * 2;
+                pos = new Point2D(
+                        paddle.getCenter().getX() - DEFAULT_RADIUS,
+                        paddle.getY() - DEFAULT_RADIUS * 2);
             }
         }
 
-        System.out.println("[BallFactory] Spawn ball at (" + x + ", " + y + "), attached=" + attached);
-        return getBuilder(new SpawnData(x, y).put("attached", attached)).buildAndAttach();
+        return getBuilder(new SpawnData(pos.getX(), pos.getY()).put("attached", attached)).buildAndAttach();
     }
 }

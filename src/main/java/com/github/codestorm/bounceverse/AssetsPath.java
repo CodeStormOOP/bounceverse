@@ -105,6 +105,7 @@ public final class AssetsPath {
                 private static final NavigableMap<Double, String> SHIELD = new TreeMap<>();
                 private static final NavigableMap<Double, String> STRONG = new TreeMap<>();
                 private static final NavigableMap<Double, String> KEY = new TreeMap<>();
+                private static final NavigableMap<Double, String> EXPLODING = new TreeMap<>();
 
                 private final Color color;
 
@@ -124,12 +125,17 @@ public final class AssetsPath {
                     SHIELD.put(0.0, "/shield.png");
 
                     // Strong
-                    STRONG.put(2.0 / 3, "/strong.png");
-                    STRONG.put(1.0 / 3, "/strongFirstHit.png");
-                    STRONG.put(0.0, "/strongSecondHit.png");
+                    // Strong
+                    STRONG.put(1.0, "/strong.png");
+                    STRONG.put(2.0 / 3, "/strongFirstHit.png");
+                    STRONG.put(1.0 / 3, "/strongSecondHit.png");
+                    STRONG.put(0.0, "/strongThirdHit.png");
 
                     // Key Brick
                     KEY.put(0.0, "/keybrick.png");
+
+                    // Exploding
+                    EXPLODING.put(0.0, "/explode.png");
                 }
 
                 public String getColorName() {
@@ -165,7 +171,7 @@ public final class AssetsPath {
                         case SHIELD -> SHIELD;
                         case STRONG -> STRONG;
                         case KEY -> KEY;
-                        case EXPLODING -> NORMAL; // fallback dùng texture thường
+                        case EXPLODING -> EXPLODING; // fallback dùng texture thường
                     };
                     return getRoot() + map.floorEntry(hpPercent).getValue();
                 }

@@ -15,12 +15,14 @@ import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Explosion;
 import com.github.codestorm.bounceverse.components.behaviors.HealthDeath;
 import com.github.codestorm.bounceverse.components.behaviors.Special;
+import com.github.codestorm.bounceverse.components.behaviors.brick.StrongBrickTextureUpdater;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.typing.enums.BrickType;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
+import javafx.scene.paint.Color;
 
 import java.util.List;
 import java.util.Random;
@@ -93,8 +95,22 @@ public final class BrickFactory extends EntityFactory {
     @Spawns("strongBrick")
     public Entity newStrongBrick(SpawnData data) {
         data.put("type", BrickType.STRONG);
-        data.put("hp", (double) (DEFAULT_HP + 2));
-        return getBuilder(data).buildAndAttach();
+        data.put("hp", DEFAULT_HP + 2);
+
+        // Xác định màu
+        String colorKey = Utilities.Typing.getOr(data, "color", COLORS.get(RANDOM.nextInt(COLORS.size())));
+        var color = switch (colorKey) {
+            case "green" -> Color.GREEN;
+            case "orange" -> Color.ORANGE;
+            case "pink" -> Color.PINK;
+            case "red" -> Color.RED;
+            case "yellow" -> Color.YELLOW;
+            default -> Color.BLUE;
+        };
+
+        return getBuilder(data)
+                .with(new StrongBrickTextureUpdater().withColor(color))
+                .buildAndAttach();
     }
 
     /** Gạch có khiên bảo vệ 3 phía (chỉ phá từ trên xuống) */
@@ -123,7 +139,7 @@ public final class BrickFactory extends EntityFactory {
         data.put("type", BrickType.KEY);
         data.put("hp", (double) DEFAULT_HP);
 
-        // 🔹 Gắn component Special để rơi power-up khi bị phá
+        // Gắn component Special để rơi power-up khi bị phá
         var special = new Special();
 
         return getBuilder(data)
