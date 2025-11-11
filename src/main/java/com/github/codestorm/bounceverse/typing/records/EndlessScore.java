@@ -16,5 +16,5 @@ import java.time.Instant;
  * @param level Cấp độ đạt được
  * @param timestamp Thời điểm ghi điểm
  */
-public record EndlessScore(String name, long score, int level, Instant timestamp)
+public record EndlessScore(String name, int score, int level, Instant timestamp)
         implements ScoreLike<EndlessScore> {}

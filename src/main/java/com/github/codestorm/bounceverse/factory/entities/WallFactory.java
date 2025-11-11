@@ -56,8 +56,7 @@ public final class WallFactory extends EntityFactory {
                 width = thickness;
                 height = appShape.getHeight();
             }
-            default ->
-                throw new IllegalArgumentException("Invalid side for wall: " + side);
+            default -> throw new IllegalArgumentException("Invalid side for wall: " + side);
         }
 
         var rect = new Rectangle(width, height, color);
@@ -77,24 +76,28 @@ public final class WallFactory extends EntityFactory {
                 .with("side", side);
     }
 
+    /** Tạo tường trên ({@link EntityType#WALL}). */
     @Spawns("wallTop")
     public Entity newWallTop(SpawnData data) {
         data.put("side", Side.TOP);
         return getBuilder(data).buildAndAttach();
     }
 
+    /** Tạo tường dưới ({@link EntityType#WALL}). */
     @Spawns("wallBottom")
     public Entity newWallBottom(SpawnData data) {
         data.put("side", Side.BOTTOM);
         return getBuilder(data).buildAndAttach();
     }
 
+    /** Tạo tường trái ({@link EntityType#WALL}). */
     @Spawns("wallLeft")
     public Entity newWallLeft(SpawnData data) {
         data.put("side", Side.LEFT);
         return getBuilder(data).buildAndAttach();
     }
 
+    /** Tạo tường phải ({@link EntityType#WALL}). */
     @Spawns("wallRight")
     public Entity newWallRight(SpawnData data) {
         data.put("side", Side.RIGHT);

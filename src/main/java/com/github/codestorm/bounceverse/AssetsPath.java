@@ -92,8 +92,6 @@ public final class AssetsPath {
         private Textures() {
         }
 
-        public static final String ROOT = AssetsPath.ROOT + "/textures";
-
         public static final class Bricks {
 
             private Bricks() {
@@ -217,6 +215,21 @@ public final class AssetsPath {
                 }
             }
         }
+
+        public static final Map<Integer, String> NUMBERS =
+                Map.of(
+                        0, "numbers/0.png",
+                        1, "numbers/1.png",
+                        2, "numbers/2.png",
+                        3, "numbers/3.png",
+                        4, "numbers/4.png",
+                        5, "numbers/5.png",
+                        6, "numbers/6.png",
+                        7, "numbers/7.png",
+                        8, "numbers/8.png",
+                        9, "numbers/9.png");
+
+        public static final String HEART = "/heart.png";
     }
 
     public static final class Other {

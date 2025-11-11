@@ -15,10 +15,15 @@ import com.github.codestorm.bounceverse.data.types.PowerUpType;
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
-
+import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 
+/**
+ * <h1>PhysicSystem</h1>
+ * Quản lý toàn bộ logic va chạm vật lý trong game (ball, paddle, wall,
+ * power-up...).
+ */
 public final class PhysicSystem extends InitialSystem {
 
     private PhysicSystem() {
@@ -75,13 +80,12 @@ public final class PhysicSystem extends InitialSystem {
             }
         });
 
-        // Ball vs Shield
+        // Ball vs Shield (bottom shield power-up)
         world.addCollisionHandler(new CollisionHandler(EntityType.BALL, PowerUpType.SHIELD) {
             @Override
             protected void onCollisionBegin(Entity ball, Entity shield) {
                 ball.getComponentOptional(PhysicsComponent.class).ifPresent(phys -> {
                     Point2D velocity = phys.getLinearVelocity();
-                    // Đảo hướng Y để bóng nảy lên
                     phys.setLinearVelocity(new Point2D(velocity.getX(), -Math.abs(velocity.getY())));
                 });
             }
@@ -94,15 +98,11 @@ public final class PhysicSystem extends InitialSystem {
                 var phys = ball.getComponent(PhysicsComponent.class);
                 var v = phys.getLinearVelocity();
                 Side side = wall.getObject("side");
-
-                // đẩy bóng ra khỏi tường để không kẹt / lọt
-                double eps = 0.5; // khoảng đệm nhỏ để tách rời
+                double eps = 0.5; // khoảng đệm nhỏ
 
                 switch (side) {
                     case LEFT -> {
-                        // đặt bóng ngay sát mép trong của tường trái
                         ball.setX(wall.getRightX() + eps);
-                        // bật lại theo trục X (sang phải)
                         phys.setLinearVelocity(Math.abs(v.getX()), v.getY());
                     }
                     case RIGHT -> {
@@ -114,23 +114,25 @@ public final class PhysicSystem extends InitialSystem {
                         phys.setLinearVelocity(v.getX(), Math.abs(v.getY()));
                     }
                     case BOTTOM -> {
-                        // như bạn đã làm: remove + respawn khi hết bóng
-                        ball.removeFromWorld();
-                        FXGL.getGameTimer().runOnceAfter(() -> {
-                            if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
-                                var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-                                paddle.getComponentOptional(
-                                        com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager.class)
-                                        .ifPresent(
-                                                com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager::resetSize);
-                                com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager
-                                        .getInstance().clearAll();
+                        // 🔹 Khi bóng rơi xuống: trừ mạng, remove bóng và respawn nếu còn mạng
+                        HealthIntValue lives = FXGL.getWorldProperties().getObject("lives");
+                        lives.damage(1);
 
-                                double x = paddle.getCenter().getX()
-                                        - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS;
-                                double y = paddle.getY()
-                                        - com.github.codestorm.bounceverse.factory.entities.BallFactory.DEFAULT_RADIUS
-                                                * 2;
+                        ball.removeFromWorld();
+
+                        FXGL.getGameTimer().runOnceAfter(() -> {
+                            // Nếu vẫn còn mạng → respawn bóng
+                            if (lives.getValue() > 0 && FXGL.getGameWorld()
+                                    .getEntitiesByType(EntityType.BALL).isEmpty()) {
+
+                                var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+                                paddle.getComponentOptional(PaddleSizeManager.class)
+                                        .ifPresent(PaddleSizeManager::resetSize);
+
+                                PowerUpManager.getInstance().clearAll();
+
+                                double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
+                                double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
                                 FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
                                 FXGL.set("ballAttached", true);
                             }
@@ -138,17 +140,15 @@ public final class PhysicSystem extends InitialSystem {
                     }
                 }
 
-                // đảm bảo tốc độ không quá nhỏ (tránh kẹt mép) và giữ ổn định
+                // Clamp tốc độ để tránh bóng bị kẹt
                 var newV = phys.getLinearVelocity();
                 double speed = newV.magnitude();
-                double MIN_SPEED = 220; // tùy game
-                double MAX_SPEED = 450; // nếu bạn muốn clamp trên
+                double MIN_SPEED = 220;
+                double MAX_SPEED = 450;
                 if (speed < MIN_SPEED) {
-                    var dir = newV.normalize();
-                    phys.setLinearVelocity(dir.multiply(MIN_SPEED));
+                    phys.setLinearVelocity(newV.normalize().multiply(MIN_SPEED));
                 } else if (speed > MAX_SPEED) {
-                    var dir = newV.normalize();
-                    phys.setLinearVelocity(dir.multiply(MAX_SPEED));
+                    phys.setLinearVelocity(newV.normalize().multiply(MAX_SPEED));
                 }
             }
         });
@@ -183,6 +183,7 @@ public final class PhysicSystem extends InitialSystem {
         });
     }
 
+    /** Đảo hướng vận tốc theo hướng va chạm. */
     private static void bounce(PhysicsComponent phys, DirectionUnit dir) {
         switch (dir) {
             case UP, DOWN -> phys.setLinearVelocity(phys.getVelocityX(), -phys.getVelocityY());
