@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
@@ -11,7 +12,8 @@ import javafx.geometry.Point2D;
 
 /**
  * PowerUp nhân đôi toàn bộ bóng hiện có.
- * Mỗi bóng sinh thêm 1 bóng mới tách từ vị trí của nó và bay lệch nhẹ sang 2 hướng.
+ * Mỗi bóng sinh thêm 1 bóng mới tách từ vị trí của nó và bay lệch nhẹ sang 2
+ * hướng.
  */
 public final class MultipleBallPowerUp extends PowerUp {
 
@@ -22,8 +24,6 @@ public final class MultipleBallPowerUp extends PowerUp {
     @Override
     public void apply(Entity paddle) {
         var balls = FXGL.getGameWorld().getEntitiesByType(EntityType.BALL);
-
-        // copy list để tránh ConcurrentModificationException khi spawn trong loop
         var currentBalls = List.copyOf(balls);
 
         for (Entity ball : currentBalls) {
@@ -34,37 +34,35 @@ public final class MultipleBallPowerUp extends PowerUp {
                 if (velocity.magnitude() < 1e-3)
                     return;
 
-                // tạo 2 bóng lệch trái/phải
-                spawnSplitBall(pos, velocity, 20);
-                spawnSplitBall(pos, velocity, -20);
+                // chỉ nhân đôi: mỗi bóng cũ sinh thêm 1 bản sao duy nhất
+                spawnDuplicateBall(pos, velocity);
             });
         }
     }
 
-    private void spawnSplitBall(Point2D pos, Point2D velocity, double deg) {
-        double angle = Math.toRadians(deg);
-        Point2D newVelocity = rotateVector(velocity, angle);
+    private void spawnDuplicateBall(Point2D pos, Point2D velocity) {
+        // lệch nhẹ góc bay để tránh trùng hướng
+        Point2D newVelocity = rotateVector(velocity, 15);
 
-        // spawn tại vị trí bóng cũ, nhưng dịch nhẹ theo hướng mới để tránh overlap
+        // spawn tại vị trí bóng gốc (dịch nhẹ 1 chút)
         Point2D spawnPos = pos.add(newVelocity.normalize().multiply(8));
 
-        Entity newBall = FXGL.spawn("ball", spawnPos);
+        Entity newBall = FXGL.spawn("ball", new SpawnData(spawnPos.getX(), spawnPos.getY()));
 
-        // ép đặt velocity sau khi spawn (ghi đè mọi mặc định trong BallFactory)
         newBall.getComponentOptional(PhysicsComponent.class).ifPresent(newPhys -> {
             newPhys.setLinearVelocity(newVelocity);
 
-            // đảm bảo ngay frame sau velocity vẫn giữ nguyên
+            // giữ velocity ổn định sau 1 frame
             FXGL.runOnce(() -> newPhys.setLinearVelocity(newVelocity), javafx.util.Duration.millis(20));
         });
     }
 
-    private static Point2D rotateVector(Point2D v, double angleRad) {
-        double cos = Math.cos(angleRad);
-        double sin = Math.sin(angleRad);
+    private static Point2D rotateVector(Point2D v, double deg) {
+        double rad = Math.toRadians(deg);
+        double cos = Math.cos(rad);
+        double sin = Math.sin(rad);
         return new Point2D(
                 v.getX() * cos - v.getY() * sin,
-                v.getX() * sin + v.getY() * cos
-        );
+                v.getX() * sin + v.getY() * cos);
     }
 }

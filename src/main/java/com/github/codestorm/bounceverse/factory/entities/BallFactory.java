@@ -67,17 +67,14 @@ public final class BallFactory extends EntityFactory {
     public Entity spawnBall(SpawnData data) {
         final boolean attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
 
-        // ✅ Ưu tiên dùng vị trí từ SpawnData nếu có
-        Point2D pos;
+        Point2D pos = null;
         if (data.hasKey("x") && data.hasKey("y")) {
             pos = new Point2D(data.getX(), data.getY());
         } else if (data.hasKey("position")) {
             pos = (Point2D) data.get("position");
-        } else {
-            pos = null;
         }
 
-        if (pos == null || (pos.getX() == 0 && pos.getY() == 0)) {
+        if (pos == null) {
             var paddleOpt = FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).stream().findFirst();
             if (paddleOpt.isPresent()) {
                 var paddle = paddleOpt.get();
@@ -87,6 +84,11 @@ public final class BallFactory extends EntityFactory {
             }
         }
 
-        return getBuilder(new SpawnData(pos.getX(), pos.getY()).put("attached", attached)).buildAndAttach();
+        // giữ nguyên SpawnData gốc để không mất thông tin pos
+        data.put("attached", attached);
+        data.put("x", pos.getX());
+        data.put("y", pos.getY());
+        return getBuilder(data).buildAndAttach();
     }
+
 }
