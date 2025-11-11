@@ -12,5 +12,5 @@ public enum BrickType {
     STRONG,
     SHIELD,
     EXPLODING,
-    SPECIAL
+    KEY
 }

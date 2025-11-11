@@ -2,19 +2,14 @@ package com.github.codestorm.bounceverse;
 
 import com.github.codestorm.bounceverse.typing.enums.BrickType;
 import com.google.common.collect.ImmutableList;
-
 import javafx.scene.paint.Color;
-
 import org.jspecify.annotations.NonNull;
-
 import java.util.*;
 
 /**
- *
- *
  * <h1>{@link AssetsPath}</h1>
  *
- * Nơi lưu trữ các đường dẫn tới assets.
+ * Nơi lưu trữ các đường dẫn tới assets (texture, âm thanh, video, v.v.).
  */
 public final class AssetsPath {
 
@@ -24,24 +19,20 @@ public final class AssetsPath {
     private static final String ROOT = "/assets";
 
     public static final class Video {
-
         private Video() {
         }
 
         private static final String ROOT = AssetsPath.ROOT + "/videos";
-
-        public static final String INTRO = "intro.mp4";
+        public static final String INTRO = "/intro.mp4";
     }
 
     public static final class Sounds {
-
         private Sounds() {
         }
 
         private static final String ROOT = AssetsPath.ROOT + "/sounds";
 
         public static final class Music {
-
             private Music() {
             }
 
@@ -52,7 +43,6 @@ public final class AssetsPath {
         }
 
         public static final class SFX {
-
             private SFX() {
             }
 
@@ -82,13 +72,11 @@ public final class AssetsPath {
             public static final String WALL_HIT = ROOT + "/wall_hit.wav";
             public static final String WIN3 = ROOT + "/win3.wav";
 
-            public static final ImmutableList<@NonNull String> BRICK_HITS
-                    = ImmutableList.of(BRICK_HIT_1, BRICK_HIT_2);
+            public static final ImmutableList<@NonNull String> BRICK_HITS = ImmutableList.of(BRICK_HIT_1, BRICK_HIT_2);
         }
     }
 
     public static final class Textures {
-
         private Textures() {
         }
 
@@ -108,8 +96,7 @@ public final class AssetsPath {
                         "orange", new ColorAssets(Color.ORANGE),
                         "pink", new ColorAssets(Color.PINK),
                         "red", new ColorAssets(Color.RED),
-                        "yellow", new ColorAssets(Color.YELLOW)
-                );
+                        "yellow", new ColorAssets(Color.YELLOW));
             }
 
             public static final class ColorAssets {
@@ -117,6 +104,7 @@ public final class AssetsPath {
                 private static final NavigableMap<Double, String> NORMAL = new TreeMap<>();
                 private static final NavigableMap<Double, String> SHIELD = new TreeMap<>();
                 private static final NavigableMap<Double, String> STRONG = new TreeMap<>();
+                private static final NavigableMap<Double, String> KEY = new TreeMap<>();
 
                 private final Color color;
 
@@ -139,27 +127,24 @@ public final class AssetsPath {
                     STRONG.put(2.0 / 3, "/strong.png");
                     STRONG.put(1.0 / 3, "/strongFirstHit.png");
                     STRONG.put(0.0, "/strongSecondHit.png");
+
+                    // Key Brick
+                    KEY.put(0.0, "/keybrick.png");
                 }
 
                 public String getColorName() {
-                    if (color.equals(Color.BLUE)) {
+                    if (color.equals(Color.BLUE))
                         return "blue";
-                    }
-                    if (color.equals(Color.GREEN)) {
+                    if (color.equals(Color.GREEN))
                         return "green";
-                    }
-                    if (color.equals(Color.ORANGE)) {
+                    if (color.equals(Color.ORANGE))
                         return "orange";
-                    }
-                    if (color.equals(Color.PINK)) {
+                    if (color.equals(Color.PINK))
                         return "pink";
-                    }
-                    if (color.equals(Color.RED)) {
+                    if (color.equals(Color.RED))
                         return "red";
-                    }
-                    if (color.equals(Color.YELLOW)) {
+                    if (color.equals(Color.YELLOW))
                         return "yellow";
-                    }
                     throw new IllegalArgumentException("Unsupported color: " + color);
                 }
 
@@ -175,15 +160,12 @@ public final class AssetsPath {
                  * @return Đường dẫn đến texture
                  */
                 public String getTexture(BrickType brickType, double hpPercent) {
-                    var map = switch (brickType) {
-                        case NORMAL ->
-                            NORMAL;
-                        case SHIELD ->
-                            SHIELD;
-                        case STRONG ->
-                            STRONG;
-                        case EXPLODING, SPECIAL ->
-                            NORMAL; // dùng lại texture mặc định
+                    NavigableMap<Double, String> map = switch (brickType) {
+                        case NORMAL -> NORMAL;
+                        case SHIELD -> SHIELD;
+                        case STRONG -> STRONG;
+                        case KEY -> KEY;
+                        case EXPLODING -> NORMAL; // fallback dùng texture thường
                     };
                     return getRoot() + map.floorEntry(hpPercent).getValue();
                 }
@@ -194,12 +176,10 @@ public final class AssetsPath {
 
                 @Override
                 public boolean equals(Object obj) {
-                    if (obj == this) {
+                    if (obj == this)
                         return true;
-                    }
-                    if (obj == null || obj.getClass() != this.getClass()) {
+                    if (obj == null || obj.getClass() != this.getClass())
                         return false;
-                    }
                     var that = (ColorAssets) obj;
                     return Objects.equals(this.color, that.color);
                 }
@@ -211,29 +191,27 @@ public final class AssetsPath {
 
                 @Override
                 public String toString() {
-                    return "ColorAssets[" + "color=" + color + ']';
+                    return "ColorAssets[color=" + color + ']';
                 }
             }
         }
 
-        public static final Map<Integer, String> NUMBERS =
-                Map.of(
-                        0, "numbers/0.png",
-                        1, "numbers/1.png",
-                        2, "numbers/2.png",
-                        3, "numbers/3.png",
-                        4, "numbers/4.png",
-                        5, "numbers/5.png",
-                        6, "numbers/6.png",
-                        7, "numbers/7.png",
-                        8, "numbers/8.png",
-                        9, "numbers/9.png");
+        public static final Map<Integer, String> NUMBERS = Map.of(
+                0, "numbers/0.png",
+                1, "numbers/1.png",
+                2, "numbers/2.png",
+                3, "numbers/3.png",
+                4, "numbers/4.png",
+                5, "numbers/5.png",
+                6, "numbers/6.png",
+                7, "numbers/7.png",
+                8, "numbers/8.png",
+                9, "numbers/9.png");
 
         public static final String HEART = "/heart.png";
     }
 
     public static final class Other {
-
         private Other() {
         }
 

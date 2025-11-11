@@ -22,6 +22,9 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 
+import java.util.List;
+import java.util.Random;
+
 /**
  * Factory sinh ra các loại gạch (Brick) trong trò chơi.
  */
@@ -31,18 +34,23 @@ public final class BrickFactory extends EntityFactory {
     private static final int DEFAULT_HEIGHT = 30;
     private static final int DEFAULT_HP = 1;
 
+    private static final Random RANDOM = new Random();
+    private static final List<String> COLORS = List.of("blue", "green", "orange", "pink", "red", "yellow");
+
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
         int hp = ((Number) Utilities.Typing.getOr(data, "hp", DEFAULT_HP)).intValue();
         int width = ((Number) Utilities.Typing.getOr(data, "width", DEFAULT_WIDTH)).intValue();
         int height = ((Number) Utilities.Typing.getOr(data, "height", DEFAULT_HEIGHT)).intValue();
 
-        // 🔹 Không dùng "pos" nữa — tự tạo từ x, y
         Point2D pos = new Point2D(data.getX(), data.getY());
 
-        String colorKey = Utilities.Typing.getOr(data, "color", "blue");
+        // 🔹 Nếu không truyền color, chọn random từ 6 màu
+        String colorKey = Utilities.Typing.getOr(data, "color", COLORS.get(RANDOM.nextInt(COLORS.size())));
+
         var colorAsset = AssetsPath.Textures.Bricks.COLORS.get(colorKey);
         if (colorAsset == null) {
+            // fallback an toàn nếu không tồn tại
             colorAsset = AssetsPath.Textures.Bricks.COLORS.values().stream()
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No ColorAssets available for bricks"));
@@ -73,9 +81,7 @@ public final class BrickFactory extends EntityFactory {
                 .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath());
     }
 
-    /**
-     * Gạch thường
-     */
+    /** Gạch thường */
     @Spawns("normalBrick")
     public Entity newNormalBrick(SpawnData data) {
         data.put("type", BrickType.NORMAL);
@@ -83,9 +89,7 @@ public final class BrickFactory extends EntityFactory {
         return getBuilder(data).buildAndAttach();
     }
 
-    /**
-     * Gạch trâu (HP cao hơn)
-     */
+    /** Gạch trâu (HP cao hơn) */
     @Spawns("strongBrick")
     public Entity newStrongBrick(SpawnData data) {
         data.put("type", BrickType.STRONG);
@@ -93,9 +97,7 @@ public final class BrickFactory extends EntityFactory {
         return getBuilder(data).buildAndAttach();
     }
 
-    /**
-     * Gạch có khiên bảo vệ 3 phía (chỉ phá từ trên xuống)
-     */
+    /** Gạch có khiên bảo vệ 3 phía (chỉ phá từ trên xuống) */
     @Spawns("shieldBrick")
     public Entity newShieldBrick(SpawnData data) {
         data.put("type", BrickType.SHIELD);
@@ -104,25 +106,29 @@ public final class BrickFactory extends EntityFactory {
         return getBuilder(data).with(shield).buildAndAttach();
     }
 
-    /**
-     * Gạch nổ — khi bị phá sẽ kích hoạt Explosion gây sát thương lan
-     */
+    /** Gạch nổ — khi bị phá sẽ kích hoạt Explosion gây sát thương lan */
     @Spawns("explodingBrick")
     public Entity newExplodingBrick(SpawnData data) {
         data.put("type", BrickType.EXPLODING);
         data.put("hp", (double) DEFAULT_HP);
-        var explosion = new Explosion(120); // bán kính 120 px
+        var explosion = new Explosion(120);
         return getBuilder(data).with(explosion).buildAndAttach();
     }
 
     /**
-     * Gạch đặc biệt — rơi PowerUp khi bị phá
+     * Gạch khóa (Key Brick) — loại đặc biệt rơi PowerUp khi bị phá
      */
-    @Spawns("specialBrick")
-    public Entity newSpecialBrick(SpawnData data) {
-        data.put("type", BrickType.SPECIAL);
+    @Spawns("keyBrick")
+    public Entity newKeyBrick(SpawnData data) {
+        data.put("type", BrickType.KEY);
         data.put("hp", (double) DEFAULT_HP);
+
+        // 🔹 Gắn component Special để rơi power-up khi bị phá
         var special = new Special();
-        return getBuilder(data).with(special).buildAndAttach();
+
+        return getBuilder(data)
+                .with(special)
+                .buildAndAttach();
     }
+
 }

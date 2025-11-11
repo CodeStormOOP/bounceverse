@@ -113,17 +113,29 @@ public final class GameSystem extends InitialSystem {
                     var posY = startY + y * (brickHeight + spacingY);
 
                     String type;
-                    switch (y) {
-                        case 0 -> type = "shieldBrick"; // hàng đầu có khiên
-                        case 3 -> type = "strongBrick"; // hàng thứ 4 mạnh
-                        default -> type = "normalBrick";
+
+                    // 🛡️ Hàng đầu tiên là shieldBrick
+                    if (y == 0) {
+                        type = "shieldBrick";
+                    }
+                    // 🔑 Hàng thứ 4 (index = 3) là keyBrick để test PowerUp
+                    else if (y == 3) {
+                        type = "keyBrick";
+                    }
+                    // 💣 Hàng cuối (index = 5) là explodingBrick để test nổ lan
+                    else if (y == 5) {
+                        type = "explodingBrick";
+                    }
+                    // 💎 Các hàng còn lại là gạch thường
+                    else {
+                        type = "normalBrick";
                     }
 
                     FXGL.spawn(type, new SpawnData(posX, posY));
                 }
             }
 
-            // Giữ lại màu nền động từ HEAD
+            // Giữ lại logic nền động
             BackgroundColorManager.init(FXGL.getGameWorld().getEntitiesByType(EntityType.BRICK).size());
         }
 
