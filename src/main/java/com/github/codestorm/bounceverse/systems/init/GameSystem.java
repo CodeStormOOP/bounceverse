@@ -6,6 +6,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
+import com.github.codestorm.bounceverse.AssetsPath;
 import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
 import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
@@ -17,9 +18,14 @@ import com.github.codestorm.bounceverse.ui.HorizontalPositiveInteger;
 import com.github.codestorm.bounceverse.ui.ingame.Hearts;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+
+import libs.FastNoiseLite;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 
 public final class GameSystem extends InitialSystem {
@@ -100,37 +106,98 @@ public final class GameSystem extends InitialSystem {
             FXGL.spawn("wallRight");
         }
 
-        public static void brick() {
-            var rows = 6;
-            var cols = 10;
-            double startX = 85;
-            double startY = 50;
-            double brickWidth = 80;
-            double brickHeight = 30;
-            double spacingX = 5;
-            double spacingY = 5;
+        public static void brick(int seed) {
+            var noise = new FastNoiseLite(seed);
+            var colors = AssetsPath.Textures.Bricks.COLORS.keySet().toArray(new Color[0]);
+            var color = colors[Math.floorMod(seed, colors.length)];
 
-            for (var y = 0; y < rows; y++) {
-                for (var x = 0; x < cols; x++) {
-                    var posX = startX + x * (brickWidth + spacingX);
-                    var posY = startY + y * (brickHeight + spacingY);
+            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+            noise.SetFrequency(0.2f);
+            noise.SetFractalType(FastNoiseLite.FractalType.FBm);
+            noise.SetFractalOctaves(4);
+            noise.SetFractalLacunarity(2.1f);
+            noise.SetFractalGain(0.6f);
+            noise.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
+            noise.SetDomainWarpAmp(6.0f);
 
-                    // Xác định loại brick theo hàng (bạn có thể chỉnh lại tuỳ ý)
-                    String type;
-                    switch (y) {
-                        case 0 -> type = "shieldBrick"; // Hàng đầu có khiên
-                            //                    case 1 -> type = "explodingBrick"; // Hàng thứ 2
-                            // nổ
-                            //                    case 2 -> type = "specialBrick"; // Hàng thứ 3 rơi
-                            // power-up
-                        case 3 -> type = "strongBrick"; // Hàng thứ 4 trâu
-                        default -> type = "normalBrick"; // Còn lại là thường
-                    }
+            final var rows = 5;
+            final var cols = 10;
+            final var amount = 36;
 
-                    var data = new SpawnData();
-                    data.put("pos", new Point2D(posX, posY));
-                    FXGL.spawn(type, data);
+            final var appWidth = FXGL.getAppWidth();
+            final var appHeight = FXGL.getAppHeight();
+            final double marginX = 40;
+            final double startY = 60;
+            final var verticalCoverageRatio = 0.30;
+            final double spacingX = 5;
+            final double spacingY = 5;
+            final var aspect = 30.0 / 80.0;
+
+            var availableWidth = appWidth - 2 * marginX;
+            var wFromWidth = (availableWidth - (cols - 1) * spacingX) / cols;
+            var hFromWidth = wFromWidth * aspect;
+
+            var targetBrickAreaHeight = appHeight * verticalCoverageRatio;
+            var hMaxByHeight = (targetBrickAreaHeight - (rows - 1) * spacingY) / rows;
+
+            var brickW = wFromWidth;
+            var brickH = hFromWidth;
+
+            if (brickH > hMaxByHeight) {
+                brickH = hMaxByHeight;
+                brickW = brickH / aspect;
+            }
+
+            double minW = 40, maxW = 160;
+            if (brickW < minW) brickW = minW;
+            if (brickW > maxW) brickW = maxW;
+            brickH = brickW * aspect;
+
+            var totalH = rows * brickH + (rows - 1) * spacingY;
+            if (totalH > targetBrickAreaHeight) {
+                brickH = hMaxByHeight;
+                brickW = brickH / aspect;
+            }
+
+            var brickWidth = (int) Math.round(brickW);
+            var brickHeight = (int) Math.round(brickH);
+
+            var totalW = cols * brickWidth + (cols - 1) * spacingX;
+            var startX = Math.max(marginX, (appWidth - totalW) / 2.0);
+
+            // Lấy ra amount phần tử có độ cao cao nhất
+            record Cell(int gx, int gy, double x, double y, float n) {}
+            var cells = new ArrayList<Cell>(rows * cols);
+            for (var gy = 0; gy < rows; gy++) {
+                for (var gx = 0; gx < cols; gx++) {
+                    var posX = startX + gx * (brickWidth + spacingX);
+                    var posY = startY + gy * (brickHeight + spacingY);
+                    var n = noise.GetNoise(gx, gy);
+                    cells.add(new Cell(gx, gy, posX, posY, n));
                 }
+            }
+            cells.sort(Comparator.comparing(Cell::n).reversed());
+            var target = Math.min(amount, cells.size());
+
+            for (var i = 0; i < target; i++) {
+                var c = cells.get(i);
+                var n = c.n();
+
+                final String type;
+                if (n > 0.5f) {
+                    type = "shieldBrick";
+                } else if (n > 0.3f) {
+                    type = "strongBrick";
+                } else {
+                    type = "normalBrick";
+                }
+
+                var data = new SpawnData();
+                data.put("pos", new Point2D(c.x(), c.y()));
+                data.put("width", brickWidth);
+                data.put("height", brickHeight);
+                data.put("color", color);
+                FXGL.spawn(type, data);
             }
         }
 
@@ -202,6 +269,7 @@ public final class GameSystem extends InitialSystem {
             if (isInitialized) {
                 return;
             }
+            // TODO: issue sau khi reset màn chơi thì không thêm lại UI
 
             addScoreDisplay();
             addHeartsDisplay();
@@ -247,7 +315,8 @@ public final class GameSystem extends InitialSystem {
     public void apply() {
         EntitySpawn.addFactory();
         EntitySpawn.walls();
-        EntitySpawn.brick();
+        EntitySpawn.brick(
+                (int) (System.currentTimeMillis() & 0x7FFFFFFF)); // TODO: Custom chọn seed
         EntitySpawn.paddle();
         EntitySpawn.ball();
 
