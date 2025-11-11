@@ -8,6 +8,7 @@ import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
 
 import javafx.geometry.Side;
 
@@ -144,6 +145,9 @@ public final class PhysicSystem extends InitialSystem {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.BALL)
                                         .forEach(Entity::removeFromWorld);
+
+                                HealthIntValue lives = FXGL.getWorldProperties().getObject("lives");
+                                lives.damage(1);
 
                                 FXGL.getGameTimer()
                                         .runOnceAfter(

@@ -49,7 +49,7 @@ public final class PowerUpFactory extends EntityFactory {
     /**
      * Tạo mới một PowerUp. Đây là một "abstract" method.
      *
-     * @param data Dữ liệu Spawn
+     * @param data Dữ liệu EntitySpawn
      * @return Entity PowerUp
      */
     private Entity newPowerUp(SpawnData data) {

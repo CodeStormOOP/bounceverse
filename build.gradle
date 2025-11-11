@@ -75,6 +75,7 @@ spotless {
 
     java {
         target 'src/**/*.java'
+        targetExclude 'src/**/libs/**/*';
 
         googleJavaFormat('1.17.0')
                 .aosp()
