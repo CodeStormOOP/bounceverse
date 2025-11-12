@@ -62,8 +62,6 @@ public final class GameSystem extends InitialSystem {
                         final int level = properties.getInt("level");
                         final int seed = properties.getInt("seed");
 
-                        // TODO: Save map
-
                         final var bundle = new Bundle("game");
                         bundle.put("lives", lives.getValue());
                         bundle.put("score", score);
@@ -83,6 +81,7 @@ public final class GameSystem extends InitialSystem {
                         final int seed = bundle.get("seed");
 
                         final var vars = FXGL.getWorldProperties();
+                        vars.clear();
                         vars.setValue("lives", lives);
                         vars.setValue("score", score);
                         vars.setValue("level", level);
@@ -119,6 +118,7 @@ public final class GameSystem extends InitialSystem {
                                     FXGL.getSceneService().popSubScene();
                                     FXGL.getGameController().resumeEngine();
                                 });
+
                         FXGL.getSceneService().pushSubScene(deathSubscene);
                         FXGL.getGameController().pauseEngine();
                     });
@@ -221,9 +221,7 @@ public final class GameSystem extends InitialSystem {
             var colorAssignments = new Color[target];
 
             // Bước 1: Gán mỗi màu cho ít nhất một brick
-            for (var i = 0; i < Math.min(colors.length, target); i++) {
-                colorAssignments[i] = colors[i];
-            }
+            System.arraycopy(colors, 0, colorAssignments, 0, Math.min(colors.length, target));
 
             // Bước 2: Phân phối các brick còn lại dựa trên noise
             for (var i = colors.length; i < target; i++) {
@@ -346,7 +344,6 @@ public final class GameSystem extends InitialSystem {
             if (isInitialized) {
                 return;
             }
-            // TODO: issue sau khi reset màn chơi thì không thêm lại UI
 
             addScoreDisplay();
             addHeartsDisplay();
