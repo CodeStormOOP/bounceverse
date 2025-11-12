@@ -12,10 +12,11 @@ import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
 import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
 import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
 import com.github.codestorm.bounceverse.factory.entities.WallFactory;
+import com.github.codestorm.bounceverse.scenes.subscenes.ingame.DeathSubscene;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
-import com.github.codestorm.bounceverse.ui.HorizontalPositiveInteger;
-import com.github.codestorm.bounceverse.ui.ingame.Hearts;
+import com.github.codestorm.bounceverse.ui.elements.HorizontalPositiveInteger;
+import com.github.codestorm.bounceverse.ui.elements.ingame.Hearts;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -28,6 +29,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
 
+/**
+ *
+ *
+ * <h1>{@link GameSystem}</h1>
+ *
+ * Hệ thống khởi tạo Game. <br>
+ *
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
+ */
 public final class GameSystem extends InitialSystem {
     private GameSystem() {}
 
@@ -48,13 +58,17 @@ public final class GameSystem extends InitialSystem {
                     public void onSave(@NotNull DataFile dataFile) {
                         final var properties = FXGL.getWorldProperties();
                         final HealthIntValue lives = properties.getObject("lives");
-                        final int score = properties.getValue("score");
+                        final int score = properties.getInt("score");
+                        final int level = properties.getInt("level");
+                        final int seed = properties.getInt("seed");
 
                         // TODO: Save map
 
                         final var bundle = new Bundle("game");
                         bundle.put("lives", lives.getValue());
                         bundle.put("score", score);
+                        bundle.put("level", level);
+                        bundle.put("seed", seed);
                         dataFile.putBundle(bundle);
                     }
 
@@ -65,10 +79,14 @@ public final class GameSystem extends InitialSystem {
                         final var lives =
                                 new HealthIntValue(GameSystem.Variables.MAX_LIVES, intLives);
                         final int score = bundle.get("score");
+                        final int level = bundle.get("level");
+                        final int seed = bundle.get("seed");
 
                         final var vars = FXGL.getWorldProperties();
                         vars.setValue("lives", lives);
                         vars.setValue("score", score);
+                        vars.setValue("level", level);
+                        vars.setValue("seed", seed);
                     }
                 };
 
@@ -84,6 +102,26 @@ public final class GameSystem extends InitialSystem {
             vars.clear();
             vars.put("lives", lives);
             vars.put("score", DEFAULT_SCORE);
+            vars.put("level", 1);
+            vars.put("seed", (int) (System.currentTimeMillis() & 0x7FFFFFFF));
+        }
+
+        public static void hookDeathSubscene() {
+            final HealthIntValue livesProperty = FXGL.getWorldProperties().getObject("lives");
+            livesProperty.onZeroListeners.add(
+                    () -> {
+                        final var score = FXGL.getWorldProperties().getInt("score");
+                        final var level = FXGL.getWorldProperties().getInt("level");
+
+                        final var deathSubscene = new DeathSubscene(score, level);
+                        deathSubscene.onGotoMainMenuListeners.add(
+                                () -> {
+                                    FXGL.getSceneService().popSubScene();
+                                    FXGL.getGameController().resumeEngine();
+                                });
+                        FXGL.getSceneService().pushSubScene(deathSubscene);
+                        FXGL.getGameController().pauseEngine();
+                    });
         }
     }
 
@@ -106,7 +144,8 @@ public final class GameSystem extends InitialSystem {
             FXGL.spawn("wallRight");
         }
 
-        public static void brick(int seed) {
+        public static void brick() {
+            final var seed = FXGL.getWorldProperties().getInt("seed");
             var noise = new FastNoiseLite(seed);
             var colors = AssetsPath.Textures.Bricks.COLORS.keySet().toArray(new Color[0]);
             var color = colors[Math.floorMod(seed, colors.length)];
@@ -313,10 +352,12 @@ public final class GameSystem extends InitialSystem {
 
     @Override
     public void apply() {
+        Variables.hookDeathSubscene();
+
+        // Entity
         EntitySpawn.addFactory();
         EntitySpawn.walls();
-        EntitySpawn.brick(
-                (int) (System.currentTimeMillis() & 0x7FFFFFFF)); // TODO: Custom chọn seed
+        EntitySpawn.brick();
         EntitySpawn.paddle();
         EntitySpawn.ball();
 

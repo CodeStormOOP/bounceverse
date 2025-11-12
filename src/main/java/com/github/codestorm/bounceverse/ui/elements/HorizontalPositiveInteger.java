@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.ui;
+package com.github.codestorm.bounceverse.ui.elements;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;

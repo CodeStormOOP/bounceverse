@@ -4,6 +4,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.components.behaviors.Attachment;
+import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
@@ -27,6 +28,32 @@ public final class InputSystem extends InitialSystem {
 
     @Override
     public void apply() {
+        // Load key bindings from settings
+        var settings = UserSettingsManager.getInstance().get();
+        var controls = settings.getControls();
+
+        KeyCode moveLeftKey;
+        KeyCode moveRightKey;
+        KeyCode launchBallKey;
+
+        try {
+            moveLeftKey = KeyCode.valueOf(controls.getMoveLeft().toUpperCase());
+        } catch (Exception e) {
+            moveLeftKey = KeyCode.LEFT;
+        }
+
+        try {
+            moveRightKey = KeyCode.valueOf(controls.getMoveRight().toUpperCase());
+        } catch (Exception e) {
+            moveRightKey = KeyCode.RIGHT;
+        }
+
+        try {
+            launchBallKey = KeyCode.valueOf(controls.getLaunchBall().toUpperCase());
+        } catch (Exception e) {
+            launchBallKey = KeyCode.SPACE;
+        }
+
         // --- Paddle - Move Left ---
         FXGL.getInput()
                 .addAction(
@@ -44,7 +71,7 @@ public final class InputSystem extends InitialSystem {
                                                 });
                             }
                         },
-                        KeyCode.LEFT);
+                        moveLeftKey);
 
         // --- Paddle - Move Right ---
         FXGL.getInput()
@@ -63,7 +90,7 @@ public final class InputSystem extends InitialSystem {
                                                 });
                             }
                         },
-                        KeyCode.RIGHT);
+                        moveRightKey);
 
         // --- Ball - Launch ---
         FXGL.getInput()
@@ -87,7 +114,7 @@ public final class InputSystem extends InitialSystem {
                                                 });
                             }
                         },
-                        KeyCode.SPACE);
+                        launchBallKey);
 
         // --- Keep Ball Attached to Paddle ---
         FXGL.getGameTimer()

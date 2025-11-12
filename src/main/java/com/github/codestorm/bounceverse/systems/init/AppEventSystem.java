@@ -11,6 +11,7 @@ import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsMan
  * <h1>{@link AppEventSystem}</h1>
  *
  * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication} <br>
+ * <b>Đừng nhầm lẫn với {@link GameSystem}.</b>
  *
  * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  */

@@ -1,10 +1,10 @@
-package com.github.codestorm.bounceverse.ui.ingame;
+package com.github.codestorm.bounceverse.ui.elements.ingame;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 import com.github.codestorm.bounceverse.AssetsPath;
 import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
-import com.github.codestorm.bounceverse.ui.ViewElement;
+import com.github.codestorm.bounceverse.ui.elements.ViewElement;
 
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;

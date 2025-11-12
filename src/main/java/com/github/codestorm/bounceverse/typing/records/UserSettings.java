@@ -14,6 +14,7 @@ import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsMan
 public final class UserSettings {
     private final Video video = new Video();
     private final Audio audio = new Audio();
+    private final Controls controls = new Controls();
 
     public Video getVideo() {
         return video;
@@ -21,6 +22,10 @@ public final class UserSettings {
 
     public Audio getAudio() {
         return audio;
+    }
+
+    public Controls getControls() {
+        return controls;
     }
 
     /** Setting về Hình ảnh. */
@@ -55,6 +60,37 @@ public final class UserSettings {
 
         public void setSound(double sound) {
             this.sound = sound;
+        }
+    }
+
+    /** Setting về Controls/Phím điều khiển */
+    public static final class Controls {
+        private String moveLeft = "LEFT";
+        private String moveRight = "RIGHT";
+        private String launchBall = "SPACE";
+
+        public String getMoveLeft() {
+            return moveLeft;
+        }
+
+        public void setMoveLeft(String moveLeft) {
+            this.moveLeft = moveLeft;
+        }
+
+        public String getMoveRight() {
+            return moveRight;
+        }
+
+        public void setMoveRight(String moveRight) {
+            this.moveRight = moveRight;
+        }
+
+        public String getLaunchBall() {
+            return launchBall;
+        }
+
+        public void setLaunchBall(String launchBall) {
+            this.launchBall = launchBall;
         }
     }
 }
