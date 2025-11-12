@@ -158,25 +158,34 @@ public final class PhysicSystem extends InitialSystem {
                         break;
                     }
                     case BOTTOM: {
-                        ball.removeFromWorld();
+                        // KIỂM TRA: Có tấm khiên nào đang hoạt động trên màn hình không?
+                        if (FXGL.getGameWorld().getEntitiesByType(PowerUpType.SHIELD).isEmpty()) {
 
-                        if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
-                            HealthIntValue lives = FXGL.getWorldProperties().getObject("lives");
-                            lives.damage(1);
+                            // --- LOGIC CŨ: KHÔNG CÓ KHIÊN ---
+                            // Tường đáy là "tường chết", hủy bóng và trừ mạng.
+                            ball.removeFromWorld();
 
-                            FXGL.getGameTimer().runOnceAfter(() -> {
-                                if (lives.getValue() > 0) {
-                                    var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-                                    paddle.getComponent(PaddleViewManager.class).reset();
+                            if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
+                                HealthIntValue lives = FXGL.getWorldProperties().getObject("lives");
+                                lives.damage(1);
 
-                                    PowerUpManager.getInstance().clearAll();
+                                FXGL.getGameTimer().runOnceAfter(() -> {
+                                    if (lives.getValue() > 0) {
+                                        var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+                                        paddle.getComponent(PaddleViewManager.class).reset();
+                                        PowerUpManager.getInstance().clearAll();
+                                        double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
+                                        double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
+                                        FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
+                                        FXGL.set("ballAttached", true);
+                                    }
+                                }, javafx.util.Duration.millis(100));
+                            }
 
-                                    double x = paddle.getCenter().getX() - BallFactory.DEFAULT_RADIUS;
-                                    double y = paddle.getY() - BallFactory.DEFAULT_RADIUS * 2;
-                                    FXGL.spawn("ball", new SpawnData(x, y).put("attached", true));
-                                    FXGL.set("ballAttached", true);
-                                }
-                            }, javafx.util.Duration.millis(100));
+                        } else {
+                            // Đảo ngược vận tốc Y để bóng nảy lên
+                            var vel = phys.getLinearVelocity();
+                            phys.setLinearVelocity(vel.getX(), -Math.abs(vel.getY()));
                         }
                         break;
                     }
@@ -205,10 +214,6 @@ public final class PhysicSystem extends InitialSystem {
             }
         });
 
-        // Va chạm giữa Paddle và Tường đã được GỠ BỎ để tránh xung đột.
-        // Logic này giờ được xử lý hoàn toàn trong InputSystem.
-
-        // Paddle vs PowerUp
         world.addCollisionHandler(new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
             @Override
             protected void onCollisionBegin(Entity paddle, Entity powerUp) {
@@ -216,8 +221,9 @@ public final class PhysicSystem extends InitialSystem {
                     powerUp.getComponentOptional(PowerUpContainer.class).ifPresent(container -> {
                         container.addTo(paddle);
                         container.getContainer().values().forEach(c -> {
-                            if (c instanceof PowerUp p)
+                            if (c instanceof PowerUp p) {
                                 p.apply(paddle);
+                            }
                         });
                     });
                     powerUp.removeFromWorld();
@@ -230,11 +236,12 @@ public final class PhysicSystem extends InitialSystem {
      * Đảo hướng vận tốc theo hướng va chạm.
      *
      * @param phys a {@link PhysicsComponent}
-     * @param dir  a {@link DirectionUnit}
+     * @param dir a {@link DirectionUnit}
      */
     private static void bounce(PhysicsComponent phys, DirectionUnit dir) {
-        if (dir == null)
+        if (dir == null) {
             return;
+        }
 
         switch (dir) {
             case UP, DOWN:
@@ -249,6 +256,7 @@ public final class PhysicSystem extends InitialSystem {
     }
 
     private static final class Holder {
+
         static final PhysicSystem INSTANCE = new PhysicSystem();
     }
 }

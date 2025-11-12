@@ -9,6 +9,7 @@ import com.github.codestorm.bounceverse.components.properties.powerup.types.misc
 import com.github.codestorm.bounceverse.components.properties.powerup.types.paddle.DuplicatePaddlePowerUp;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.paddle.GunPowerUp;
 import com.github.codestorm.bounceverse.typing.structures.Cooldown;
+
 import javafx.util.Duration;
 
 public class PaddlePowerComponent extends Component {
@@ -33,9 +34,7 @@ public class PaddlePowerComponent extends Component {
 
         switch (color) {
             case "red":
-                if (!paddle.hasComponent(GunPowerUp.class)) {
-                    paddle.addComponent(new GunPowerUp());
-                }
+                new GunPowerUp().apply(paddle);
                 break;
             case "green":
                 new ExtraLifePowerUp().apply(paddle);
@@ -60,5 +59,9 @@ public class PaddlePowerComponent extends Component {
         FXGL.getGameTimer().runOnceAfter(viewManager::setNormalState, POWER_VISUAL_DURATION);
 
         powerCooldown.getCurrent().createNew();
+    }
+
+    public Cooldown getPowerCooldown() {
+        return powerCooldown;
     }
 }

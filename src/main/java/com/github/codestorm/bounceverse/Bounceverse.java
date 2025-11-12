@@ -1,16 +1,21 @@
 package com.github.codestorm.bounceverse;
 
+import java.io.IOException;
+import java.util.Map;
+
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
-import com.github.codestorm.bounceverse.systems.init.*;
+import com.github.codestorm.bounceverse.systems.init.AppEventSystem;
+import com.github.codestorm.bounceverse.systems.init.GameSystem;
+import com.github.codestorm.bounceverse.systems.init.InputSystem;
+import com.github.codestorm.bounceverse.systems.init.PhysicSystem;
+import com.github.codestorm.bounceverse.systems.init.UISystem;
 import com.github.codestorm.bounceverse.systems.manager.settings.GameSettingsManager;
 import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
 import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * <h1>{@link Bounceverse}</h1>
@@ -69,5 +74,6 @@ public final class Bounceverse extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         PowerUpManager.getInstance().onUpdate(tpf);
+        GameSystem.UI.getInstance().onUpdate();
     }
 }

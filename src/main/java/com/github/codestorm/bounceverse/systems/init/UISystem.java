@@ -1,6 +1,12 @@
 package com.github.codestorm.bounceverse.systems.init;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 import com.almasb.fxgl.dsl.FXGL;
+
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -12,11 +18,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 /**
  * UISystem với hiệu ứng sóng neon và nền "Siri" động.

@@ -7,6 +7,7 @@ import com.almasb.fxgl.physics.HitBox;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import com.github.codestorm.bounceverse.data.types.PowerUpType;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -46,7 +47,6 @@ public class ShieldPowerUp extends PowerUp {
                 .view(view)
                 .bbox(new HitBox(BoundingShape.box(appWidth, shieldHeight)))
                 .collidable()
-                .with(new ShieldSafetyNetComponent())
                 .buildAndAttach();
     }
 

@@ -1,5 +1,10 @@
 package com.github.codestorm.bounceverse.systems.init;
 
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
@@ -7,16 +12,19 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
-import com.github.codestorm.bounceverse.factory.entities.*;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddlePowerComponent;
+import com.github.codestorm.bounceverse.factory.entities.BallFactory;
+import com.github.codestorm.bounceverse.factory.entities.BrickFactory;
+import com.github.codestorm.bounceverse.factory.entities.BulletFactory;
+import com.github.codestorm.bounceverse.factory.entities.PaddleFactory;
+import com.github.codestorm.bounceverse.factory.entities.PowerUpFactory;
+import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
 import com.github.codestorm.bounceverse.ui.HorizontalPositiveInteger;
 import com.github.codestorm.bounceverse.ui.ingame.Hearts;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Map;
+import javafx.scene.text.Text;
 
 /**
  * <h1>GameSystem</h1>
@@ -31,7 +39,9 @@ public final class GameSystem extends InitialSystem {
         return Holder.INSTANCE;
     }
 
-    /** Biến toàn cục của game (điểm, mạng, save/load). */
+    /**
+     * Biến toàn cục của game (điểm, mạng, save/load).
+     */
     public static final class Variables {
 
         private Variables() {
@@ -44,7 +54,9 @@ public final class GameSystem extends InitialSystem {
 
         private static final List<String> PADDLE_COLORS = List.of("blue", "green", "orange", "pink", "red", "yellow");
 
-        /** Handler cho hệ thống save/load của FXGL. */
+        /**
+         * Handler cho hệ thống save/load của FXGL.
+         */
         public static final SaveLoadHandler SAVE_LOAD_HANDLER = new SaveLoadHandler() {
             @Override
             public void onSave(@NotNull DataFile dataFile) {
@@ -83,8 +95,11 @@ public final class GameSystem extends InitialSystem {
         }
     }
 
-    /** Lớp con phụ trách spawn các thực thể chính (entity). */
+    /**
+     * Lớp con phụ trách spawn các thực thể chính (entity).
+     */
     private static final class EntitySpawn {
+
         private EntitySpawn() {
         }
 
@@ -104,7 +119,9 @@ public final class GameSystem extends InitialSystem {
             FXGL.spawn("wallRight");
         }
 
-        /** Spawn các bricks theo layout mẫu. */
+        /**
+         * Spawn các bricks theo layout mẫu.
+         */
         public static void bricks() {
             var rows = 6;
             var cols = 10;
@@ -125,16 +142,13 @@ public final class GameSystem extends InitialSystem {
                     // Hàng đầu tiên là shieldBrick
                     if (y == 0) {
                         type = "shieldBrick";
-                    }
-                    // 🔑 Hàng thứ 4 (index = 3) là keyBrick để test PowerUp
+                    } // 🔑 Hàng thứ 4 (index = 3) là keyBrick để test PowerUp
                     else if (y == 4) {
                         type = "keyBrick";
-                    }
-                    // Hàng cuối (index = 5) là explodingBrick để test nổ lan
+                    } // Hàng cuối (index = 5) là explodingBrick để test nổ lan
                     else if (y == 5) {
                         type = "explodingBrick";
-                    }
-                    // Các hàng còn lại là gạch thường
+                    } // Các hàng còn lại là gạch thường
                     else {
                         type = "normalBrick";
                     }
@@ -160,14 +174,18 @@ public final class GameSystem extends InitialSystem {
         }
     }
 
-    /** Hiển thị giao diện UI trong game. */
-    private static final class UI {
+    /**
+     * Hiển thị giao diện UI trong game.
+     */
+    public static final class UI {
+
         private UI() {
         }
 
         private boolean isInitialized = false;
         private Hearts heartsDisplay;
         private HorizontalPositiveInteger scoreDisplay;
+        private Text cooldownText;
 
         public static UI getInstance() {
             return Holder.INSTANCE;
@@ -193,21 +211,68 @@ public final class GameSystem extends InitialSystem {
             heartsDisplay.getView().setTranslateY(FXGL.getAppHeight() - 52);
         }
 
-        public void addAll() {
-            if (isInitialized)
+        public void addCooldownDisplay() {
+            if (cooldownText == null) {
+                cooldownText = FXGL.getUIFactoryService().newText("", 18);
+                cooldownText.getStyleClass().add("powerup-text"); // Áp dụng style CSS
+            }
+            FXGL.getGameScene().addUINode(cooldownText);
+            cooldownText.setTranslateX(FXGL.getAppWidth() - 220);
+            cooldownText.setTranslateY(FXGL.getAppHeight() - FXGL.getAppHeight()/2);
+        }
+
+        public void onUpdate() {
+            if (!isInitialized || cooldownText == null) {
                 return;
+            }
+
+            var paddleOpt = FXGL.getGameWorld().getSingletonOptional(EntityType.PADDLE);
+
+            if (paddleOpt.isEmpty()) {
+                cooldownText.setText("");
+                return;
+            }
+
+            var powerCompOpt = paddleOpt.get().getComponentOptional(PaddlePowerComponent.class);
+
+            if (powerCompOpt.isEmpty()) {
+                cooldownText.setText("");
+                return;
+            }
+
+            var powerComp = powerCompOpt.get();
+            var powerCooldown = powerComp.getPowerCooldown();
+
+            if (powerCooldown.getCurrent().isExpired()) {
+                cooldownText.setText("Power: READY");
+            } else {
+                cooldownText.setText(String.format("Power: COOLDOWN"));
+            }
+        }
+
+        public void addAll() {
+            if (isInitialized) {
+                return;
+            }
             addScoreDisplay();
             addHeartsDisplay();
+            addCooldownDisplay();
             isInitialized = true;
         }
 
         public void removeAll() {
-            if (!isInitialized)
+            if (!isInitialized) {
                 return;
-            if (scoreDisplay != null)
+            }
+            if (scoreDisplay != null) {
                 FXGL.getGameScene().removeUINode(scoreDisplay.getView());
-            if (heartsDisplay != null)
+            }
+            if (heartsDisplay != null) {
                 FXGL.getGameScene().removeUINode(heartsDisplay.getView());
+            }
+            if (cooldownText != null) {
+                FXGL.getGameScene().removeUINode(cooldownText);
+            }
             isInitialized = false;
         }
 
@@ -215,9 +280,11 @@ public final class GameSystem extends InitialSystem {
             removeAll();
             scoreDisplay = null;
             heartsDisplay = null;
+            cooldownText = null;
         }
 
         private static final class Holder {
+
             static final UI INSTANCE = new UI();
         }
     }
@@ -233,6 +300,7 @@ public final class GameSystem extends InitialSystem {
     }
 
     private static final class Holder {
+
         static final GameSystem INSTANCE = new GameSystem();
     }
 }

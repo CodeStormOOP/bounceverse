@@ -1,13 +1,14 @@
 package com.github.codestorm.bounceverse.components.properties.powerup;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.time.TimerAction;
+
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Quản lý các Power-Up đang hoạt động: thời gian, gia hạn, và hiển thị HUD đếm
@@ -22,7 +23,7 @@ public final class PowerUpManager {
      * gian.
      */
     private static final class ActivePowerUp {
-        TimerAction timer; // Không còn là 'final'
+        TimerAction timer;
         final Runnable onExpire;
         final Text label;
         double timeLeft;
