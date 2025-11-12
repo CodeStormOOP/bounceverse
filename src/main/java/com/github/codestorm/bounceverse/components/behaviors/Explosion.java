@@ -1,54 +1,61 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
-import com.github.codestorm.bounceverse.typing.annotations.ForEntity;
+import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import java.util.List;
 
-/**
- *
- *
- * <h1>{@link Explosion}</h1>
- *
- * <br>
- * Hành vi nổ của {@link Entity}, có thể gây sát thương hoặc hồi máu cho những đối tượng xung quanh.
- * <br>
- * <b>Yêu cầu entity có {@link Attributes} trước.</b>
- */
+/** Hành vi nổ của Brick – gây damage cho các đối tượng xung quanh. */
 @Required(Attributes.class)
-@ForEntity({})
+@OnlyForEntity({EntityType.BRICK})
 public final class Explosion extends Attack {
-    public static final int DEFAULT_RADIUS = 1;
-    private int radius = DEFAULT_RADIUS;
+
+    private double explosionWidth;
+    private double explosionHeight;
 
     @Override
     public void execute(List<Object> data) {
-        final var attributes = entity.getComponent(Attributes.class);
-        final double cx = getEntity().getCenter().getX();
-        final double cy = getEntity().getCenter().getY();
+        var cx = getEntity().getCenter().getX();
+        var cy = getEntity().getCenter().getY();
 
-        final var nearEntities = Utilities.Geometric.getEntityInCircle(cx, cy, radius);
-        super.execute(nearEntities.stream().map(e -> (Object) e).toList());
+        var nearEntities =
+                Utilities.Geometric.getEntitiesInRectangle(cx, cy, explosionWidth, explosionHeight);
+
+        var filteredEntities =
+                nearEntities.stream()
+                        .filter(e -> !e.equals(getEntity()))
+                        .map(e -> (Object) e)
+                        .toList();
+
+        super.execute(filteredEntities);
     }
 
     @Override
     public void onRemoved() {
-        execute(null);
+        execute(List.of());
     }
 
-    public int getRadius() {
-        return radius;
+    public Explosion(double width, double height) {
+        this.explosionWidth = width;
+        this.explosionHeight = height;
     }
 
-    public void setRadius(int radius) {
-        this.radius = Math.abs(radius);
+    public double getExplosionWidth() {
+        return explosionWidth;
     }
 
-    public Explosion() {}
+    public void setExplosionWidth(double explosionWidth) {
+        this.explosionWidth = explosionWidth;
+    }
 
-    public Explosion(int radius) {
-        setRadius(radius);
+    public double getExplosionHeight() {
+        return explosionHeight;
+    }
+
+    public void setExplosionHeight(double explosionHeight) {
+        this.explosionHeight = explosionHeight;
     }
 }

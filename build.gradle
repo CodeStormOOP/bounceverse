@@ -23,6 +23,7 @@ dependencies {
 	implementation 'com.github.almasb:fxgl:21.1'
 	implementation 'com.google.guava:guava:33.5.0-jre'
 	implementation 'com.moandjiezana.toml:toml4j:0.7.2'
+	implementation 'com.google.guava:guava:33.5.0-jre'
 	implementation 'com.google.auto.service:auto-service-annotations:1.1.1'
 	annotationProcessor 'com.google.auto.service:auto-service:1.1.1'
 }
@@ -30,13 +31,16 @@ dependencies {
 application {
 	mainClass = 'com.github.codestorm.bounceverse.Bounceverse'
 	applicationDefaultJvmArgs = [
-			"--enable-native-access=javafx.graphics"
+			"--enable-native-access=javafx.graphics",
+			"--enable-native-access=javafx.media",
+			'-Dprism.forceGPU=true',
+			'-Dmedia.gpu.decoder=true'
 	]
 }
 
 defaultTasks('run')
 
-tasks.register('buildRelease', Jar) {
+tasks.register('release', Jar) {
 	group = 'build'
 	description = "Test this project and assemble a release JAR file."
 
@@ -63,16 +67,24 @@ javafx {
 }
 
 spotless {
-	enforceCheck = false
-	format 'misc', {
-		target '*.gradle', '.gitattributes', '.gitignore'
+    enforceCheck = false
 
-		trimTrailingWhitespace()
-		leadingSpacesToTabs()
-		endWithNewline()
-	}
-	java {
-		googleJavaFormat().aosp().reflowLongStrings()
-		formatAnnotations()
-	}
+    format 'misc', {
+        target '*.gradle', '.gitattributes', '.gitignore'
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    java {
+        target 'src/**/*.java'
+        targetExclude 'src/**/libs/**/*';
+
+        googleJavaFormat('1.17.0')
+                .aosp()
+                .reorderImports(true)
+                .reflowLongStrings(true)
+                .formatJavadoc(true)
+        formatAnnotations()
+        removeUnusedImports()
+    }
 }
