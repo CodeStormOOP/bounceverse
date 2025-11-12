@@ -133,10 +133,10 @@ public final class InputSystem extends InitialSystem {
                                     var paddleBBox = paddle.getBoundingBoxComponent();
                                     var ballBBox = ball.getBoundingBoxComponent();
 
-                                    double x =
+                                    var x =
                                             paddleBBox.getCenterWorld().getX()
                                                     - ballBBox.getWidth() / 2;
-                                    double y = paddleBBox.getMinYWorld() - ballBBox.getHeight() - 4;
+                                    var y = paddleBBox.getMinYWorld() - ballBBox.getHeight() - 4;
 
                                     ball.setPosition(x, y);
 

@@ -148,7 +148,6 @@ public final class GameSystem extends InitialSystem {
             final var seed = FXGL.getWorldProperties().getInt("seed");
             var noise = new FastNoiseLite(seed);
             var colors = AssetsPath.Textures.Bricks.COLORS.keySet().toArray(new Color[0]);
-            var color = colors[Math.floorMod(seed, colors.length)];
 
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             noise.SetFrequency(0.2f);
@@ -218,6 +217,28 @@ public final class GameSystem extends InitialSystem {
             cells.sort(Comparator.comparing(Cell::n).reversed());
             var target = Math.min(amount, cells.size());
 
+            // Đảm bảo mỗi màu xuất hiện ít nhất một lần
+            var colorAssignments = new Color[target];
+
+            // Bước 1: Gán mỗi màu cho ít nhất một brick
+            for (var i = 0; i < Math.min(colors.length, target); i++) {
+                colorAssignments[i] = colors[i];
+            }
+
+            // Bước 2: Phân phối các brick còn lại dựa trên noise
+            for (var i = colors.length; i < target; i++) {
+                var c = cells.get(i);
+                var n = c.n();
+                var normalizedN = (n + 1.0f) / 2.0f; // [0, 1]
+
+                var colorIndex = (int) (normalizedN * colors.length);
+                if (colorIndex >= colors.length) {
+                    colorIndex = colors.length - 1;
+                }
+                colorAssignments[i] = colors[colorIndex];
+            }
+
+            // Spawn các brick với màu đã được gán
             for (var i = 0; i < target; i++) {
                 var c = cells.get(i);
                 var n = c.n();
@@ -235,7 +256,7 @@ public final class GameSystem extends InitialSystem {
                 data.put("pos", new Point2D(c.x(), c.y()));
                 data.put("width", brickWidth);
                 data.put("height", brickHeight);
-                data.put("color", color);
+                data.put("color", colorAssignments[i]);
                 FXGL.spawn(type, data);
             }
         }
@@ -274,6 +295,7 @@ public final class GameSystem extends InitialSystem {
         private boolean isInitialized = false;
         private Hearts heartsDisplay;
         private HorizontalPositiveInteger scoreDisplay;
+        private javafx.scene.text.Text levelDisplay;
 
         public static UI getInstance() {
             return Holder.INSTANCE;
@@ -303,6 +325,22 @@ public final class GameSystem extends InitialSystem {
             heartsDisplay.getView().setTranslateY(FXGL.getAppHeight() - 52); // Dưới cùng màn hình
         }
 
+        /** Thêm Level display (hiển thị level) vào game scene. */
+        public void addLevelDisplay() {
+            if (levelDisplay == null) {
+                final var levelProperty = FXGL.getWorldProperties().intProperty("level");
+                levelDisplay = FXGL.getUIFactoryService().newText("", Color.WHITE, 24.0);
+
+                // Bind text to level property
+                levelDisplay.textProperty().bind(levelProperty.asString("LEVEL %d"));
+            }
+
+            FXGL.getGameScene().addUINode(levelDisplay);
+            // Position at bottom right corner
+            levelDisplay.setTranslateX(FXGL.getAppWidth() - 120);
+            levelDisplay.setTranslateY(FXGL.getAppHeight() - 30);
+        }
+
         /** Thêm tất cả UI elements vào game scene. */
         public void addAll() {
             if (isInitialized) {
@@ -312,6 +350,7 @@ public final class GameSystem extends InitialSystem {
 
             addScoreDisplay();
             addHeartsDisplay();
+            addLevelDisplay();
             isInitialized = true;
         }
 
@@ -329,6 +368,10 @@ public final class GameSystem extends InitialSystem {
                 FXGL.getGameScene().removeUINode(heartsDisplay.getView());
             }
 
+            if (levelDisplay != null) {
+                FXGL.getGameScene().removeUINode(levelDisplay);
+            }
+
             isInitialized = false;
         }
 
@@ -337,6 +380,7 @@ public final class GameSystem extends InitialSystem {
             removeAll();
             scoreDisplay = null;
             heartsDisplay = null;
+            levelDisplay = null;
         }
 
         /** Kiểm tra UI đã được khởi tạo chưa. */
