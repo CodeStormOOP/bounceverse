@@ -1,11 +1,14 @@
 package com.github.codestorm.bounceverse.systems.init;
 
+import java.util.List;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.Utilities;
+import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
@@ -42,8 +45,47 @@ public final class PhysicSystem extends InitialSystem {
         world.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BRICK) {
             @Override
             protected void onCollisionBegin(Entity bullet, Entity brick) {
-                bullet.getComponentOptional(com.github.codestorm.bounceverse.components.behaviors.Attack.class)
-                        .ifPresent(a -> a.execute(java.util.List.of(brick)));
+                PhysicsComponent bulletPhysics = bullet.getComponent(PhysicsComponent.class);
+                Point2D velocity = bulletPhysics.getLinearVelocity();
+
+                Side hitSide;
+
+                if (Math.abs(velocity.getY()) > Math.abs(velocity.getX())) {
+                    if (velocity.getY() < 0) {
+                        hitSide = Side.BOTTOM;
+                    } else {
+                        hitSide = Side.TOP;
+                    }
+                } else {
+                    if (velocity.getX() < 0) {
+                        hitSide = Side.RIGHT;
+                    } else {
+                        hitSide = Side.LEFT;
+                    }
+                }
+
+                var shieldOpt = brick.getComponentOptional(Shield.class);
+
+                // Kiểm tra xem mặt vừa bị va chạm có được bảo vệ không
+                if (shieldOpt.isPresent() && shieldOpt.get().hasSide(hitSide)) {
+                    // Có khiên bảo vệ, không gây sát thương
+                } else {
+                    // Không có khiên, gây sát thương
+                    bullet.getComponentOptional(Attack.class)
+                            .ifPresent(a -> a.execute(List.of(brick)));
+                }
+
+                // Viên đạn luôn tự hủy sau va chạm
+                bullet.removeFromWorld();
+            }
+        });
+
+        // Bullet vs Wall
+        world.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.WALL) {
+            @Override
+            protected void onCollisionBegin(Entity bullet, Entity wall) {
+                // Đơn giản là xóa viên đạn khi nó chạm vào bất kỳ bức tường nào
+                bullet.removeFromWorld();
             }
         });
 
@@ -74,7 +116,7 @@ public final class PhysicSystem extends InitialSystem {
                 double offset = (ball.getCenter().getX() - paddle.getCenter().getX()) / (paddle.getWidth() / 2.0);
                 offset = Math.max(-1.0, Math.min(1.0, offset));
                 double angle = Math.toRadians(90 - 45 * offset);
-                double speed = 300;
+                double speed = FXGL.getd("ballSpeed");
                 physics.setLinearVelocity(speed * Math.cos(angle), -speed * Math.sin(angle));
             }
         });
@@ -141,14 +183,25 @@ public final class PhysicSystem extends InitialSystem {
                     }
                 }
 
-                var newV = phys.getLinearVelocity();
-                double speed = newV.magnitude();
-                double MIN_SPEED = 220;
-                double MAX_SPEED = 450;
-                if (speed < MIN_SPEED) {
-                    phys.setLinearVelocity(newV.normalize().multiply(MIN_SPEED));
-                } else if (speed > MAX_SPEED) {
-                    phys.setLinearVelocity(newV.normalize().multiply(MAX_SPEED));
+                var currentVelocity = phys.getLinearVelocity();
+                double currentSpeed = currentVelocity.magnitude();
+                double targetSpeed = FXGL.getd("ballSpeed");
+
+                // Đặt một khoảng an toàn để tránh điều chỉnh liên tục do sai số vật lý
+                double minAllowedSpeed = targetSpeed * 0.95;
+                double maxAllowedSpeed = targetSpeed * 1.05;
+
+                double newSpeed = currentSpeed;
+
+                if (currentSpeed < minAllowedSpeed) {
+                    newSpeed = minAllowedSpeed;
+                } else if (currentSpeed > maxAllowedSpeed) {
+                    newSpeed = maxAllowedSpeed;
+                }
+
+                // Chỉ cập nhật lại vận tốc nếu tốc độ thực sự bị thay đổi
+                if (Math.abs(newSpeed - currentSpeed) > 1e-3) {
+                    phys.setLinearVelocity(currentVelocity.normalize().multiply(newSpeed));
                 }
             }
         });
@@ -176,7 +229,7 @@ public final class PhysicSystem extends InitialSystem {
 
     /**
      * Đảo hướng vận tốc theo hướng va chạm.
-     * 
+     *
      * @param phys a {@link PhysicsComponent}
      * @param dir  a {@link DirectionUnit}
      */

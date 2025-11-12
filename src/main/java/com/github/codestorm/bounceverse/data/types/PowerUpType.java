@@ -7,10 +7,7 @@ public enum PowerUpType {
     MULTI_BALL,
     SLOW_BALL,
     FAST_BALL,
-    BIG_BALL,
     SHIELD,
     GUN,
-    MAGNET,
     EXTRA_LIFE,
-    SCORE_BOOST
 }

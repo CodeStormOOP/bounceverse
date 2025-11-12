@@ -1,5 +1,6 @@
 package com.github.codestorm.bounceverse.systems.init;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -15,6 +16,7 @@ import com.github.codestorm.bounceverse.ui.ingame.Hearts;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,9 +38,12 @@ public final class GameSystem extends InitialSystem {
         private Variables() {
         }
 
-        public static final int MAX_LIVES = 5;
+        public static final int MAX_LIVES = 3;
         public static final int DEFAULT_LIVES = 3;
         public static final int DEFAULT_SCORE = 0;
+        public static final double DEFAULT_BALL_SPEED = 300;
+
+        private static final List<String> PADDLE_COLORS = List.of("blue", "green", "orange", "pink", "red", "yellow");
 
         /** Handler cho hệ thống save/load của FXGL. */
         public static final SaveLoadHandler SAVE_LOAD_HANDLER = new SaveLoadHandler() {
@@ -72,6 +77,10 @@ public final class GameSystem extends InitialSystem {
             vars.clear();
             vars.put("lives", lives);
             vars.put("score", DEFAULT_SCORE);
+            vars.put("ballSpeed", DEFAULT_BALL_SPEED);
+
+            String randomColor = PADDLE_COLORS.get(FXGLMath.random(0, PADDLE_COLORS.size() - 1));
+            vars.put("paddleColor", randomColor);
         }
     }
 
@@ -114,7 +123,7 @@ public final class GameSystem extends InitialSystem {
 
                     String type;
 
-                    // 🛡️ Hàng đầu tiên là shieldBrick
+                    // Hàng đầu tiên là shieldBrick
                     if (y == 0) {
                         type = "shieldBrick";
                     }
@@ -122,11 +131,11 @@ public final class GameSystem extends InitialSystem {
                     else if (y == 4) {
                         type = "keyBrick";
                     }
-                    // 💣 Hàng cuối (index = 5) là explodingBrick để test nổ lan
+                    // Hàng cuối (index = 5) là explodingBrick để test nổ lan
                     else if (y == 5) {
                         type = "explodingBrick";
                     }
-                    // 💎 Các hàng còn lại là gạch thường
+                    // Các hàng còn lại là gạch thường
                     else {
                         type = "normalBrick";
                     }
@@ -141,9 +150,7 @@ public final class GameSystem extends InitialSystem {
 
         public static void paddle() {
             FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).forEach(Entity::removeFromWorld);
-            double px = FXGL.getAppWidth() / 2.0 - 60;
-            double py = FXGL.getAppHeight() - 40;
-            FXGL.spawn("paddle", px, py);
+            FXGL.spawn("paddle");
         }
 
         public static void ball() {

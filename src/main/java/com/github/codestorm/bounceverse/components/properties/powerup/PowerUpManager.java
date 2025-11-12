@@ -16,12 +16,16 @@ import java.util.Map;
  */
 public final class PowerUpManager {
 
-    /** Mỗi power-up có timer riêng + logic hết hạn + UI text. */
+    /**
+     * Lớp nội bộ để theo dõi mỗi power-up đang hoạt động.
+     * Sửa đổi: 'timer' không còn là final để có thể cập nhật khi cộng dồn thời
+     * gian.
+     */
     private static final class ActivePowerUp {
-        final TimerAction timer;
+        TimerAction timer; // Không còn là 'final'
         final Runnable onExpire;
         final Text label;
-        double timeLeft; // giây còn lại
+        double timeLeft;
 
         ActivePowerUp(TimerAction timer, Runnable onExpire, Text label, double durationSeconds) {
             this.timer = timer;
@@ -32,15 +36,12 @@ public final class PowerUpManager {
     }
 
     private final Map<String, ActivePowerUp> activePowerUps = new HashMap<>();
-
-    /** HUD hiển thị danh sách power-up. */
     private final VBox hudBox = new VBox(6);
     private boolean hudAdded = false;
 
     private static final PowerUpManager INSTANCE = new PowerUpManager();
 
     private PowerUpManager() {
-        // Cấu hình vị trí HUD ở góc phải trên cùng
         hudBox.setTranslateX(FXGL.getAppWidth() - 220);
         hudBox.setTranslateY(20);
     }
@@ -49,7 +50,6 @@ public final class PowerUpManager {
         return INSTANCE;
     }
 
-    /** Đảm bảo HUD đã được thêm vào Scene (gọi an toàn mỗi frame). */
     private void ensureHUDAdded() {
         if (!hudAdded && FXGL.getGameScene() != null) {
             FXGL.getGameScene().addUINode(hudBox);
@@ -58,66 +58,65 @@ public final class PowerUpManager {
     }
 
     /**
-     * Kích hoạt hoặc gia hạn Power-Up.
+     * Kích hoạt hoặc gia hạn (cộng dồn) thời gian cho một Power-Up.
      *
-     * @param name       Tên power-up (ví dụ: "ExpandPaddle")
-     * @param duration   Thời gian hiệu lực
-     * @param onActivate Logic khi kích hoạt
-     * @param onExpire   Logic khi hết hiệu lực
+     * @param name       Tên power-up
+     * @param duration   Thời gian hiệu lực của power-up mới
+     * @param onActivate Logic khi kích hoạt LẦN ĐẦU
+     * @param onExpire   Logic khi hết hiệu lực hoàn toàn
      */
     public void activate(String name, Duration duration, Runnable onActivate, Runnable onExpire) {
         ensureHUDAdded();
-
-        // Nếu đã tồn tại power-up cùng loại -> xóa cũ
+        double newDurationSeconds = duration.toSeconds();
+        
         if (activePowerUps.containsKey(name)) {
-            var old = activePowerUps.get(name);
-            if (!old.timer.isExpired()) {
-                old.timer.expire();
-            }
-            old.onExpire.run();
-            hudBox.getChildren().remove(old.label);
-            activePowerUps.remove(name);
+            var existing = activePowerUps.get(name);
+
+            existing.timer.expire();
+
+            double newTimeLeft = existing.timeLeft + newDurationSeconds;
+            existing.timeLeft = newTimeLeft;
+
+            var newTimer = FXGL.getGameTimer().runOnceAfter(() -> {
+                onExpire.run();
+                hudBox.getChildren().remove(existing.label);
+                activePowerUps.remove(name);
+            }, Duration.seconds(newTimeLeft));
+
+            existing.timer = newTimer;
+
+            return;
         }
 
-        // Kích hoạt mới
         onActivate.run();
 
-        // Tạo label UI hiển thị
         Text label = FXGL.getUIFactoryService()
-                .newText(name + " " + String.format("%.1fs", duration.toSeconds()), 18);
+                .newText(name + " " + String.format("%.1fs", newDurationSeconds), 18);
         label.getStyleClass().add("powerup-text");
         hudBox.getChildren().add(label);
 
-        // Tạo timer hết hạn
         var timer = FXGL.getGameTimer().runOnceAfter(() -> {
             onExpire.run();
             hudBox.getChildren().remove(label);
             activePowerUps.remove(name);
         }, duration);
 
-        // Lưu lại
-        activePowerUps.put(name,
-                new ActivePowerUp(timer, onExpire, label, duration.toSeconds()));
+        activePowerUps.put(name, new ActivePowerUp(timer, onExpire, label, newDurationSeconds));
     }
 
-    /**
-     * Gọi trong vòng lặp update() để giảm thời gian đếm ngược và cập nhật UI.
-     */
     public void onUpdate(double tpf) {
-        ensureHUDAdded(); // ✅ đảm bảo HUD đã được thêm vào scene
+        ensureHUDAdded();
 
         for (var entry : activePowerUps.values()) {
             entry.timeLeft -= tpf;
             if (entry.timeLeft < 0)
                 entry.timeLeft = 0;
 
-            // Giữ nguyên tên power-up, chỉ cập nhật thời gian
-            entry.label.setText(String.format("%s  %.1fs",
-                    entry.label.getText().split(" ")[0], entry.timeLeft));
+            String powerUpName = entry.label.getText().split(" ")[0];
+            entry.label.setText(String.format("%s  %.1fs", powerUpName, entry.timeLeft));
         }
     }
 
-    /** Xóa toàn bộ power-up đang hoạt động (ví dụ khi mất bóng). */
     public void clearAll() {
         ensureHUDAdded();
 

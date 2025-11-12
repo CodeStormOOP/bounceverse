@@ -2,6 +2,7 @@ package com.github.codestorm.bounceverse.components.properties.powerup.types.pad
 
 import com.almasb.fxgl.entity.Entity;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddleTextureManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import javafx.util.Duration;
@@ -20,12 +21,18 @@ public final class ShrinkPaddlePowerUp extends PowerUp {
     @Override
     public void apply(Entity paddle) {
         var manager = paddle.getComponent(PaddleSizeManager.class);
+        var textureManager = paddle.getComponent(PaddleTextureManager.class);
 
         PowerUpManager.getInstance().activate(
                 name,
                 DURATION,
-                () -> manager.expand(0.7),
-                manager::resetSize
-        );
+                () -> {
+                    manager.shrink(0.7);
+                    textureManager.setShrinkState();
+                },
+                () -> {
+                    manager.resetSize();
+                    textureManager.setNormalState();
+                });
     }
 }

@@ -15,7 +15,6 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
 @OnlyForEntity({ EntityType.BRICK })
 public final class Explosion extends Attack {
 
-    // Thay thế 'radius' bằng 'explosionWidth' và 'explosionHeight'
     private double explosionWidth;
     private double explosionHeight;
 
@@ -24,10 +23,8 @@ public final class Explosion extends Attack {
         double cx = getEntity().getCenter().getX();
         double cy = getEntity().getCenter().getY();
 
-        // Sử dụng hàm mới để lấy các entity trong hình chữ nhật
         var nearEntities = Utilities.Geometric.getEntitiesInRectangle(cx, cy, explosionWidth, explosionHeight);
 
-        // Lọc ra để vụ nổ không tự phá hủy chính nó (nếu logic game thay đổi)
         var filteredEntities = nearEntities.stream()
                 .filter(e -> !e.equals(getEntity()))
                 .map(e -> (Object) e)
@@ -38,12 +35,9 @@ public final class Explosion extends Attack {
 
     @Override
     public void onRemoved() {
-        // execute(null) sẽ không hoạt động đúng nếu data là null, truyền vào một danh
-        // sách trống
         execute(List.of());
     }
 
-    // Constructor mới nhận chiều rộng và cao
     public Explosion(double width, double height) {
         this.explosionWidth = width;
         this.explosionHeight = height;

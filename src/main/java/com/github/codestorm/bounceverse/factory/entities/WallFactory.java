@@ -10,6 +10,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.typing.enums.AnchorPoint;
+import com.github.codestorm.bounceverse.typing.enums.CollisionGroup;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
@@ -64,6 +65,12 @@ public final class WallFactory extends EntityFactory {
         var fixture = new FixtureDef();
         fixture.setFriction(0f);
         fixture.setRestitution(1f);
+
+        // Lọc va chạm: Tường thuộc nhóm WALL và va chạm với BALL, BULLET, PADDLE
+        fixture.getFilter().categoryBits = CollisionGroup.WALL.bits;
+        fixture.getFilter().maskBits = CollisionGroup.BALL.bits | CollisionGroup.BULLET.bits
+                | CollisionGroup.PADDLE.bits;
+
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);
 

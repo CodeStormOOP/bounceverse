@@ -17,7 +17,6 @@ public class Special extends Component {
     public void onRemoved() {
         var pos = getEntity().getCenter();
 
-        // ✅ Delay 1 frame rồi gọi spawner random
         FXGL.runOnce(() -> PowerUpSpawner.spawnRandom(pos.add(0, 10)), Duration.seconds(0.017));
     }
 }

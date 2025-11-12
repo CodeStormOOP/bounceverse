@@ -5,6 +5,7 @@ import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.texture.Texture;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.ball.*;
+import com.github.codestorm.bounceverse.components.properties.powerup.types.misc.ExtraLifePowerUp;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.misc.ShieldPowerUp;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.paddle.*;
 import com.github.codestorm.bounceverse.data.types.PowerUpType;
@@ -28,7 +29,8 @@ public final class PowerUpSpawner {
             Map.entry(PowerUpType.FAST_BALL, 0.10),
             Map.entry(PowerUpType.SHIELD, 0.10),
             Map.entry(PowerUpType.GUN, 0.10),
-            Map.entry(PowerUpType.REVERSE_PADDLE, 0.15)
+            Map.entry(PowerUpType.REVERSE_PADDLE, 0.15),
+            Map.entry(PowerUpType.EXTRA_LIFE, 0.08)
     );
 
     private static final Random RANDOM = new Random();
@@ -66,10 +68,12 @@ public final class PowerUpSpawner {
 
             // Misc
             case SHIELD -> new ShieldPowerUp();
+            case EXTRA_LIFE -> new ExtraLifePowerUp();
+            
 
             // Loại chưa có class — fallback
             default -> {
-                LOGGER.warning("⚠️ PowerUp chưa được triển khai: " + type);
+                LOGGER.warning(" PowerUp chưa được triển khai: " + type);
                 yield new ExpandPaddlePowerUp();
             }
         };
@@ -78,21 +82,22 @@ public final class PowerUpSpawner {
     /** Lấy texture theo loại Power-Up */
     public static Texture getPowerUpTexture(PowerUpType type) {
         String path = switch (type) {
-            // 🧱 Paddle
+            // Paddle
             case EXPAND_PADDLE -> "power/paddle/Expand Paddle.png";
             case SHRINK_PADDLE -> "power/paddle/Shrink Paddle.png";
             case GUN -> "power/paddle/Gun.png";
             case REVERSE_PADDLE -> "power/paddle/Reverse Paddle.png";
 
-            // 🟣 Ball
+            // Ball
             case MULTI_BALL -> "power/ball/x2 Ball.png";
             case SLOW_BALL -> "power/ball/Slow Ball.png";
             case FAST_BALL -> "power/ball/Fast Ball.png";
 
-            // 🟢 Misc
+            // Misc
             case SHIELD -> "power/misc/shield.png";
+            case EXTRA_LIFE -> "power/misc/extra_life.png";
 
-            // ⚙️ fallback
+            // fallback
             default -> "power/paddle/Expand Paddle.png";
         };
         return FXGL.texture(path);

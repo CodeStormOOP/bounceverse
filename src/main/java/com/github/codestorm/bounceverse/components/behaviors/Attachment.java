@@ -68,18 +68,11 @@ public class Attachment extends Component {
         physics.overwritePosition(entity.getPosition());
         physics.getBody().setAwake(true);
 
-        double speed = 350; // Giữ nguyên tốc độ
-        
-        // Vận tốc ngang (vx) bằng 0 để bóng bay thẳng
+        double speed = 350;
         double vx = 0;
-        
-        // Vận tốc dọc (vy) là một giá trị âm để bóng bay lên (vì trục Y hướng xuống)
         double vy = -speed;
 
         physics.setLinearVelocity(new Point2D(vx, vy));
-
-        // ---------- KẾT THÚC SỬA ĐỔI ----------
-        
         move = false;
     }
 

@@ -42,14 +42,14 @@ public final class BallFactory extends EntityFactory {
             physics.getBody().setFixedRotation(true);
             physics.getBody().setLinearDamping(0f);
             physics.getBody().setAngularDamping(0f);
-
-            // Bật chế độ Continuous Collision Detection để chống "xuyên tường".
             physics.getBody().setBullet(true);
 
             if (attached) {
                 physics.setLinearVelocity(Point2D.ZERO);
             } else {
-                physics.setLinearVelocity(200, -200);
+                double initialSpeed = FXGL.getd("ballSpeed");
+                Point2D initialVelocity = new Point2D(1, -1).normalize().multiply(initialSpeed);
+                physics.setLinearVelocity(initialVelocity);
             }
         });
 

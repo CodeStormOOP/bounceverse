@@ -19,6 +19,7 @@ import com.github.codestorm.bounceverse.components.behaviors.brick.StrongBrickTe
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.components.properties.Shield;
 import com.github.codestorm.bounceverse.typing.enums.BrickType;
+import com.github.codestorm.bounceverse.typing.enums.CollisionGroup;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
@@ -71,6 +72,11 @@ public final class BrickFactory extends EntityFactory {
         var fixture = new FixtureDef();
         fixture.setFriction(0f);
         fixture.setRestitution(1f);
+
+        // Lọc va chạm: Gạch thuộc nhóm BRICK và chỉ va chạm với BALL, BULLET
+        fixture.getFilter().categoryBits = CollisionGroup.BRICK.bits;
+        fixture.getFilter().maskBits = CollisionGroup.BALL.bits | CollisionGroup.BULLET.bits;
+
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);
 
@@ -123,11 +129,10 @@ public final class BrickFactory extends EntityFactory {
     public Entity newExplodingBrick(SpawnData data) {
         data.put("type", BrickType.EXPLODING);
         data.put("hp", (double) DEFAULT_HP);
-        double explosionWidth = DEFAULT_WIDTH * 1.5; // 80 * 1.5 = 120
-        double explosionHeight = DEFAULT_HEIGHT * 2.5; // 30 * 2.5 = 75
+        double explosionWidth = DEFAULT_WIDTH * 1.5;
+        double explosionHeight = DEFAULT_HEIGHT * 2.5;
 
         var explosion = new Explosion(explosionWidth, explosionHeight);
-        // ------------------------------------
 
         return getBuilder(data).with(explosion).buildAndAttach();
     }

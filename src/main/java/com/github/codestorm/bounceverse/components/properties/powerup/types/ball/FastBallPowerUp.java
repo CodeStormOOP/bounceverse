@@ -5,6 +5,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
+import com.github.codestorm.bounceverse.systems.init.GameSystem;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.util.Duration;
 
@@ -14,6 +15,7 @@ import javafx.util.Duration;
 public class FastBallPowerUp extends PowerUp {
 
     private static final Duration DURATION = Duration.seconds(6);
+    private static final double SPEED_MULTIPLIER = 1.5;
 
     public FastBallPowerUp() {
         super("FastBall");
@@ -25,23 +27,26 @@ public class FastBallPowerUp extends PowerUp {
                 name,
                 DURATION,
                 this::speedUpBalls,
-                this::resetBalls
-        );
+                this::resetBalls);
     }
 
     private void speedUpBalls() {
-        FXGL.getGameWorld().getEntitiesByType(EntityType.BALL)
-            .forEach(ball -> {
-                var physics = ball.getComponent(PhysicsComponent.class);
-                physics.setLinearVelocity(physics.getLinearVelocity().multiply(1.5));
-            });
+        double currentSpeed = FXGL.getd("ballSpeed");
+        FXGL.set("ballSpeed", currentSpeed * SPEED_MULTIPLIER);
+        updateAllBallSpeeds();
     }
 
     private void resetBalls() {
+        FXGL.set("ballSpeed", GameSystem.Variables.DEFAULT_BALL_SPEED);
+        updateAllBallSpeeds();
+    }
+
+    private void updateAllBallSpeeds() {
+        double newSpeed = FXGL.getd("ballSpeed");
         FXGL.getGameWorld().getEntitiesByType(EntityType.BALL)
-            .forEach(ball -> {
-                var physics = ball.getComponent(PhysicsComponent.class);
-                physics.setLinearVelocity(physics.getLinearVelocity().normalize().multiply(300));
-            });
+                .forEach(ball -> {
+                    var physics = ball.getComponent(PhysicsComponent.class);
+                    physics.setLinearVelocity(physics.getLinearVelocity().normalize().multiply(newSpeed));
+                });
     }
 }
