@@ -1,18 +1,16 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import java.util.List;
-
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
-/**
- * Hành vi nổ của Brick – gây damage cho các đối tượng xung quanh.
- */
+import java.util.List;
+
+/** Hành vi nổ của Brick – gây damage cho các đối tượng xung quanh. */
 @Required(Attributes.class)
-@OnlyForEntity({ EntityType.BRICK })
+@OnlyForEntity({EntityType.BRICK})
 public final class Explosion extends Attack {
 
     private double explosionWidth;
@@ -20,15 +18,17 @@ public final class Explosion extends Attack {
 
     @Override
     public void execute(List<Object> data) {
-        double cx = getEntity().getCenter().getX();
-        double cy = getEntity().getCenter().getY();
+        var cx = getEntity().getCenter().getX();
+        var cy = getEntity().getCenter().getY();
 
-        var nearEntities = Utilities.Geometric.getEntitiesInRectangle(cx, cy, explosionWidth, explosionHeight);
+        var nearEntities =
+                Utilities.Geometric.getEntitiesInRectangle(cx, cy, explosionWidth, explosionHeight);
 
-        var filteredEntities = nearEntities.stream()
-                .filter(e -> !e.equals(getEntity()))
-                .map(e -> (Object) e)
-                .toList();
+        var filteredEntities =
+                nearEntities.stream()
+                        .filter(e -> !e.equals(getEntity()))
+                        .map(e -> (Object) e)
+                        .toList();
 
         super.execute(filteredEntities);
     }

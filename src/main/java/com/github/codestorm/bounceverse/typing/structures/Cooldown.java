@@ -2,11 +2,12 @@ package com.github.codestorm.bounceverse.typing.structures;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.time.TimerAction;
+
 import javafx.util.Duration;
 
 /**
- * Lớp Cooldown đã được sửa lỗi dứt điểm. Logic tính toán thời gian còn lại đã
- * được chuyển ra đúng chỗ và hoạt động chính xác.
+ * Lớp Cooldown đã được sửa lỗi dứt điểm. Logic tính toán thời gian còn lại đã được chuyển ra đúng
+ * chỗ và hoạt động chính xác.
  */
 public class Cooldown {
 
@@ -34,14 +35,13 @@ public class Cooldown {
         final var elapsed = Duration.millis(FXGL.getGameTimer().getNow() - current.timestamp);
 
         // Lấy tổng thời gian trừ đi thời gian đã trôi qua
-        Duration timeLeft = duration.subtract(elapsed);
+        var timeLeft = duration.subtract(elapsed);
 
         // Đảm bảo không bao giờ trả về giá trị âm
         return timeLeft.lessThan(Duration.ZERO) ? Duration.ZERO : timeLeft;
     }
 
-    public Cooldown() {
-    }
+    public Cooldown() {}
 
     public Cooldown(Duration duration) {
         this.duration = duration;
@@ -81,9 +81,7 @@ public class Cooldown {
             }
 
             var gameTimer = FXGL.getGameTimer();
-            waiter = gameTimer.runOnceAfter(() -> {
-                timestamp = Double.NaN;
-            }, duration);
+            waiter = gameTimer.runOnceAfter(() -> timestamp = Double.NaN, duration);
 
             timestamp = gameTimer.getNow();
         }
@@ -104,7 +102,6 @@ public class Cooldown {
             return !isExpired() && waiter.isPaused();
         }
 
-        protected ActiveCooldown() {
-        }
+        protected ActiveCooldown() {}
     }
 }

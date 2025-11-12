@@ -32,7 +32,7 @@ public class DeathSubscene extends SubScene {
     private final int score;
     private final int level;
 
-    public List<Runnable> onGotoMainMenuListeners = new ArrayList<>();
+    public final List<Runnable> onGotoMainMenuListeners = new ArrayList<>();
 
     public DeathSubscene(int score, int level) {
         this.score = score;

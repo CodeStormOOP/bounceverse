@@ -1,11 +1,9 @@
-package com.github.codestorm.bounceverse.components.properties.powerup.types;
+package com.github.codestorm.bounceverse.components.properties.powerup;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 
-/**
- * Base class cho mọi Power-Up có thể áp dụng hiệu ứng.
- */
+/** Base class cho mọi Power-Up có thể áp dụng hiệu ứng. */
 public abstract class PowerUp extends Component {
 
     protected final String name;

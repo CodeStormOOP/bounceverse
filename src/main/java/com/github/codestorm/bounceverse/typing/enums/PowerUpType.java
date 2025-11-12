@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.data.types;
+package com.github.codestorm.bounceverse.typing.enums;
 
 public enum PowerUpType {
     EXPAND_PADDLE,
@@ -9,5 +9,5 @@ public enum PowerUpType {
     FAST_BALL,
     SHIELD,
     GUN,
-    EXTRA_LIFE,
+    EXTRA_LIFE
 }

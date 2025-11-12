@@ -23,13 +23,11 @@ import java.util.EnumSet;
  * @see UserSettingsManager
  */
 public final class GameSettingsManager extends SettingsManager {
-    private GameSettingsManager() {
-    }
+    private GameSettingsManager() {}
 
     /**
      * Tải các settings từ file đã thiết lập vào bộ nhớ. <br>
-     * <b>Cần tải {@link LaunchOptionsManager#load(String...)} và
-     * {@link UserSettingsManager#load()}
+     * <b>Cần tải {@link LaunchOptionsManager#load(String...)} và {@link UserSettingsManager#load()}
      * trước khi dùng.</b>
      *
      * @param settings Nơi tải vào

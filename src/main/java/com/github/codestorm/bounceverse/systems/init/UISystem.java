@@ -1,10 +1,5 @@
 package com.github.codestorm.bounceverse.systems.init;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
 import com.almasb.fxgl.dsl.FXGL;
 
 import javafx.animation.AnimationTimer;
@@ -19,9 +14,14 @@ import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 /**
- * UISystem với hiệu ứng sóng neon và nền "Siri" động. Hệ thống này vẽ hiệu ứng
- * LÊN TRÊN nền đen có sẵn của GameScene.
+ * UISystem với hiệu ứng sóng neon và nền "Siri" động. Hệ thống này vẽ hiệu ứng LÊN TRÊN nền đen có
+ * sẵn của GameScene.
  */
 public final class UISystem extends InitialSystem {
 
@@ -42,9 +42,8 @@ public final class UISystem extends InitialSystem {
     private static final double BLOB_GAUSSIAN_BLUR = 150.0;
 
     // --- Hằng số mục tiêu ---
-    private static final Set<Color> TARGET_COLORS = Set.of(
-            Color.BLUE, Color.GREEN, Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW
-    );
+    private static final Set<Color> TARGET_COLORS =
+            Set.of(Color.BLUE, Color.GREEN, Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW);
 
     // --- Các biến thành viên ---
     private Group backgroundBlobLayer;
@@ -58,16 +57,13 @@ public final class UISystem extends InitialSystem {
 
     private AnimationTimer animationTimer;
 
-    private UISystem() {
-    }
+    private UISystem() {}
 
     public static UISystem getInstance() {
         return Holder.INSTANCE;
     }
 
-    /**
-     * Dọn dẹp và reset lại toàn bộ trạng thái của UISystem.
-     */
+    /** Dọn dẹp và reset lại toàn bộ trạng thái của UISystem. */
     public void dispose() {
         // 1. Dừng animation timer cũ nếu nó đang chạy
         if (animationTimer != null) {
@@ -99,9 +95,10 @@ public final class UISystem extends InitialSystem {
         createWaveLayer();
 
         // 2. Thêm các layer hiệu ứng vào GỐC của scene để chúng nằm dưới các thực thể game
-        FXGL.getGameScene().getRoot().getChildren().addAll(0,
-                java.util.Arrays.asList(backgroundBlobLayer, waveLayer)
-        );
+        FXGL.getGameScene()
+                .getRoot()
+                .getChildren()
+                .addAll(0, java.util.Arrays.asList(backgroundBlobLayer, waveLayer));
 
         // 3. Bắt đầu vòng lặp animation
         startAnimationLoop();
@@ -110,14 +107,18 @@ public final class UISystem extends InitialSystem {
     private void createSiriBlobs() {
         backgroundBlobLayer = new Group();
         blobs = new ArrayList<>();
-        Color[] siriColors = {Color.web("#26F3FF"), Color.web("#A942FF"), Color.web("#FF34BB")};
-        for (int i = 0; i < BLOB_COUNT; i++) {
-            Circle blob = new Circle();
+        var siriColors =
+                new Color[] {Color.web("#26F3FF"), Color.web("#A942FF"), Color.web("#FF34BB")};
+        for (var i = 0; i < BLOB_COUNT; i++) {
+            var blob = new Circle();
             blob.setRadius(BLOB_BASE_SIZE + random.nextDouble() * 100);
             blob.setCenterX(random.nextDouble() * FXGL.getAppWidth());
             blob.setCenterY(random.nextDouble() * FXGL.getAppHeight());
             blob.setFill(siriColors[i % siriColors.length].deriveColor(0, 1, 1, 0.3));
-            Point2D velocity = new Point2D((random.nextDouble() - 0.5) * 2 * BLOB_MAX_SPEED, (random.nextDouble() - 0.5) * 2 * BLOB_MAX_SPEED);
+            var velocity =
+                    new Point2D(
+                            (random.nextDouble() - 0.5) * 2 * BLOB_MAX_SPEED,
+                            (random.nextDouble() - 0.5) * 2 * BLOB_MAX_SPEED);
             blob.setUserData(velocity);
             blobs.add(blob);
         }
@@ -145,15 +146,17 @@ public final class UISystem extends InitialSystem {
 
         double appW = FXGL.getAppWidth();
         double appH = FXGL.getAppHeight();
-        for (Node node : blobs) {
-            Circle blob = (Circle) node;
-            Point2D v = (Point2D) blob.getUserData();
+        for (var node : blobs) {
+            var blob = (Circle) node;
+            var v = (Point2D) blob.getUserData();
             blob.setCenterX(blob.getCenterX() + v.getX());
             blob.setCenterY(blob.getCenterY() + v.getY());
-            if (blob.getCenterX() - blob.getRadius() < 0 || blob.getCenterX() + blob.getRadius() > appW) {
+            if (blob.getCenterX() - blob.getRadius() < 0
+                    || blob.getCenterX() + blob.getRadius() > appW) {
                 v = new Point2D(-v.getX(), v.getY());
             }
-            if (blob.getCenterY() - blob.getRadius() < 0 || blob.getCenterY() + blob.getRadius() > appH) {
+            if (blob.getCenterY() - blob.getRadius() < 0
+                    || blob.getCenterY() + blob.getRadius() > appH) {
                 v = new Point2D(v.getX(), -v.getY());
             }
             blob.setUserData(v);
@@ -161,23 +164,26 @@ public final class UISystem extends InitialSystem {
     }
 
     private Path createWavePath(Color color, double timeOffset, double yOffset) {
-        Path wavePath = new Path();
+        var wavePath = new Path();
         wavePath.setStroke(color);
         wavePath.setStrokeWidth(WAVE_STROKE_WIDTH);
         wavePath.setFill(null);
         wavePath.setSmooth(true);
         double width = FXGL.getAppWidth();
-        double step = WAVE_STEP;
-        double adjustedTime = time + timeOffset;
-        double baseY = WAVE_Y_POSITION + yOffset;
-        double firstX = -step;
-        double firstY = baseY + Math.sin(firstX / 100 + adjustedTime * WAVE_SPEED) * WAVE_AMPLITUDE;
+        var step = WAVE_STEP;
+        var adjustedTime = time + timeOffset;
+        var baseY = WAVE_Y_POSITION + yOffset;
+        var firstX = -step;
+        var firstY = baseY + Math.sin(firstX / 100 + adjustedTime * WAVE_SPEED) * WAVE_AMPLITUDE;
         wavePath.getElements().add(new MoveTo(firstX, firstY));
         for (double x = 0; x <= width + step; x += step) {
-            double prevX = x - step;
-            double prevY = baseY + Math.sin(prevX / 100 + adjustedTime * WAVE_SPEED) * WAVE_AMPLITUDE;
-            double currentY = baseY + Math.sin(x / 100 + adjustedTime * WAVE_SPEED) * WAVE_AMPLITUDE;
-            wavePath.getElements().add(new CubicCurveTo(prevX + step / 2, prevY, x - step / 2, currentY, x, currentY));
+            var prevX = x - step;
+            var prevY = baseY + Math.sin(prevX / 100 + adjustedTime * WAVE_SPEED) * WAVE_AMPLITUDE;
+            var currentY = baseY + Math.sin(x / 100 + adjustedTime * WAVE_SPEED) * WAVE_AMPLITUDE;
+            wavePath.getElements()
+                    .add(
+                            new CubicCurveTo(
+                                    prevX + step / 2, prevY, x - step / 2, currentY, x, currentY));
         }
         return wavePath;
     }
@@ -195,13 +201,13 @@ public final class UISystem extends InitialSystem {
 
     private void updateWaves() {
         waveLayer.getChildren().clear();
-        Path whiteWave = createWavePath(Color.WHITE, 0.0, 0.0);
+        var whiteWave = createWavePath(Color.WHITE, 0.0, 0.0);
         waveLayer.getChildren().add(whiteWave);
-        int i = 0;
-        for (Color brickColor : collectedColors) {
-            double yOffset = (i + 1) * WAVE_SEPARATION;
-            double timeOffsetValue = (i + 1) * WAVE_TIME_OFFSET;
-            Path coloredWave = createWavePath(brickColor, timeOffsetValue, yOffset);
+        var i = 0;
+        for (var brickColor : collectedColors) {
+            var yOffset = (i + 1) * WAVE_SEPARATION;
+            var timeOffsetValue = (i + 1) * WAVE_TIME_OFFSET;
+            var coloredWave = createWavePath(brickColor, timeOffsetValue, yOffset);
             waveLayer.getChildren().add(coloredWave);
             i++;
         }
@@ -214,14 +220,15 @@ public final class UISystem extends InitialSystem {
         }
 
         // Gán timer mới cho biến thành viên
-        animationTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                time += 0.01;
-                updateWaves();
-                updateSiriBackground();
-            }
-        };
+        animationTimer =
+                new AnimationTimer() {
+                    @Override
+                    public void handle(long now) {
+                        time += 0.01;
+                        updateWaves();
+                        updateSiriBackground();
+                    }
+                };
         animationTimer.start();
     }
 

@@ -1,8 +1,5 @@
 package com.github.codestorm.bounceverse;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
@@ -19,8 +16,14 @@ import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 
 import javafx.util.Duration;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
+ *
+ *
  * <h1>{@link Bounceverse}</h1>
+ *
  * Game chính — quản lý vòng đời khởi tạo và vòng lặp của trò chơi.
  */
 public final class Bounceverse extends GameApplication {
@@ -59,9 +62,7 @@ public final class Bounceverse extends GameApplication {
     protected void initGame() {
         GameSystem.UI.getInstance().dispose();
         UISystem.getInstance().dispose();
-        FXGL.runOnce(() -> {
-            GameSystem.getInstance().apply();
-        }, Duration.seconds(0.1));
+        FXGL.runOnce(() -> GameSystem.getInstance().apply(), Duration.seconds(0.1));
     }
 
     @Override

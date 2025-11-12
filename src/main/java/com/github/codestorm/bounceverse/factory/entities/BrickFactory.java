@@ -1,8 +1,5 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
-import java.util.List;
-import java.util.Random;
-
 import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
@@ -30,13 +27,17 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+import java.util.Random;
+
 public final class BrickFactory extends EntityFactory {
 
     private static final int DEFAULT_WIDTH = 80;
     private static final int DEFAULT_HEIGHT = 30;
     private static final int DEFAULT_HP = 1;
     private static final Random RANDOM = new Random();
-    private static final List<String> COLORS = List.of("blue", "green", "orange", "pink", "red", "yellow");
+    private static final List<String> COLORS =
+            List.of("blue", "green", "orange", "pink", "red", "yellow");
 
     private String getColorName(Color color) {
         if (color.equals(Color.BLUE)) {
@@ -62,25 +63,17 @@ public final class BrickFactory extends EntityFactory {
 
     // Phương thức trợ giúp để lấy Color object từ SpawnData
     private Color getSpawnColor(SpawnData data) {
-        Object colorValue = data.get("color");
+        var colorValue = data.get("color");
         if (colorValue instanceof Color) {
             return (Color) colorValue;
         } else if (colorValue instanceof String) {
             return switch ((String) colorValue) {
-                case "blue" ->
-                    Color.BLUE;
-                case "green" ->
-                    Color.GREEN;
-                case "orange" ->
-                    Color.ORANGE;
-                case "pink" ->
-                    Color.PINK;
-                case "red" ->
-                    Color.RED;
-                case "yellow" ->
-                    Color.YELLOW;
-                default ->
-                    Color.BLUE;
+                case "green" -> Color.GREEN;
+                case "orange" -> Color.ORANGE;
+                case "pink" -> Color.PINK;
+                case "red" -> Color.RED;
+                case "yellow" -> Color.YELLOW;
+                default -> Color.BLUE;
             };
         }
         return Color.BLUE; // Mặc định
@@ -88,15 +81,15 @@ public final class BrickFactory extends EntityFactory {
 
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
-        int hp = ((Number) Utilities.Typing.getOr(data, "hp", DEFAULT_HP)).intValue();
-        int width = ((Number) Utilities.Typing.getOr(data, "width", DEFAULT_WIDTH)).intValue();
-        int height = ((Number) Utilities.Typing.getOr(data, "height", DEFAULT_HEIGHT)).intValue();
+        var hp = ((Number) Utilities.Typing.getOr(data, "hp", DEFAULT_HP)).intValue();
+        var width = ((Number) Utilities.Typing.getOr(data, "width", DEFAULT_WIDTH)).intValue();
+        var height = ((Number) Utilities.Typing.getOr(data, "height", DEFAULT_HEIGHT)).intValue();
 
         Point2D pos = data.hasKey("pos") ? data.get("pos") : new Point2D(data.getX(), data.getY());
 
         // CHỈ LẤY STRING KEY: Đảm bảo chỉ làm việc với String ở đây
         String colorKey;
-        Object colorValue = data.get("color");
+        var colorValue = data.get("color");
 
         if (colorValue instanceof Color) {
             colorKey = getColorName((Color) colorValue); // Chuyển Color object thành String key
@@ -108,13 +101,17 @@ public final class BrickFactory extends EntityFactory {
 
         var colorAsset = AssetsPath.Textures.Bricks.COLORS.get(colorKey);
         if (colorAsset == null) {
-            colorAsset = AssetsPath.Textures.Bricks.COLORS.values().stream()
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("No ColorAssets available for bricks"));
+            colorAsset =
+                    AssetsPath.Textures.Bricks.COLORS.values().stream()
+                            .findFirst()
+                            .orElseThrow(
+                                    () ->
+                                            new IllegalStateException(
+                                                    "No ColorAssets available for bricks"));
         }
 
-        BrickType type = Utilities.Typing.getOr(data, "type", BrickType.NORMAL);
-        String texturePath = colorAsset.getTexture(type, 1.0);
+        var type = Utilities.Typing.getOr(data, "type", BrickType.NORMAL);
+        var texturePath = colorAsset.getTexture(type, 1.0);
         var texture = FXGL.texture(texturePath);
         texture.setFitWidth(width);
         texture.setFitHeight(height);
@@ -177,8 +174,8 @@ public final class BrickFactory extends EntityFactory {
     public Entity newExplodingBrick(SpawnData data) {
         data.put("type", BrickType.EXPLODING);
         data.put("hp", (double) DEFAULT_HP);
-        double explosionWidth = DEFAULT_WIDTH * 1.5;
-        double explosionHeight = DEFAULT_HEIGHT * 2.5;
+        var explosionWidth = DEFAULT_WIDTH * 1.5;
+        var explosionHeight = DEFAULT_HEIGHT * 2.5;
         var explosion = new Explosion(explosionWidth, explosionHeight);
         var color = getSpawnColor(data);
         data.put("color", getColorName(color));

@@ -12,14 +12,13 @@ import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.typing.enums.AnchorPoint;
 import com.github.codestorm.bounceverse.typing.enums.CollisionGroup;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-/**
- * Factory tạo 4 tường vật lý bao quanh màn chơi.
- */
+/** Factory tạo 4 tường vật lý bao quanh màn chơi. */
 public final class WallFactory extends EntityFactory {
 
     public static final double DEFAULT_THICKNESS = 5;
@@ -31,7 +30,7 @@ public final class WallFactory extends EntityFactory {
         Side side = data.get("side");
 
         double thickness = Utilities.Typing.getOr(data, "thickness", DEFAULT_THICKNESS);
-        Color color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
+        var color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
 
         Point2D pos;
         double width, height;
@@ -68,8 +67,8 @@ public final class WallFactory extends EntityFactory {
 
         // Lọc va chạm: Tường thuộc nhóm WALL và va chạm với BALL, BULLET, PADDLE
         fixture.getFilter().categoryBits = CollisionGroup.WALL.bits;
-        fixture.getFilter().maskBits = CollisionGroup.BALL.bits | CollisionGroup.BULLET.bits
-                | CollisionGroup.PADDLE.bits;
+        fixture.getFilter().maskBits =
+                CollisionGroup.BALL.bits | CollisionGroup.BULLET.bits | CollisionGroup.PADDLE.bits;
 
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);

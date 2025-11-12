@@ -15,12 +15,11 @@ import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooti
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddlePowerComponent;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddleViewManager;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-/**
- * Factory để tạo các entity loại PADDLE trong trò chơi.
- */
+/** Factory để tạo các entity loại PADDLE trong trò chơi. */
 public final class PaddleFactory extends EntityFactory {
 
     private static final double DEFAULT_WIDTH = 150;
@@ -32,9 +31,7 @@ public final class PaddleFactory extends EntityFactory {
 
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
-        return FXGL.entityBuilder(data)
-                .type(EntityType.PADDLE)
-                .collidable();
+        return FXGL.entityBuilder(data).type(EntityType.PADDLE).collidable();
     }
 
     @Spawns("paddle")
@@ -44,8 +41,8 @@ public final class PaddleFactory extends EntityFactory {
 
         var physics = new PhysicsComponent();
         physics.setBodyType(BodyType.KINEMATIC);
-        double px = FXGL.getAppWidth() / 2.0 - width / 2.0;
-        double py = FXGL.getAppHeight() - height - 40;
+        var px = FXGL.getAppWidth() / 2.0 - width / 2.0;
+        var py = FXGL.getAppHeight() - height - 40;
 
         return getBuilder(data)
                 .at(px, py)

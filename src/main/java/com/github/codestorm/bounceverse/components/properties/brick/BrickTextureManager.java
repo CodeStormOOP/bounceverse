@@ -18,12 +18,11 @@ import javafx.scene.paint.Color;
  *
  * <h1>{@link BrickTextureManager}</h1>
  *
- * Sự thay đổi texture của {@link EntityType#BRICK} theo
- * {@link HealthIntComponent};
+ * Sự thay đổi texture của {@link EntityType#BRICK} theo {@link HealthIntComponent};
  */
 @CoreComponent
 @Required(HealthIntComponent.class)
-@OnlyForEntity({ EntityType.BRICK })
+@OnlyForEntity({EntityType.BRICK})
 public final class BrickTextureManager extends Property {
     private String oldTexturePath;
     private Node oldTexture;
@@ -43,18 +42,12 @@ public final class BrickTextureManager extends Property {
     }
 
     private String getColorName() {
-        if (color.equals(Color.BLUE))
-            return "blue";
-        if (color.equals(Color.GREEN))
-            return "green";
-        if (color.equals(Color.ORANGE))
-            return "orange";
-        if (color.equals(Color.PINK))
-            return "pink";
-        if (color.equals(Color.RED))
-            return "red";
-        if (color.equals(Color.YELLOW))
-            return "yellow";
+        if (color.equals(Color.BLUE)) return "blue";
+        if (color.equals(Color.GREEN)) return "green";
+        if (color.equals(Color.ORANGE)) return "orange";
+        if (color.equals(Color.PINK)) return "pink";
+        if (color.equals(Color.RED)) return "red";
+        if (color.equals(Color.YELLOW)) return "yellow";
         return "blue";
     }
 
@@ -64,8 +57,9 @@ public final class BrickTextureManager extends Property {
         final var percent = health.getValuePercent() / 100;
 
         // SỬA ĐỔI Ở ĐÂY
-        final String colorKey = getColorName(); // Chuyển Color object thành String key
-        final var colorTextures = AssetsPath.Textures.Bricks.COLORS.get(colorKey); // Dùng key String để tra cứu
+        final var colorKey = getColorName(); // Chuyển Color object thành String key
+        final var colorTextures =
+                AssetsPath.Textures.Bricks.COLORS.get(colorKey); // Dùng key String để tra cứu
 
         // Đoạn mã còn lại giữ nguyên
         final var texturePath = colorTextures.getTexture(brickType, percent);
@@ -79,7 +73,8 @@ public final class BrickTextureManager extends Property {
             if (!oldTexturePath.equals(texturePath)) {
                 views.removeChild(oldTexture);
                 oldTexturePath = texturePath;
-                oldTexture = makeView(texturePath, (int) entity.getWidth(), (int) entity.getHeight());
+                oldTexture =
+                        makeView(texturePath, (int) entity.getWidth(), (int) entity.getHeight());
                 views.addChild(oldTexture);
             }
         }

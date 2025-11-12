@@ -3,13 +3,13 @@ package com.github.codestorm.bounceverse.components.behaviors;
 import com.almasb.fxgl.time.TimerAction;
 import com.github.codestorm.bounceverse.components.Behavior;
 import com.github.codestorm.bounceverse.typing.interfaces.Undoable;
+
 import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Thay đổi kích thước entity tạm thời và có thể hoàn tác (undo).
- */
+/** Thay đổi kích thước entity tạm thời và có thể hoàn tác (undo). */
 public class ScaleChange extends Behavior implements Undoable {
 
     public static final double DONT_CHANGE = 1;

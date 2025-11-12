@@ -1,8 +1,5 @@
 package com.github.codestorm.bounceverse.components.properties.paddle;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
@@ -11,9 +8,12 @@ import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.texture.Texture;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Component duy nhất quản lý TOÀN BỘ hình ảnh và kích thước của Paddle.
- * Nó thay thế cho cả PaddleSizeManager và PaddleTextureManager.
+ * Component duy nhất quản lý TOÀN BỘ hình ảnh và kích thước của Paddle. Nó thay thế cho cả
+ * PaddleSizeManager và PaddleTextureManager.
  */
 public class PaddleViewManager extends Component {
 
@@ -82,15 +82,15 @@ public class PaddleViewManager extends Component {
 
     /**
      * Hàm trung tâm, chịu trách nhiệm cập nhật MỌI THỨ.
-     * 
-     * @param state      Tên trạng thái ("normal", "expand", "shrink")
+     *
+     * @param state Tên trạng thái ("normal", "expand", "shrink")
      * @param sizeFactor Hệ số nhân kích thước (1.0 cho normal)
      */
     private void updateViewState(String state, double sizeFactor) {
         this.currentState = state;
         this.currentSizeFactor = sizeFactor;
 
-        double newWidth = originalWidth * sizeFactor;
+        var newWidth = originalWidth * sizeFactor;
 
         bbox.clearHitBoxes();
         bbox.addHitBox(new HitBox(BoundingShape.box(newWidth, originalHeight)));
@@ -98,14 +98,15 @@ public class PaddleViewManager extends Component {
         paddleTexture.setFitWidth(newWidth);
         paddleTexture.setFitHeight(originalHeight);
 
-        for (Entity clone : clones) {
+        for (var clone : clones) {
             if (clone.isActive()) {
                 // Cập nhật hitbox cho bản sao
                 clone.getBoundingBoxComponent().clearHitBoxes();
-                clone.getBoundingBoxComponent().addHitBox(new HitBox(BoundingShape.box(newWidth, originalHeight)));
+                clone.getBoundingBoxComponent()
+                        .addHitBox(new HitBox(BoundingShape.box(newWidth, originalHeight)));
 
                 // Cập nhật hình ảnh cho bản sao
-                var cloneTexture = (Texture) clone.getViewComponent().getChildren().get(0);
+                var cloneTexture = (Texture) clone.getViewComponent().getChildren().getFirst();
                 cloneTexture.setImage(FXGL.getAssetLoader().loadImage(getTexturePath(state)));
                 cloneTexture.setFitWidth(newWidth);
                 cloneTexture.setFitHeight(originalHeight);
@@ -119,12 +120,12 @@ public class PaddleViewManager extends Component {
     }
 
     private String getTexturePath(String state) {
-        String colorCapitalized = color.substring(0, 1).toUpperCase() + color.substring(1);
+        var colorCapitalized = color.substring(0, 1).toUpperCase() + color.substring(1);
         String textureName;
         if ("normal".equals(state)) {
             textureName = colorCapitalized + " Paddle.png";
         } else {
-            String stateCapitalized = state.substring(0, 1).toUpperCase() + state.substring(1);
+            var stateCapitalized = state.substring(0, 1).toUpperCase() + state.substring(1);
             textureName = colorCapitalized + " " + stateCapitalized + " Paddle.png";
         }
         return "paddle/" + state + "/" + color + "/" + textureName;

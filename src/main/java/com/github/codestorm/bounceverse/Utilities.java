@@ -15,14 +15,12 @@ import java.util.*;
 
 /** Utilities. */
 public final class Utilities {
-    private Utilities() {
-    }
+    private Utilities() {}
 
     /** Input/Output utilities. */
     public static final class IO {
         // ... (Nội dung của lớp IO giữ nguyên, không cần thay đổi)
-        private IO() {
-        }
+        private IO() {}
 
         public static Properties loadProperties(String path) throws IOException {
             var fileStream = IO.class.getResourceAsStream(path);
@@ -75,14 +73,13 @@ public final class Utilities {
     }
 
     public static final class Geometric {
-        private Geometric() {
-        }
+        private Geometric() {}
 
         /**
          * Lọc các Entity trong phạm vi Hình tròn.
          *
-         * @param cx     Tâm X
-         * @param cy     Tâm Y
+         * @param cx Tâm X
+         * @param cy Tâm Y
          * @param radius Bán kính
          * @return Các entity
          */
@@ -91,8 +88,10 @@ public final class Utilities {
             return FXGL.getGameWorld().getEntitiesInRange(outRect).stream()
                     .filter(
                             e -> {
-                                var nearestX = Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
-                                var nearestY = Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
+                                var nearestX =
+                                        Math.max(e.getX(), Math.min(cx, e.getX() + e.getWidth()));
+                                var nearestY =
+                                        Math.max(e.getY(), Math.min(cy, e.getY() + e.getHeight()));
                                 var dx = cx - nearestX;
                                 var dy = cy - nearestY;
                                 return (dx * dx + dy * dy) <= radius * radius;
@@ -105,22 +104,22 @@ public final class Utilities {
          *
          * @param centerX Tâm X của hình chữ nhật
          * @param centerY Tâm Y của hình chữ nhật
-         * @param width   Chiều rộng của hình chữ nhật
-         * @param height  Chiều cao của hình chữ nhật
+         * @param width Chiều rộng của hình chữ nhật
+         * @param height Chiều cao của hình chữ nhật
          * @return Danh sách các entity nằm trong khu vực đó
          */
-        public static List<Entity> getEntitiesInRectangle(double centerX, double centerY, double width, double height) {
-            double topLeftX = centerX - width / 2;
-            double topLeftY = centerY - height / 2;
-            Rectangle2D explosionArea = new Rectangle2D(topLeftX, topLeftY, width, height);
+        public static List<Entity> getEntitiesInRectangle(
+                double centerX, double centerY, double width, double height) {
+            var topLeftX = centerX - width / 2;
+            var topLeftY = centerY - height / 2;
+            var explosionArea = new Rectangle2D(topLeftX, topLeftY, width, height);
             return FXGL.getGameWorld().getEntitiesInRange(explosionArea);
         }
     }
 
     // ... (Các lớp Collision, Compatibility, Typing giữ nguyên, không cần thay đổi)
     public static final class Collision {
-        private Collision() {
-        }
+        private Collision() {}
 
         public static DirectionUnit getCollisionDirection(Entity source, Entity target) {
             var fromBox = source.getBoundingBoxComponent();
@@ -135,11 +134,10 @@ public final class Utilities {
     }
 
     public static final class Compatibility {
-        private Compatibility() {
-        }
+        private Compatibility() {}
 
-        public static void throwIfNotCompatible(EntityType entityType,
-                com.almasb.fxgl.entity.component.Component... components) {
+        public static void throwIfNotCompatible(
+                EntityType entityType, com.almasb.fxgl.entity.component.Component... components) {
             for (var param : components) {
                 final var annotation = param.getClass().getAnnotation(OnlyForEntity.class);
                 if (annotation == null) {
@@ -167,8 +165,7 @@ public final class Utilities {
     }
 
     public static final class Typing {
-        private Typing() {
-        }
+        private Typing() {}
 
         public static <T> T getOr(SpawnData data, String key, T ifNot) {
             if (data.hasKey(key)) {
@@ -182,5 +179,4 @@ public final class Utilities {
             return varargs;
         }
     }
-
 }

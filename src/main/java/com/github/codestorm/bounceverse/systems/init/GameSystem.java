@@ -9,10 +9,6 @@ import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
 import com.github.codestorm.bounceverse.AssetsPath;
 import com.github.codestorm.bounceverse.AssetsPath.Textures.Bricks.ColorAssets;
-import com.github.codestorm.bounceverse.components.behaviors.Explosion;
-import com.github.codestorm.bounceverse.components.behaviors.HealthDeath; // THÊM IMPORT QUAN TRỌNG NÀY
-import com.github.codestorm.bounceverse.components.behaviors.Special;
-import com.github.codestorm.bounceverse.components.behaviors.brick.BrickDropPowerUp;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddlePowerComponent;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.factory.entities.*;
@@ -21,23 +17,25 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
 import com.github.codestorm.bounceverse.ui.elements.HorizontalPositiveInteger;
 import com.github.codestorm.bounceverse.ui.elements.ingame.Hearts;
+
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
 import libs.FastNoiseLite;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public final class GameSystem extends InitialSystem {
 
-    private GameSystem() {
-    }
+    private GameSystem() {}
 
     public static GameSystem getInstance() {
         return Holder.INSTANCE;
@@ -53,19 +51,22 @@ public final class GameSystem extends InitialSystem {
         FXGL.getNotificationService().pushNotification("Level " + FXGL.geti("level"));
 
         // Dọn dẹp tất cả thực thể động
-        FXGL.getGameWorld().getEntitiesByType(EntityType.BALL, EntityType.BRICK, EntityType.POWER_UP, EntityType.BULLET).forEach(Entity::removeFromWorld);
+        FXGL.getGameWorld()
+                .getEntitiesByType(
+                        EntityType.BALL, EntityType.BRICK, EntityType.POWER_UP, EntityType.BULLET)
+                .forEach(Entity::removeFromWorld);
 
         // Tạo lại màn chơi sau một khoảng trễ nhỏ để đảm bảo mọi thứ đã được dọn dẹp
-        FXGL.runOnce(() -> {
-            EntitySpawn.paddle();
-            EntitySpawn.ball();
-            EntitySpawn.bricks();
-        }, Duration.seconds(0.1));
+        FXGL.runOnce(
+                () -> {
+                    EntitySpawn.paddle();
+                    EntitySpawn.ball();
+                    EntitySpawn.bricks();
+                },
+                Duration.seconds(0.1));
     }
 
-    /**
-     * Reset lại toàn bộ game về trạng thái ban đầu.
-     */
+    /** Reset lại toàn bộ game về trạng thái ban đầu. */
     public static void resetGame() {
         // Cách làm đúng và an toàn nhất là yêu cầu engine bắt đầu lại từ đầu
         FXGL.getGameController().startNewGame();
@@ -73,46 +74,59 @@ public final class GameSystem extends InitialSystem {
 
     public static final class Variables {
 
-        private Variables() {
-        }
+        private Variables() {}
+
         public static final int MAX_LIVES = 3;
         public static final int DEFAULT_LIVES = 3;
         public static final int DEFAULT_SCORE = 0;
         public static final double DEFAULT_BALL_SPEED = 300;
-        private static final List<String> PADDLE_COLORS = List.of("blue", "green", "orange", "pink", "red", "yellow");
+        private static final List<String> PADDLE_COLORS =
+                List.of("blue", "green", "orange", "pink", "red", "yellow");
 
-        public static final SaveLoadHandler SAVE_LOAD_HANDLER = new SaveLoadHandler() {
-            @Override
-            public void onSave(@NotNull DataFile dataFile) {
-                final var properties = FXGL.getWorldProperties();
-                final HealthIntValue lives = properties.getObject("lives");
-                final int score = properties.getInt("score");
-                final int level = properties.getInt("level");
-                final int seed = properties.getInt("seed");
-                final var bundle = new Bundle("game");
-                bundle.put("lives", lives.getValue());
-                bundle.put("score", score);
-                bundle.put("level", level);
-                bundle.put("seed", seed);
-                dataFile.putBundle(bundle);
-            }
+        public static final SaveLoadHandler SAVE_LOAD_HANDLER =
+                new SaveLoadHandler() {
+                    @Override
+                    public void onSave(@NotNull DataFile dataFile) {
+                        final var properties = FXGL.getWorldProperties();
+                        final HealthIntValue lives = properties.getObject("lives");
+                        final int score = properties.getInt("score");
+                        final int level = properties.getInt("level");
+                        final int seed = properties.getInt("seed");
+                        final var bundle = new Bundle("game");
+                        final var paddleColor = properties.getString("paddleColor");
+                        final var ballSpeed = properties.getDouble("ballSpeed");
 
-            @Override
-            public void onLoad(@NotNull DataFile dataFile) {
-                final var bundle = dataFile.getBundle("game");
-                final int intLives = bundle.get("lives");
-                final var lives = new HealthIntValue(GameSystem.Variables.MAX_LIVES, intLives);
-                final int score = bundle.get("score");
-                final int level = bundle.get("level");
-                final int seed = bundle.get("seed");
-                final var vars = FXGL.getWorldProperties();
-                vars.clear();
-                vars.setValue("lives", lives);
-                vars.setValue("score", score);
-                vars.setValue("level", level);
-                vars.setValue("seed", seed);
-            }
-        };
+                        bundle.put("lives", lives.getValue());
+                        bundle.put("score", score);
+                        bundle.put("level", level);
+                        bundle.put("seed", seed);
+                        bundle.put("paddleColor", paddleColor);
+                        bundle.put("ballSpeed", ballSpeed);
+                        dataFile.putBundle(bundle);
+                    }
+
+                    @Override
+                    public void onLoad(@NotNull DataFile dataFile) {
+                        final var bundle = dataFile.getBundle("game");
+                        final int intLives = bundle.get("lives");
+                        final var lives =
+                                new HealthIntValue(GameSystem.Variables.MAX_LIVES, intLives);
+                        final int score = bundle.get("score");
+                        final int level = bundle.get("level");
+                        final int seed = bundle.get("seed");
+                        final var paddleColor = bundle.get("paddleColor");
+                        final var ballSpeed = bundle.get("ballSpeed");
+
+                        final var vars = FXGL.getWorldProperties();
+                        vars.clear();
+                        vars.setValue("lives", lives);
+                        vars.setValue("score", score);
+                        vars.setValue("level", level);
+                        vars.setValue("seed", seed);
+                        vars.setValue("paddleColor", paddleColor);
+                        vars.setValue("ballSpeed", ballSpeed);
+                    }
+                };
 
         public static void loadDefault(com.almasb.fxgl.core.collection.PropertyMap vars) {
             final var lives = new HealthIntValue(MAX_LIVES, DEFAULT_LIVES);
@@ -122,30 +136,31 @@ public final class GameSystem extends InitialSystem {
             vars.setValue("level", 1);
             vars.setValue("seed", (int) (System.currentTimeMillis() & 0x7FFFFFFF));
             vars.setValue("ballSpeed", DEFAULT_BALL_SPEED);
-            String randomColor = PADDLE_COLORS.get(FXGLMath.random(0, PADDLE_COLORS.size() - 1));
+            var randomColor = PADDLE_COLORS.get(FXGLMath.random(0, PADDLE_COLORS.size() - 1));
             vars.setValue("paddleColor", randomColor);
         }
 
         public static void hookDeathSubscene() {
             final HealthIntValue livesProperty = FXGL.getWorldProperties().getObject("lives");
-            livesProperty.onZeroListeners.add(() -> {
-                final var score = FXGL.getWorldProperties().getInt("score");
-                final var level = FXGL.getWorldProperties().getInt("level");
-                final var deathSubscene = new DeathSubscene(score, level);
-                deathSubscene.onGotoMainMenuListeners.add(() -> {
-                    FXGL.getSceneService().popSubScene();
-                    FXGL.getGameController().resumeEngine();
-                });
-                FXGL.getSceneService().pushSubScene(deathSubscene);
-                FXGL.getGameController().pauseEngine();
-            });
+            livesProperty.onZeroListeners.add(
+                    () -> {
+                        final var score = FXGL.getWorldProperties().getInt("score");
+                        final var level = FXGL.getWorldProperties().getInt("level");
+                        final var deathSubscene = new DeathSubscene(score, level);
+                        deathSubscene.onGotoMainMenuListeners.add(
+                                () -> {
+                                    FXGL.getSceneService().popSubScene();
+                                    FXGL.getGameController().resumeEngine();
+                                });
+                        FXGL.getSceneService().pushSubScene(deathSubscene);
+                        FXGL.getGameController().pauseEngine();
+                    });
         }
     }
 
     private static final class EntitySpawn {
 
-        private EntitySpawn() {
-        }
+        private EntitySpawn() {}
 
         public static void addFactory() {
             FXGL.getGameWorld().addEntityFactory(new WallFactory());
@@ -167,10 +182,10 @@ public final class GameSystem extends InitialSystem {
             final var seed = FXGL.getWorldProperties().getInt("seed");
             var noise = new FastNoiseLite(seed);
 
-            var colors = AssetsPath.Textures.Bricks.COLORS.values()
-                    .stream()
-                    .map(ColorAssets::color)
-                    .toArray(Color[]::new);
+            var colors =
+                    AssetsPath.Textures.Bricks.COLORS.values().stream()
+                            .map(ColorAssets::color)
+                            .toArray(Color[]::new);
 
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             noise.SetFrequency(0.2f);
@@ -221,9 +236,8 @@ public final class GameSystem extends InitialSystem {
             var totalW = cols * brickWidth + (cols - 1) * spacingX;
             var startX = Math.max(marginX, (appWidth - totalW) / 2.0);
 
-            record Cell(int gx, int gy, double x, double y, float n) {
+            record Cell(int gx, int gy, double x, double y, float n) {}
 
-            }
             var cells = new ArrayList<Cell>(rows * cols);
             for (var gy = 0; gy < rows; gy++) {
                 for (var gx = 0; gx < cols; gx++) {
@@ -237,16 +251,17 @@ public final class GameSystem extends InitialSystem {
 
             // *** BẮT ĐẦU THAY ĐỔI LOGIC TẠI ĐÂY ***
             // 1. Danh sách các loại gạch BẮT BUỘC. Bạn có thể thêm/bớt ở đây.
-            final List<String> requiredTypes = new ArrayList<>(List.of(
-                    "explodingBrick", // Thêm gạch nổ
-                    "explodingBrick",
-                    "explodingBrick",
-                    "keyBrick", // Thêm gạch chìa khóa
-                    "keyBrick",
-                    "shieldBrick",
-                    "strongBrick",
-                    "normalBrick"
-            ));
+            final List<String> requiredTypes =
+                    new ArrayList<>(
+                            List.of(
+                                    "explodingBrick", // Thêm gạch nổ
+                                    "explodingBrick",
+                                    "explodingBrick",
+                                    "keyBrick", // Thêm gạch chìa khóa
+                                    "keyBrick",
+                                    "shieldBrick",
+                                    "strongBrick",
+                                    "normalBrick"));
             // Xáo trộn danh sách để vị trí của chúng ngẫu nhiên
             Collections.shuffle(requiredTypes, new Random(seed));
 
@@ -294,7 +309,9 @@ public final class GameSystem extends InitialSystem {
         }
 
         public static void paddle() {
-            FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).forEach(Entity::removeFromWorld);
+            FXGL.getGameWorld()
+                    .getEntitiesByType(EntityType.PADDLE)
+                    .forEach(Entity::removeFromWorld);
             FXGL.spawn("paddle");
         }
 
@@ -311,8 +328,8 @@ public final class GameSystem extends InitialSystem {
 
     public static final class UI {
 
-        private UI() {
-        }
+        private UI() {}
+
         private boolean isInitialized = false;
         private Hearts heartsDisplay;
         private HorizontalPositiveInteger scoreDisplay;
@@ -361,7 +378,7 @@ public final class GameSystem extends InitialSystem {
             }
             FXGL.getGameScene().addUINode(cooldownText);
             cooldownText.setTranslateX(FXGL.getAppWidth() - 220);
-            cooldownText.setTranslateY(FXGL.getAppHeight() / 2);
+            cooldownText.setTranslateY((double) FXGL.getAppHeight() / 2);
         }
 
         public void onUpdate() {
@@ -384,7 +401,7 @@ public final class GameSystem extends InitialSystem {
             if (timeLeft == null || timeLeft.toMillis() <= 0) {
                 cooldownText.setText("Power: Start");
             } else {
-                cooldownText.setText(String.format("Power: Cooldown"));
+                cooldownText.setText("Power: Cooldown");
             }
         }
 

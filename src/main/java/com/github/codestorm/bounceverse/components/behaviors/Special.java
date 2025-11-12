@@ -1,16 +1,15 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import com.github.codestorm.bounceverse.data.meta.entities.ForEntity;
-import com.github.codestorm.bounceverse.data.types.EntityType;
-import com.github.codestorm.bounceverse.systems.init.PowerUpSpawner;
-import javafx.util.Duration;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
+import com.github.codestorm.bounceverse.systems.init.PowerUpSpawner;
+import com.github.codestorm.bounceverse.typing.annotations.OnlyForEntity;
+import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
-/**
- * Khi brick bị phá thì spawn PowerUp.
- */
-@ForEntity({ EntityType.BRICK })
+import javafx.util.Duration;
+
+/** Khi brick bị phá thì spawn PowerUp. */
+@OnlyForEntity({EntityType.BRICK})
 public class Special extends Component {
 
     @Override

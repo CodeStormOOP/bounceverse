@@ -19,9 +19,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-/**
- * Factory để tạo các entity loại BULLET trong trò chơi.
- */
+/** Factory để tạo các entity loại BULLET trong trò chơi. */
 public final class BulletFactory extends EntityFactory {
     public static final double DEFAULT_RADIUS = 4;
     public static final Color DEFAULT_COLOR = Color.YELLOW;
@@ -38,22 +36,20 @@ public final class BulletFactory extends EntityFactory {
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.DYNAMIC);
 
-        physics.setOnPhysicsInitialized(() -> {
-            Vec2 velocity = data.get("velocity");
-            physics.setLinearVelocity(velocity.toPoint2D());
-            physics.getBody().setGravityScale(0f);
-            physics.getBody().setBullet(true);
-        });
+        physics.setOnPhysicsInitialized(
+                () -> {
+                    Vec2 velocity = data.get("velocity");
+                    physics.setLinearVelocity(velocity.toPoint2D());
+                    physics.getBody().setGravityScale(0f);
+                    physics.getBody().setBullet(true);
+                });
 
-        return entityBuilder(data)
-                .type(EntityType.BULLET)
-                .collidable()
-                .with(physics);
+        return entityBuilder(data).type(EntityType.BULLET).collidable().with(physics);
     }
 
     @Spawns("paddleBullet")
     public Entity newBullet(SpawnData data) {
-        final Point2D pos = new Point2D(data.getX(), data.getY());
+        final var pos = new Point2D(data.getX(), data.getY());
         final double radius = Utilities.Typing.getOr(data, "radius", DEFAULT_RADIUS);
         final var color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
         final int damage = Utilities.Typing.getOr(data, "damage", Attack.DEFAULT_DAMAGE);
@@ -61,10 +57,6 @@ public final class BulletFactory extends EntityFactory {
 
         final var bbox = new Circle(radius, color);
 
-        return getBuilder(data)
-                .at(pos)
-                .viewWithBBox(bbox)
-                .with(attackComponent)
-                .buildAndAttach();
+        return getBuilder(data).at(pos).viewWithBBox(bbox).with(attackComponent).buildAndAttach();
     }
 }

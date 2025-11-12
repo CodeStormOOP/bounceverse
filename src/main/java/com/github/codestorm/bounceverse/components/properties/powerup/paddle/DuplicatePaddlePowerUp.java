@@ -1,4 +1,4 @@
-package com.github.codestorm.bounceverse.components.properties.powerup.types.paddle;
+package com.github.codestorm.bounceverse.components.properties.powerup.paddle;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -7,9 +7,10 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.github.codestorm.bounceverse.components.properties.paddle.PaddleViewManager;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUp;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
-import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -29,28 +30,25 @@ public final class DuplicatePaddlePowerUp extends PowerUp {
     @Override
     public void apply(Entity paddle) {
         PowerUpManager.getInstance().clearPowerUp(this.name);
-        PowerUpManager.getInstance().activate(
-                name,
-                DURATION,
-                () -> spawnClones(paddle),
-                () -> removeClones(paddle));
+        PowerUpManager.getInstance()
+                .activate(name, DURATION, () -> spawnClones(paddle), () -> removeClones(paddle));
     }
 
     private void spawnClones(Entity mainPaddle) {
         var mainViewManager = mainPaddle.getComponent(PaddleViewManager.class);
-        double width = mainPaddle.getWidth();
-        double mainPaddleX = mainPaddle.getX();
-        double mainPaddleY = mainPaddle.getY();
+        var width = mainPaddle.getWidth();
+        var mainPaddleX = mainPaddle.getX();
+        var mainPaddleY = mainPaddle.getY();
 
         // Tạo bản sao bên trái
-        Entity leftClone = createClone(mainPaddle);
+        var leftClone = createClone(mainPaddle);
         // THAY ĐỔI QUAN TRỌNG: KHÔNG DÙNG .bind(), chỉ đặt vị trí ban đầu
         leftClone.setPosition(mainPaddleX - width - PADDLE_GAP, mainPaddleY);
         FXGL.getGameWorld().addEntity(leftClone);
         mainViewManager.registerClone(leftClone);
 
         // Tạo bản sao bên phải
-        Entity rightClone = createClone(mainPaddle);
+        var rightClone = createClone(mainPaddle);
         // THAY ĐỔI QUAN TRỌNG: KHÔNG DÙNG .bind(), chỉ đặt vị trí ban đầu
         rightClone.setPosition(mainPaddleX + width + PADDLE_GAP, mainPaddleY);
         FXGL.getGameWorld().addEntity(rightClone);
@@ -70,7 +68,7 @@ public final class DuplicatePaddlePowerUp extends PowerUp {
 
         if (FXGL.getWorldProperties().exists(CLONES_LIST_KEY)) {
             List<Entity> clones = FXGL.geto(CLONES_LIST_KEY);
-            for (Entity clone : clones) {
+            for (var clone : clones) {
                 if (clone.isActive()) {
                     // Không cần unbind vì chúng ta không bind ngay từ đầu
                     clone.removeFromWorld();
@@ -81,9 +79,9 @@ public final class DuplicatePaddlePowerUp extends PowerUp {
     }
 
     private Entity createClone(Entity mainPaddle) {
-        String color = FXGL.gets("paddleColor");
-        String colorCapitalized = color.substring(0, 1).toUpperCase() + color.substring(1);
-        String texturePath = "paddle/power/" + color + "/" + colorCapitalized + " Power Paddle.png";
+        var color = FXGL.gets("paddleColor");
+        var colorCapitalized = color.substring(0, 1).toUpperCase() + color.substring(1);
+        var texturePath = "paddle/power/" + color + "/" + colorCapitalized + " Power Paddle.png";
         var texture = FXGL.texture(texturePath, mainPaddle.getWidth(), mainPaddle.getHeight());
 
         var physics = new PhysicsComponent();

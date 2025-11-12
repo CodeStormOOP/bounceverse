@@ -9,7 +9,6 @@ import javafx.geometry.Pos;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -38,27 +37,31 @@ public final class Intro extends IntroScene {
             final var player = video.getMediaPlayer();
 
             // Xử lý khi video kết thúc thành công
-            player.setOnEndOfMedia(() -> {
-                player.dispose();
-                finishIntro();
-            });
+            player.setOnEndOfMedia(
+                    () -> {
+                        player.dispose();
+                        finishIntro();
+                    });
 
             // SỬA ĐỔI: Xử lý khi có lỗi xảy ra
-            player.setOnError(() -> {
-                Logger.get(Intro.class).fatal("Cannot play intro video", player.getError());
-                
-                // Hiển thị thông báo lỗi thay vì bỏ qua ngay lập tức
-                showErrorAndExit("Lỗi: Không thể tải video intro.\nVui lòng kiểm tra file tại\nsrc/main/resources/assets/videos/intro.mp4");
-                
-                player.dispose(); // Dọn dẹp media player
-            });
+            player.setOnError(
+                    () -> {
+                        Logger.get(Intro.class).fatal("Cannot play intro video", player.getError());
+
+                        // Hiển thị thông báo lỗi thay vì bỏ qua ngay lập tức
+                        showErrorAndExit();
+
+                        player.dispose(); // Dọn dẹp media player
+                    });
 
             // Bỏ qua intro khi người dùng click chuột
-            getContentRoot().setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    player.getOnEndOfMedia().run();
-                }
-            });
+            getContentRoot()
+                    .setOnMouseClicked(
+                            event -> {
+                                if (event.getButton() == MouseButton.PRIMARY) {
+                                    player.getOnEndOfMedia().run();
+                                }
+                            });
 
             // Bắt đầu phát khi video đã sẵn sàng
             player.setOnReady(player::play);
@@ -69,26 +72,30 @@ public final class Intro extends IntroScene {
         }
     }
 
-    /**
-     * Hiển thị một thông báo lỗi trên màn hình trong 3 giây rồi kết thúc intro.
-     * @param message Nội dung thông báo
-     */
-    private void showErrorAndExit(String message) {
+    /** Hiển thị một thông báo lỗi trên màn hình trong 3 giây rồi kết thúc intro. */
+    private void showErrorAndExit() {
         // Xóa các thành phần cũ (nếu có)
         getContentRoot().getChildren().clear();
 
         // Tạo văn bản thông báo lỗi
-        Text errorText = FXGL.getUIFactoryService().newText(message, Color.WHITE, 22.0);
+        var errorText =
+                FXGL.getUIFactoryService()
+                        .newText(
+                                "Lỗi: Không thể tải video intro.\n"
+                                        + "Vui lòng kiểm tra file tại\n"
+                                        + "src/main/resources/assets/videos/intro.mp4",
+                                Color.WHITE,
+                                22.0);
         errorText.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
         // Đặt văn bản vào giữa màn hình
-        StackPane layout = new StackPane(errorText);
+        var layout = new StackPane(errorText);
         layout.setPrefSize(FXGL.getAppWidth(), FXGL.getAppHeight());
         StackPane.setAlignment(errorText, Pos.CENTER);
-        
+
         addChild(layout);
 
         // Tự động kết thúc intro sau 3.5 giây để người dùng kịp đọc
-        FXGL.getGameTimer().runOnceAfter((Runnable) this::finishIntro, Duration.seconds(3.5));
+        FXGL.getGameTimer().runOnceAfter(this::finishIntro, Duration.seconds(3.5));
     }
 }

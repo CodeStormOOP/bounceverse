@@ -9,9 +9,7 @@ import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.geometry.Point2D;
 
-/**
- * Gắn bóng vào paddle và điều khiển khi người chơi chưa bắn ra.
- */
+/** Gắn bóng vào paddle và điều khiển khi người chơi chưa bắn ra. */
 public class Attachment extends Component {
 
     private Entity paddle;
@@ -19,9 +17,7 @@ public class Attachment extends Component {
     private PhysicsComponent physics;
 
     private boolean move = false;
-    private double moveSpeed = 50;
     private double direction = 1;
-    private double maxOffset = 50;
     private double currentOffset = 0;
     private double lastPaddleX;
 
@@ -35,10 +31,10 @@ public class Attachment extends Component {
     @Override
     public void onUpdate(double tpf) {
         if (attached && paddle != null) {
-            double paddleCenterX = paddle.getCenter().getX();
-            double paddleTopY = paddle.getY();
+            var paddleCenterX = paddle.getCenter().getX();
+            var paddleTopY = paddle.getY();
 
-            double deltaX = paddle.getX() - lastPaddleX;
+            var deltaX = paddle.getX() - lastPaddleX;
             lastPaddleX = paddle.getX();
 
             if (!move && Math.abs(deltaX) > 0.5) {
@@ -47,14 +43,16 @@ public class Attachment extends Component {
             }
 
             if (move) {
+                double moveSpeed = 50;
                 currentOffset += direction * moveSpeed * tpf;
+                double maxOffset = 50;
                 if (Math.abs(currentOffset) > maxOffset) {
                     direction *= -1;
                 }
             }
 
-            double x = paddleCenterX - entity.getWidth() / 2 + currentOffset + 10;
-            double y = paddleTopY - BallFactory.DEFAULT_RADIUS * 2 + 5;
+            var x = paddleCenterX - entity.getWidth() / 2 + currentOffset + 10;
+            var y = paddleTopY - BallFactory.DEFAULT_RADIUS * 2 + 5;
 
             entity.setPosition(x, y);
             physics.setLinearVelocity(Point2D.ZERO);
@@ -70,7 +68,7 @@ public class Attachment extends Component {
 
         double speed = 350;
         double vx = 0;
-        double vy = -speed;
+        var vy = -speed;
 
         physics.setLinearVelocity(new Point2D(vx, vy));
         move = false;

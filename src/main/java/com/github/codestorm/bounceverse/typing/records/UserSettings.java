@@ -1,6 +1,6 @@
 package com.github.codestorm.bounceverse.typing.records;
 
-import com.github.codestorm.bounceverse.core.settings.UserSettingsManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 
 /**
  *

@@ -2,34 +2,28 @@ package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.dsl.FXGL;
-import com.github.codestorm.bounceverse.core.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.systems.manager.metrics.LeaderboardManager;
+import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 
 /**
+ *
+ *
  * <h1>{@link AppEventSystem}</h1>
  *
-<<<<<<< HEAD
  * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication}. <br>
-=======
- * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication} <br>
  * <b>Đừng nhầm lẫn với {@link GameSystem}.</b>
->>>>>>> origin/dev
  *
- * @apiNote Đây là một Singleton, cần lấy instance thông qua
- *          {@link #getInstance()}.
+ * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  */
 public final class AppEventSystem extends InitialSystem {
 
-    private AppEventSystem() {
-    }
+    private AppEventSystem() {}
 
     public static AppEventSystem getInstance() {
         return Holder.INSTANCE;
     }
 
-    /**
-     * Sự kiện khởi động game.
-     */
+    /** Sự kiện khởi động game. */
     private void onStart() {
         // Áp dụng cài đặt người dùng
         UserSettingsManager.getInstance().apply();
@@ -38,12 +32,10 @@ public final class AppEventSystem extends InitialSystem {
         FXGL.getSaveLoadService().addHandler(GameSystem.Variables.SAVE_LOAD_HANDLER);
     }
 
-    /**
-     * Sự kiện thoát game.
-     */
+    /** Sự kiện thoát game. */
     private void onExit() {
         // Lưu cài đặt
-        UserSettingsManager.save();
+        UserSettingsManager.getInstance().save();
 
         // Lưu bảng xếp hạng
         LeaderboardManager.getInstance().save();
@@ -57,8 +49,7 @@ public final class AppEventSystem extends InitialSystem {
 
     /**
      * Lazy-loaded singleton holder.<br>
-     * Follow <a href=
-     * "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
+     * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
     private static final class Holder {
