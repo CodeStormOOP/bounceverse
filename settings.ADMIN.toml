@@ -5,3 +5,7 @@ fullscreen = false
 [audio]
 music = 1.0
 sound = 1.0
+[controls]
+moveLeft = "LEFT"
+moveRight = "RIGHT"
+launchBall = "SPACE"

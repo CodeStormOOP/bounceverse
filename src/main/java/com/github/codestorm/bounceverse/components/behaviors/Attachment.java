@@ -18,7 +18,7 @@ public class Attachment extends Component {
     private boolean attached = true;
     private PhysicsComponent physics;
 
-    private static boolean move = false;
+    private boolean move = false;
     private double moveSpeed = 50;
     private double direction = 1;
     private double maxOffset = 50;
@@ -78,13 +78,5 @@ public class Attachment extends Component {
 
     public boolean isAttached() {
         return attached;
-    }
-
-    public static boolean isMove() {
-        return move;
-    }
-
-    public static void setMove(boolean value) {
-        move = value;
     }
 }

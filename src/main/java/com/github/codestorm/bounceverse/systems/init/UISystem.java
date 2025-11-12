@@ -20,8 +20,8 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
 /**
- * UISystem với hiệu ứng sóng neon và nền "Siri" động.
- * Hệ thống này vẽ hiệu ứng LÊN TRÊN nền đen có sẵn của GameScene.
+ * UISystem với hiệu ứng sóng neon và nền "Siri" động. Hệ thống này vẽ hiệu ứng
+ * LÊN TRÊN nền đen có sẵn của GameScene.
  */
 public final class UISystem extends InitialSystem {
 
@@ -56,10 +56,40 @@ public final class UISystem extends InitialSystem {
     private final Set<Color> collectedColors = new java.util.LinkedHashSet<>();
     private boolean allColorsCollected = false;
 
-    private UISystem() {}
+    private AnimationTimer animationTimer;
+
+    private UISystem() {
+    }
 
     public static UISystem getInstance() {
         return Holder.INSTANCE;
+    }
+
+    /**
+     * Dọn dẹp và reset lại toàn bộ trạng thái của UISystem.
+     */
+    public void dispose() {
+        // 1. Dừng animation timer cũ nếu nó đang chạy
+        if (animationTimer != null) {
+            animationTimer.stop();
+            animationTimer = null;
+        }
+
+        // 2. Dọn dẹp nội dung của các layer và đặt chúng về null
+        //    Không cần xóa chúng khỏi parent, vì toàn bộ scene sẽ được tạo lại.
+        if (waveLayer != null) {
+            waveLayer.getChildren().clear();
+            waveLayer = null;
+        }
+        if (backgroundBlobLayer != null) {
+            backgroundBlobLayer.getChildren().clear();
+            backgroundBlobLayer = null;
+        }
+
+        // 3. Reset lại tất cả các biến trạng thái về giá trị ban đầu
+        time = 0;
+        collectedColors.clear();
+        allColorsCollected = false;
     }
 
     @Override
@@ -105,7 +135,9 @@ public final class UISystem extends InitialSystem {
     }
 
     private void updateSiriBackground() {
-        if (!allColorsCollected) return;
+        if (!allColorsCollected) {
+            return;
+        }
 
         if (!backgroundBlobLayer.isVisible()) {
             backgroundBlobLayer.setVisible(true);
@@ -176,17 +208,25 @@ public final class UISystem extends InitialSystem {
     }
 
     private void startAnimationLoop() {
-        new AnimationTimer() {
+        // Dừng timer cũ trước khi tạo timer mới để tránh chạy nhiều timer song song
+        if (animationTimer != null) {
+            animationTimer.stop();
+        }
+
+        // Gán timer mới cho biến thành viên
+        animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 time += 0.01;
                 updateWaves();
                 updateSiriBackground();
             }
-        }.start();
+        };
+        animationTimer.start();
     }
 
     private static final class Holder {
+
         static final UISystem INSTANCE = new UISystem();
     }
 }

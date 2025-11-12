@@ -1,5 +1,8 @@
 package com.github.codestorm.bounceverse.factory.entities;
 
+import java.util.List;
+import java.util.Random;
+
 import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
@@ -22,36 +25,86 @@ import com.github.codestorm.bounceverse.components.properties.brick.BrickTexture
 import com.github.codestorm.bounceverse.typing.enums.BrickType;
 import com.github.codestorm.bounceverse.typing.enums.CollisionGroup;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.paint.Color;
 
-import java.util.List;
-import java.util.Random;
-
-/**
- * Factory sinh ra các loại gạch (Brick) trong trò chơi.
- */
 public final class BrickFactory extends EntityFactory {
 
     private static final int DEFAULT_WIDTH = 80;
     private static final int DEFAULT_HEIGHT = 30;
     private static final int DEFAULT_HP = 1;
-
     private static final Random RANDOM = new Random();
     private static final List<String> COLORS = List.of("blue", "green", "orange", "pink", "red", "yellow");
 
-    // ... (Các phương thức getBuilder, newNormalBrick, newStrongBrick,
-    // newShieldBrick giữ nguyên)
+    private String getColorName(Color color) {
+        if (color.equals(Color.BLUE)) {
+            return "blue";
+        }
+        if (color.equals(Color.GREEN)) {
+            return "green";
+        }
+        if (color.equals(Color.ORANGE)) {
+            return "orange";
+        }
+        if (color.equals(Color.PINK)) {
+            return "pink";
+        }
+        if (color.equals(Color.RED)) {
+            return "red";
+        }
+        if (color.equals(Color.YELLOW)) {
+            return "yellow";
+        }
+        return "blue";
+    }
+
+    // Phương thức trợ giúp để lấy Color object từ SpawnData
+    private Color getSpawnColor(SpawnData data) {
+        Object colorValue = data.get("color");
+        if (colorValue instanceof Color) {
+            return (Color) colorValue;
+        } else if (colorValue instanceof String) {
+            return switch ((String) colorValue) {
+                case "blue" ->
+                    Color.BLUE;
+                case "green" ->
+                    Color.GREEN;
+                case "orange" ->
+                    Color.ORANGE;
+                case "pink" ->
+                    Color.PINK;
+                case "red" ->
+                    Color.RED;
+                case "yellow" ->
+                    Color.YELLOW;
+                default ->
+                    Color.BLUE;
+            };
+        }
+        return Color.BLUE; // Mặc định
+    }
+
     @Override
     protected EntityBuilder getBuilder(SpawnData data) {
         int hp = ((Number) Utilities.Typing.getOr(data, "hp", DEFAULT_HP)).intValue();
         int width = ((Number) Utilities.Typing.getOr(data, "width", DEFAULT_WIDTH)).intValue();
         int height = ((Number) Utilities.Typing.getOr(data, "height", DEFAULT_HEIGHT)).intValue();
 
-        Point2D pos = new Point2D(data.getX(), data.getY());
+        Point2D pos = data.hasKey("pos") ? data.get("pos") : new Point2D(data.getX(), data.getY());
 
-        String colorKey = Utilities.Typing.getOr(data, "color", COLORS.get(RANDOM.nextInt(COLORS.size())));
+        // CHỈ LẤY STRING KEY: Đảm bảo chỉ làm việc với String ở đây
+        String colorKey;
+        Object colorValue = data.get("color");
+
+        if (colorValue instanceof Color) {
+            colorKey = getColorName((Color) colorValue); // Chuyển Color object thành String key
+        } else if (colorValue instanceof String) {
+            colorKey = (String) colorValue;
+        } else {
+            colorKey = COLORS.get(RANDOM.nextInt(COLORS.size()));
+        }
 
         var colorAsset = AssetsPath.Textures.Bricks.COLORS.get(colorKey);
         if (colorAsset == null) {
@@ -61,10 +114,7 @@ public final class BrickFactory extends EntityFactory {
         }
 
         BrickType type = Utilities.Typing.getOr(data, "type", BrickType.NORMAL);
-
-        double hpPercent = 1.0;
-        String texturePath = colorAsset.getTexture(type, hpPercent);
-
+        String texturePath = colorAsset.getTexture(type, 1.0);
         var texture = FXGL.texture(texturePath);
         texture.setFitWidth(width);
         texture.setFitHeight(height);
@@ -73,22 +123,10 @@ public final class BrickFactory extends EntityFactory {
         var fixture = new FixtureDef();
         fixture.setFriction(0f);
         fixture.setRestitution(1f);
-
-        // Lọc va chạm: Gạch thuộc nhóm BRICK và chỉ va chạm với BALL, BULLET
         fixture.getFilter().categoryBits = CollisionGroup.BRICK.bits;
         fixture.getFilter().maskBits = CollisionGroup.BALL.bits | CollisionGroup.BULLET.bits;
-
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);
-
-        var color = switch (colorKey) {
-            case "green" -> Color.GREEN;
-            case "orange" -> Color.ORANGE;
-            case "pink" -> Color.PINK;
-            case "red" -> Color.RED;
-            case "yellow" -> Color.YELLOW;
-            default -> Color.BLUE;
-        };
 
         return FXGL.entityBuilder(data)
                 .type(EntityType.BRICK)
@@ -96,35 +134,29 @@ public final class BrickFactory extends EntityFactory {
                 .viewWithBBox(texture)
                 .at(pos)
                 .collidable()
-                // SỬA ĐỔI DÒNG NÀY: Thêm BrickTextureManager vào
-                .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath(),
-                        new BrickTextureManager(type, color));
+                .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath());
     }
 
     @Spawns("normalBrick")
     public Entity newNormalBrick(SpawnData data) {
         data.put("type", BrickType.NORMAL);
         data.put("hp", (double) DEFAULT_HP);
-        return getBuilder(data).buildAndAttach();
+        var color = getSpawnColor(data);
+        data.put("color", getColorName(color));
+        return getBuilder(data)
+                .with(new BrickTextureManager(BrickType.NORMAL, color))
+                .buildAndAttach();
     }
 
     @Spawns("strongBrick")
     public Entity newStrongBrick(SpawnData data) {
         data.put("type", BrickType.STRONG);
         data.put("hp", DEFAULT_HP + 2);
-
-        String colorKey = Utilities.Typing.getOr(data, "color", COLORS.get(RANDOM.nextInt(COLORS.size())));
-        var color = switch (colorKey) {
-            case "green" -> Color.GREEN;
-            case "orange" -> Color.ORANGE;
-            case "pink" -> Color.PINK;
-            case "red" -> Color.RED;
-            case "yellow" -> Color.YELLOW;
-            default -> Color.BLUE;
-        };
-
+        var color = getSpawnColor(data);
+        data.put("color", getColorName(color));
         return getBuilder(data)
                 .with(new StrongBrickTextureUpdater().withColor(color))
+                .with(new BrickTextureManager(BrickType.STRONG, color))
                 .buildAndAttach();
     }
 
@@ -133,20 +165,27 @@ public final class BrickFactory extends EntityFactory {
         data.put("type", BrickType.SHIELD);
         data.put("hp", (double) (DEFAULT_HP));
         var shield = new Shield(Side.LEFT, Side.RIGHT, Side.BOTTOM);
-        return getBuilder(data).with(shield).buildAndAttach();
+        var color = getSpawnColor(data);
+        data.put("color", getColorName(color));
+        return getBuilder(data)
+                .with(shield)
+                .with(new BrickTextureManager(BrickType.SHIELD, color))
+                .buildAndAttach();
     }
 
-    /** Gạch nổ — khi bị phá sẽ kích hoạt Explosion gây sát thương lan */
     @Spawns("explodingBrick")
     public Entity newExplodingBrick(SpawnData data) {
         data.put("type", BrickType.EXPLODING);
         data.put("hp", (double) DEFAULT_HP);
         double explosionWidth = DEFAULT_WIDTH * 1.5;
         double explosionHeight = DEFAULT_HEIGHT * 2.5;
-
         var explosion = new Explosion(explosionWidth, explosionHeight);
-
-        return getBuilder(data).with(explosion).buildAndAttach();
+        var color = getSpawnColor(data);
+        data.put("color", getColorName(color));
+        return getBuilder(data)
+                .with(explosion)
+                .with(new BrickTextureManager(BrickType.EXPLODING, color))
+                .buildAndAttach();
     }
 
     @Spawns("keyBrick")
@@ -154,8 +193,11 @@ public final class BrickFactory extends EntityFactory {
         data.put("type", BrickType.KEY);
         data.put("hp", (double) DEFAULT_HP);
         var special = new Special();
+        var color = getSpawnColor(data);
+        data.put("color", getColorName(color));
         return getBuilder(data)
                 .with(special)
+                .with(new BrickTextureManager(BrickType.KEY, color))
                 .buildAndAttach();
     }
 }
