@@ -7,7 +7,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.profile.DataFile;
 import com.almasb.fxgl.profile.SaveLoadHandler;
-import com.github.codestorm.bounceverse.core.BackgroundColorManager;
 import com.github.codestorm.bounceverse.factory.entities.*;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
@@ -143,9 +142,6 @@ public final class GameSystem extends InitialSystem {
                     FXGL.spawn(type, new SpawnData(posX, posY));
                 }
             }
-
-            // Giữ lại logic nền động
-            BackgroundColorManager.init(FXGL.getGameWorld().getEntitiesByType(EntityType.BRICK).size());
         }
 
         public static void paddle() {

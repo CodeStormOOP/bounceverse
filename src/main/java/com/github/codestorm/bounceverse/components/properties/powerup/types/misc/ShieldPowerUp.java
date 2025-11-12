@@ -29,13 +29,14 @@ public class ShieldPowerUp extends PowerUp {
                 name,
                 DURATION,
                 this::spawnShield,
-                this::removeShield
-        );
+                this::removeShield);
     }
 
     private void spawnShield() {
         double appWidth = FXGL.getAppWidth();
         double appHeight = FXGL.getAppHeight();
+
+        double shieldHeight = 20.0;
 
         Rectangle view = new Rectangle(appWidth, 8, Color.AQUA);
 
@@ -43,8 +44,9 @@ public class ShieldPowerUp extends PowerUp {
                 .at(0, appHeight - 10)
                 .type(PowerUpType.SHIELD)
                 .view(view)
-                .bbox(new HitBox(BoundingShape.box(appWidth, 8)))
+                .bbox(new HitBox(BoundingShape.box(appWidth, shieldHeight)))
                 .collidable()
+                .with(new ShieldSafetyNetComponent())
                 .buildAndAttach();
     }
 

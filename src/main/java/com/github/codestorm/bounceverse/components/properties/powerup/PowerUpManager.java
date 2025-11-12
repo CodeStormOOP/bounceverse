@@ -68,7 +68,7 @@ public final class PowerUpManager {
     public void activate(String name, Duration duration, Runnable onActivate, Runnable onExpire) {
         ensureHUDAdded();
         double newDurationSeconds = duration.toSeconds();
-        
+
         if (activePowerUps.containsKey(name)) {
             var existing = activePowerUps.get(name);
 
@@ -128,5 +128,26 @@ public final class PowerUpManager {
             hudBox.getChildren().remove(entry.label);
         });
         activePowerUps.clear();
+    }
+
+    /**
+     * Hủy bỏ và dọn dẹp một Power-Up cụ thể đang hoạt động theo tên.
+     * 
+     * @param name Tên của power-up cần hủy
+     */
+    public void clearPowerUp(String name) {
+        if (activePowerUps.containsKey(name)) {
+            var existing = activePowerUps.get(name);
+
+            if (!existing.timer.isExpired()) {
+                existing.timer.expire();
+            }
+
+            existing.onExpire.run();
+
+            hudBox.getChildren().remove(existing.label);
+
+            activePowerUps.remove(name);
+        }
     }
 }

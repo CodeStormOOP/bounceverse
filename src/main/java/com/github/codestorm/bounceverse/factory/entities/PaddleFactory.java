@@ -12,8 +12,8 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
-import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
-import com.github.codestorm.bounceverse.components.properties.paddle.PaddleTextureManager;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddlePowerComponent;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddleViewManager;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -53,8 +53,8 @@ public final class PaddleFactory extends EntityFactory {
                 .with(physics)
                 .with(new PaddleShooting(DEFAULT_SHOOT_COOLDOWN))
                 .with(new Attack())
-                .with(new PaddleTextureManager())
-                .with(new PaddleSizeManager())
+                .with(new PaddleViewManager())
+                .with(new PaddlePowerComponent())
                 .build();
     }
 }

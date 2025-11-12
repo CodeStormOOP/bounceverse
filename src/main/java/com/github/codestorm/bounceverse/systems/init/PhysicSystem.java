@@ -10,7 +10,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.Utilities;
 import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.properties.Shield;
-import com.github.codestorm.bounceverse.components.properties.paddle.PaddleSizeManager;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddleViewManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
 import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.components.properties.powerup.types.PowerUp;
@@ -167,8 +167,7 @@ public final class PhysicSystem extends InitialSystem {
                             FXGL.getGameTimer().runOnceAfter(() -> {
                                 if (lives.getValue() > 0) {
                                     var paddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
-                                    paddle.getComponentOptional(PaddleSizeManager.class)
-                                            .ifPresent(PaddleSizeManager::resetSize);
+                                    paddle.getComponent(PaddleViewManager.class).reset();
 
                                     PowerUpManager.getInstance().clearAll();
 

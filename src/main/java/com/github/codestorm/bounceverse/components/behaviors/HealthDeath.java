@@ -5,12 +5,11 @@ import java.util.List;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.component.Required;
 import com.github.codestorm.bounceverse.components.Behavior;
-import com.github.codestorm.bounceverse.core.BackgroundColorManager;
+import com.github.codestorm.bounceverse.components.properties.brick.BrickTextureManager;
+import com.github.codestorm.bounceverse.systems.init.UISystem;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import javafx.scene.paint.Color;
 
-/**
- * Khi máu của entity về 0 thì xóa entity khỏi thế giới.
- */
 @Required(HealthIntComponent.class)
 public class HealthDeath extends Behavior {
 
@@ -19,7 +18,11 @@ public class HealthDeath extends Behavior {
         var health = entity.getComponent(HealthIntComponent.class);
         if (health != null && health.isZero()) {
             if (entity.isType(EntityType.BRICK)) {
-                BackgroundColorManager.brickDestroyed();
+                entity.getComponentOptional(BrickTextureManager.class).ifPresent(textureManager -> {
+                    Color brickColor = textureManager.getColor();
+
+                    UISystem.getInstance().addColorToWave(brickColor);
+                });
             }
             entity.removeFromWorld();
         }

@@ -1,7 +1,5 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.time.TimerAction;
 import com.github.codestorm.bounceverse.components.Behavior;
 import com.github.codestorm.bounceverse.typing.interfaces.Undoable;

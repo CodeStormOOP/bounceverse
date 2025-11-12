@@ -18,6 +18,7 @@ import com.github.codestorm.bounceverse.components.behaviors.Special;
 import com.github.codestorm.bounceverse.components.behaviors.brick.StrongBrickTextureUpdater;
 import com.github.codestorm.bounceverse.components.properties.Attributes;
 import com.github.codestorm.bounceverse.components.properties.Shield;
+import com.github.codestorm.bounceverse.components.properties.brick.BrickTextureManager;
 import com.github.codestorm.bounceverse.typing.enums.BrickType;
 import com.github.codestorm.bounceverse.typing.enums.CollisionGroup;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
@@ -80,13 +81,24 @@ public final class BrickFactory extends EntityFactory {
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.STATIC);
 
+        var color = switch (colorKey) {
+            case "green" -> Color.GREEN;
+            case "orange" -> Color.ORANGE;
+            case "pink" -> Color.PINK;
+            case "red" -> Color.RED;
+            case "yellow" -> Color.YELLOW;
+            default -> Color.BLUE;
+        };
+
         return FXGL.entityBuilder(data)
                 .type(EntityType.BRICK)
                 .bbox(BoundingShape.box(width, height))
                 .viewWithBBox(texture)
                 .at(pos)
                 .collidable()
-                .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath());
+                // SỬA ĐỔI DÒNG NÀY: Thêm BrickTextureManager vào
+                .with(physics, new Attributes(), new HealthIntComponent(hp), new HealthDeath(),
+                        new BrickTextureManager(type, color));
     }
 
     @Spawns("normalBrick")
@@ -119,7 +131,7 @@ public final class BrickFactory extends EntityFactory {
     @Spawns("shieldBrick")
     public Entity newShieldBrick(SpawnData data) {
         data.put("type", BrickType.SHIELD);
-        data.put("hp", (double) (DEFAULT_HP + 1));
+        data.put("hp", (double) (DEFAULT_HP));
         var shield = new Shield(Side.LEFT, Side.RIGHT, Side.BOTTOM);
         return getBuilder(data).with(shield).buildAndAttach();
     }

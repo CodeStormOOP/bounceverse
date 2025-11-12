@@ -60,6 +60,7 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initUI() {
+        FXGL.getGameScene().setBackgroundColor(javafx.scene.paint.Color.web("#0d0b1a"));
         UISystem.getInstance().apply();
 
         FXGL.getGameScene().getRoot().getStylesheets().add("assets/ui/powerup.css");

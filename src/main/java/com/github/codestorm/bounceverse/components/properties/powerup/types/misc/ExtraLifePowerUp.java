@@ -12,7 +12,7 @@ import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
 public final class ExtraLifePowerUp extends PowerUp {
 
     public ExtraLifePowerUp() {
-        super("ExtraLife"); // Tên này sẽ không hiển thị trên HUD vì không có thời gian
+        super("ExtraLife");
     }
 
     @Override

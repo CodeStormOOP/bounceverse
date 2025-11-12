@@ -34,7 +34,7 @@ public class StrongBrickTextureUpdater extends Component {
 
         Texture tex = FXGL.texture(texPath);
 
-        // ✅ Giữ nguyên kích thước ban đầu của brick
+        // Giữ nguyên kích thước ban đầu của brick
         double width = getEntity().getWidth();
         double height = getEntity().getHeight();
         tex.setFitWidth(width);
