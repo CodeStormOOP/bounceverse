@@ -1,5 +1,8 @@
-# Bounceverse - A Modern Arkanoid Clone
+# Bounceverse - A Modern Arkanoid
+
 ### Báo cáo Bài tập lớn OOP
+
+[Video giới thiệu](https://youtu.be/k5M-Qq1SNXU)
 
 **Bounceverse** là một bản làm lại hiện đại của tựa game brick-breaker kinh điển, được xây dựng hoàn toàn bằng **Java** và game engine **FXGL**. Dự án này tập trung vào việc áp dụng kiến trúc **Entity-Component-System (ECS)** tiên tiến, được hỗ trợ bởi các nguyên tắc Lập trình Hướng đối tượng, để tạo ra một cấu trúc game linh hoạt, dễ bảo trì và mở rộng.
 
@@ -7,7 +10,13 @@ Game không chỉ tái hiện lối chơi gốc mà còn bổ sung nhiều tính
 
 ---
 
-![Preview](https://s12.gifyu.com/images/b9Mf5.png)
+## Screenshots:
+
+![Preview](assets/mainmenu.png)
+
+![In-game 2](assets/ingame2.png)
+
+![In-game 1](assets/ingame1.png)
 
 ---
 
