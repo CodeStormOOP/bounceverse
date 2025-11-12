@@ -735,7 +735,7 @@ public class Menu extends FXGLMenu {
         var leaderboardManager = LeaderboardManager.getInstance();
         leaderboardManager.reload();
 
-        var blitzScores = leaderboardManager.getBlitzLeaderboard();
+        var blitzScores = leaderboardManager.getEndlessLeaderboard();
 
         var contentBox = new VBox(20);
         contentBox.setAlignment(Pos.TOP_CENTER);
