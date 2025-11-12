@@ -3,7 +3,7 @@
 
 **Bounceverse** là một bản làm lại hiện đại của tựa game brick-breaker kinh điển, được xây dựng hoàn toàn bằng **Java** và game engine **FXGL**. Dự án này tập trung vào việc áp dụng kiến trúc **Entity-Component-System (ECS)** tiên tiến, được hỗ trợ bởi các nguyên tắc Lập trình Hướng đối tượng, để tạo ra một cấu trúc game linh hoạt, dễ bảo trì và mở rộng.
 
-Game không chỉ tái hiện lối chơi gốc mà còn bổ sung nhiều tính năng nâng cao như hệ thống sinh màn chơi ngẫu nhiên, hệ thống vật phẩm (power-up) đa dạng, và các hiệu ứng "game feel" hiện đại để mang lại trải nghiệm hấp dẫn.
+Game không chỉ tái hiện lối chơi gốc mà còn bổ sung nhiều tính năng nâng cao như hệ thống sinh màn chơi ngẫu nhiên, hệ thống vật phẩm (power-up) đa dạng, kỹ năng chủ động cho Paddle và các hiệu ứng "game feel" hiện đại để mang lại trải nghiệm hấp dẫn.
 
 ---
 
@@ -55,8 +55,7 @@ Dự án Bounceverse có các tính năng nâng cao như sau:
     *   `Mũi tên Trái/Phải`: Di chuyển thanh đỡ (Paddle).
     *   `SPACE`: Phóng bóng khi bóng đang dính vào thanh đỡ (đầu màn/sau khi mất mạng).
     *   `ESC`: Tạm dừng game.
-*   Power-up `GUN` sẽ tự động bắn, không cần nhấn thêm nút.
-
+    *   `S`: Kích hoạt kỹ năng chủ động của Paddle.
 ---
 
 ## 🏗 Cấu trúc dự án (Thiết kế ECS & OOP)
