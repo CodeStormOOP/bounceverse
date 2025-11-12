@@ -2,7 +2,6 @@ package com.github.codestorm.bounceverse.systems.manager.metrics;
 
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.logging.Logger;
-import com.github.codestorm.bounceverse.typing.records.BlitzScore;
 import com.github.codestorm.bounceverse.typing.records.EndlessScore;
 import com.github.codestorm.bounceverse.typing.structures.BoundedTreeSet;
 
@@ -25,7 +24,6 @@ import java.util.Comparator;
 public final class LeaderboardManager extends MetricsManager {
     public static final int MAX_SIZE = 10;
     public static final String FILENAME = "leaderboard.dat";
-    private static final String BLITZ = "blitz";
     private static final String ENDLESS = "endless";
 
     public static LeaderboardManager getInstance() {
@@ -40,13 +38,9 @@ public final class LeaderboardManager extends MetricsManager {
             final var bundle = (Bundle) ois.readObject();
 
             final BoundedTreeSet<EndlessScore> endlessLB = bundle.get(ENDLESS);
-            final BoundedTreeSet<BlitzScore> blitzLB = bundle.get(BLITZ);
 
             endlessLeaderboard.clear();
             endlessLeaderboard.addAll(endlessLB);
-
-            blitzLeaderboard.clear();
-            blitzLeaderboard.addAll(blitzLB);
 
             Logger.get(LeaderboardManager.class)
                     .infof("Loaded leaderboard from: %s", file.getAbsolutePath());
@@ -60,7 +54,6 @@ public final class LeaderboardManager extends MetricsManager {
     /** Lưu lại BXH. */
     public void save() {
         final var leaderboard = new Bundle("leaderboard");
-        leaderboard.put(BLITZ, blitzLeaderboard);
         leaderboard.put(ENDLESS, endlessLeaderboard);
 
         try {
@@ -79,14 +72,8 @@ public final class LeaderboardManager extends MetricsManager {
         reload();
     }
 
-    private final BoundedTreeSet<BlitzScore> blitzLeaderboard =
-            new BoundedTreeSet<>(MAX_SIZE, Comparator.reverseOrder());
     private final BoundedTreeSet<EndlessScore> endlessLeaderboard =
             new BoundedTreeSet<>(MAX_SIZE, Comparator.reverseOrder());
-
-    public BoundedTreeSet<BlitzScore> getBlitzLeaderboard() {
-        return blitzLeaderboard;
-    }
 
     public BoundedTreeSet<EndlessScore> getEndlessLeaderboard() {
         return endlessLeaderboard;
