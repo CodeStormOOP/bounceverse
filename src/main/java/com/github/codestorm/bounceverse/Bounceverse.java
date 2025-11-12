@@ -17,6 +17,8 @@ import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsMa
 import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 
+import javafx.util.Duration;
+
 /**
  * <h1>{@link Bounceverse}</h1>
  * Game chính — quản lý vòng đời khởi tạo và vòng lặp của trò chơi.
@@ -50,12 +52,16 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        GameSystem.Variables.loadDefault(vars);
+        GameSystem.Variables.loadDefault(FXGL.getWorldProperties());
     }
 
     @Override
     protected void initGame() {
-        GameSystem.getInstance().apply();
+        GameSystem.UI.getInstance().dispose();
+        UISystem.getInstance().dispose();
+        FXGL.runOnce(() -> {
+            GameSystem.getInstance().apply();
+        }, Duration.seconds(0.1));
     }
 
     @Override
@@ -67,7 +73,6 @@ public final class Bounceverse extends GameApplication {
     protected void initUI() {
         FXGL.getGameScene().setBackgroundColor(javafx.scene.paint.Color.web("#0d0b1a"));
         UISystem.getInstance().apply();
-
         FXGL.getGameScene().getRoot().getStylesheets().add("assets/ui/powerup.css");
     }
 

@@ -31,6 +31,7 @@ import com.almasb.fxgl.profile.SaveFile;
 import com.almasb.fxgl.scene.SubScene;
 import com.almasb.fxgl.ui.FXGLScrollPane;
 import com.almasb.fxgl.ui.FontType;
+import com.github.codestorm.bounceverse.systems.manager.metrics.LeaderboardManager;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
@@ -38,14 +39,31 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.*;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -58,7 +76,9 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -339,8 +359,8 @@ public class Menu extends FXGLMenu {
     private MenuBox createOptionsMenu() {
         log.debug("createOptionsMenu()");
 
-        var itemGameplay = new MenuButton("menu.gameplay");
-        itemGameplay.setMenuContent(this::createContentGameplay);
+        // var itemGameplay = new MenuButton("menu.gameplay");
+        // itemGameplay.setMenuContent(this::createContentGameplay);
 
         var itemControls = new MenuButton("menu.controls");
         itemControls.setMenuContent(this::createContentControls);
@@ -350,9 +370,9 @@ public class Menu extends FXGLMenu {
         var itemAudio = new MenuButton("menu.audio");
         itemAudio.setMenuContent(this::createContentAudio);
 
-        var btnRestore = createRestoreButton();
+        // var btnRestore = createRestoreButton();
 
-        return new MenuBox(itemGameplay, itemControls, itemVideo, itemAudio, btnRestore);
+        return new MenuBox(itemControls, itemVideo, itemAudio);
     }
 
     private MenuButton createRestoreButton() {
@@ -375,13 +395,18 @@ public class Menu extends FXGLMenu {
     private MenuBox createExtraMenu() {
         log.debug("createExtraMenu()");
 
-        var itemAchievements = new MenuButton("menu.trophies");
-        itemAchievements.setMenuContent(this::createContentAchievements);
+        // var itemAchievements = new MenuButton("menu.trophies");
+        // itemAchievements.setMenuContent(this::createContentAchievements);
+
+        var itemLeaderboard = new MenuButton("temp.key");
+        itemLeaderboard.btn.textProperty().unbind();
+        itemLeaderboard.btn.setText("LEADERBOARD");
+        itemLeaderboard.setMenuContent(this::createContentLeaderboard);
 
         var itemCredits = new MenuButton("menu.credits");
         itemCredits.setMenuContent(this::createContentCredits);
 
-        return new MenuBox(itemAchievements, itemCredits);
+        return new MenuBox(itemLeaderboard, itemCredits);
     }
 
     private void switchMenuTo(Node menuNode) {
@@ -704,6 +729,100 @@ public class Menu extends FXGLMenu {
         return content;
     }
 
+    protected MenuContent createContentLeaderboard() {
+        log.debug("createContentLeaderboard()");
+
+        var leaderboardManager = LeaderboardManager.getInstance();
+
+        var endlessScores = leaderboardManager.getViewLeaderboard();
+
+        var contentBox = new VBox(20);
+        contentBox.setAlignment(Pos.TOP_CENTER);
+
+        var title =
+                FXGL.getUIFactoryService()
+                        .newText("LEADERBOARD", Color.ORANGE, FontType.MONO, 27.0);
+
+        var grid = new GridPane();
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10, 10, 10, 10));
+
+        grid.getColumnConstraints()
+                .add(new ColumnConstraints(40, 40, 40, Priority.NEVER, HPos.CENTER, false)); // Rank
+        grid.getColumnConstraints()
+                .add(
+                        new ColumnConstraints(
+                                120, 120, 120, Priority.NEVER, HPos.LEFT, false)); // Name
+        grid.getColumnConstraints()
+                .add(new ColumnConstraints(70, 70, 70, Priority.NEVER, HPos.RIGHT, false)); // Score
+        grid.getColumnConstraints()
+                .add(
+                        new ColumnConstraints(
+                                50, 50, 50, Priority.NEVER, HPos.CENTER, false)); // Level
+        grid.getColumnConstraints()
+                .add(
+                        new ColumnConstraints(
+                                130, 130, 130, Priority.NEVER, HPos.CENTER, false)); // Date
+
+        grid.addRow(
+                0,
+                FXGL.getUIFactoryService().newText("Rank", Color.NAVAJOWHITE, FontType.MONO, 18.0),
+                FXGL.getUIFactoryService()
+                        .newText("Player", Color.NAVAJOWHITE, FontType.MONO, 18.0),
+                FXGL.getUIFactoryService().newText("Score", Color.NAVAJOWHITE, FontType.MONO, 18.0),
+                FXGL.getUIFactoryService().newText("Level", Color.NAVAJOWHITE, FontType.MONO, 18.0),
+                FXGL.getUIFactoryService().newText("Date", Color.NAVAJOWHITE, FontType.MONO, 18.0));
+
+        int rank = 1;
+        if (endlessScores.isEmpty()) {
+            var noDataText =
+                    FXGL.getUIFactoryService()
+                            .newText("No data available.", Color.GRAY, FontType.UI, 16.0);
+            grid.add(noDataText, 0, 1);
+            GridPane.setColumnSpan(noDataText, 5);
+        } else {
+            for (var score : endlessScores) {
+                var dateStr =
+                        score.timestamp()
+                                .atZone(java.time.ZoneId.systemDefault())
+                                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+                grid.addRow(
+                        rank,
+                        FXGL.getUIFactoryService()
+                                .newText("#" + rank, Color.YELLOW, FontType.MONO, 16.0),
+                        FXGL.getUIFactoryService()
+                                .newText(score.name(), Color.CYAN, FontType.MONO, 16.0),
+                        FXGL.getUIFactoryService()
+                                .newText(
+                                        String.valueOf(score.score()),
+                                        Color.LIGHTGREEN,
+                                        FontType.MONO,
+                                        16.0),
+                        FXGL.getUIFactoryService()
+                                .newText(
+                                        String.valueOf(score.level()),
+                                        Color.ORANGE,
+                                        FontType.MONO,
+                                        16.0),
+                        FXGL.getUIFactoryService()
+                                .newText(dateStr, Color.LIGHTGRAY, FontType.MONO, 16.0));
+                rank++;
+            }
+        }
+
+        var scrollPane = new FXGLScrollPane(grid);
+        scrollPane.setPrefHeight(getAppHeight() / 2.0);
+        scrollPane.setPrefWidth(480);
+        scrollPane.setStyle("-fx-background: black;");
+
+        contentBox.getChildren().addAll(title, scrollPane);
+
+        return new MenuContent(contentBox);
+    }
+
     private void showProfileDialog() {
         ChoiceBox<String> profilesBox =
                 FXGL.getUIFactoryService().newChoiceBox(FXCollections.observableArrayList());
@@ -818,7 +937,9 @@ public class Menu extends FXGLMenu {
             btn.setAlignment(Pos.CENTER_LEFT);
             btn.setStyle("-fx-background-color: transparent");
 
-            final var p = new Polygon(0.0, 0.0, 220.0, 0.0, 250.0, 35.0, 0.0, 35.0);
+            btn.setPrefWidth(280);
+
+            final var p = new Polygon(0.0, 0.0, 270.0, 0.0, 300.0, 35.0, 0.0, 35.0);
             p.setMouseTransparent(true);
 
             var g =

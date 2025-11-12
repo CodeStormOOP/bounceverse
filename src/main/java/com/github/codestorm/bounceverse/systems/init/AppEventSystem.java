@@ -8,7 +8,12 @@ import com.github.codestorm.bounceverse.systems.manager.metrics.LeaderboardManag
 /**
  * <h1>{@link AppEventSystem}</h1>
  *
+<<<<<<< HEAD
  * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication}. <br>
+=======
+ * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication} <br>
+ * <b>Đừng nhầm lẫn với {@link GameSystem}.</b>
+>>>>>>> origin/dev
  *
  * @apiNote Đây là một Singleton, cần lấy instance thông qua
  *          {@link #getInstance()}.

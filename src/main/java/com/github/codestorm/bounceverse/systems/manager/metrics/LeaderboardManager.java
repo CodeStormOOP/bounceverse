@@ -2,15 +2,18 @@ package com.github.codestorm.bounceverse.systems.manager.metrics;
 
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.logging.Logger;
-import com.github.codestorm.bounceverse.typing.records.BlitzScore;
 import com.github.codestorm.bounceverse.typing.records.EndlessScore;
-import com.github.codestorm.bounceverse.typing.structures.BoundedTreeSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MinMaxPriorityQueue;
+
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
@@ -25,7 +28,6 @@ import java.util.Comparator;
 public final class LeaderboardManager extends MetricsManager {
     public static final int MAX_SIZE = 10;
     public static final String FILENAME = "leaderboard.dat";
-    private static final String BLITZ = "blitz";
     private static final String ENDLESS = "endless";
 
     public static LeaderboardManager getInstance() {
@@ -39,14 +41,10 @@ public final class LeaderboardManager extends MetricsManager {
             final var ois = new ObjectInputStream(new FileInputStream(file));
             final var bundle = (Bundle) ois.readObject();
 
-            final BoundedTreeSet<EndlessScore> endlessLB = bundle.get(ENDLESS);
-            final BoundedTreeSet<BlitzScore> blitzLB = bundle.get(BLITZ);
+            final ArrayList<@NonNull EndlessScore> endlessLB = bundle.get(ENDLESS);
 
             endlessLeaderboard.clear();
             endlessLeaderboard.addAll(endlessLB);
-
-            blitzLeaderboard.clear();
-            blitzLeaderboard.addAll(blitzLB);
 
             Logger.get(LeaderboardManager.class)
                     .infof("Loaded leaderboard from: %s", file.getAbsolutePath());
@@ -60,8 +58,7 @@ public final class LeaderboardManager extends MetricsManager {
     /** Lưu lại BXH. */
     public void save() {
         final var leaderboard = new Bundle("leaderboard");
-        leaderboard.put(BLITZ, blitzLeaderboard);
-        leaderboard.put(ENDLESS, endlessLeaderboard);
+        leaderboard.put(ENDLESS, new ArrayList<>(endlessLeaderboard));
 
         try {
             final var file = new File(FILENAME);
@@ -79,17 +76,46 @@ public final class LeaderboardManager extends MetricsManager {
         reload();
     }
 
-    private final BoundedTreeSet<BlitzScore> blitzLeaderboard =
-            new BoundedTreeSet<>(MAX_SIZE, Comparator.reverseOrder());
-    private final BoundedTreeSet<EndlessScore> endlessLeaderboard =
-            new BoundedTreeSet<>(MAX_SIZE, Comparator.reverseOrder());
+    private final MinMaxPriorityQueue<@NonNull EndlessScore> endlessLeaderboard =
+            MinMaxPriorityQueue.<EndlessScore>orderedBy(Comparator.reverseOrder())
+                    .maximumSize(MAX_SIZE)
+                    .create();
 
-    public BoundedTreeSet<BlitzScore> getBlitzLeaderboard() {
-        return blitzLeaderboard;
+    /**
+     * Kiểm tra xem điểm số có nằm trong top leaderboard không.
+     *
+     * @param score Điểm số cần kiểm tra
+     * @return true nếu điểm số đủ để vào leaderboard
+     */
+    public boolean isTopScore(int score) {
+        if (endlessLeaderboard.size() < LeaderboardManager.MAX_SIZE) {
+            return true;
+        }
+        final var lowestScore = endlessLeaderboard.peek();
+        assert lowestScore != null;
+        return score > lowestScore.score();
     }
 
-    public BoundedTreeSet<EndlessScore> getEndlessLeaderboard() {
-        return endlessLeaderboard;
+    /**
+     * Thêm một điểm số mới vào leaderboard nếu đủ điều kiện.
+     *
+     * @param newScore Điểm số mới
+     */
+    public void addScore(EndlessScore newScore) {
+        if (!isTopScore(newScore.score())) {
+            return;
+        }
+        endlessLeaderboard.add(newScore);
+        save();
+    }
+
+    /**
+     * Lấy danh sách leaderboard hiện tại dưới dạng {@link ImmutableList}.
+     *
+     * @return Danh sách leaderboard
+     */
+    public ImmutableList<@NonNull EndlessScore> getViewLeaderboard() {
+        return ImmutableList.copyOf(endlessLeaderboard);
     }
 
     /**

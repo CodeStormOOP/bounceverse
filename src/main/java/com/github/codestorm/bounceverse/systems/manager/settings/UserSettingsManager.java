@@ -98,6 +98,33 @@ public final class UserSettingsManager extends SettingsManager {
         // ? Audio
         profile.getAudio().setMusic(FXGL.getSettings().getGlobalMusicVolume());
         profile.getAudio().setSound(FXGL.getSettings().getGlobalSoundVolume());
+
+        // ? Controls
+        syncControls();
+    }
+
+    /** Đồng bộ controls settings từ input bindings hiện tại. */
+    private void syncControls() {
+        var bindings = FXGL.getInput().getAllBindings();
+
+        for (var entry : bindings.entrySet()) {
+            var action = entry.getKey();
+            var trigger = entry.getValue();
+
+            var triggerStr = trigger.toString();
+
+            switch (action.getName()) {
+                case "Move Left":
+                    profile.getControls().setMoveLeft(triggerStr);
+                    break;
+                case "Move Right":
+                    profile.getControls().setMoveRight(triggerStr);
+                    break;
+                case "Launch Ball":
+                    profile.getControls().setLaunchBall(triggerStr);
+                    break;
+            }
+        }
     }
 
     /**
