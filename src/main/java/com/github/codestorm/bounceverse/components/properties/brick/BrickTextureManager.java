@@ -41,12 +41,27 @@ public final class BrickTextureManager extends Property {
         return view;
     }
 
+    private String getColorName() {
+        if (color.equals(Color.BLUE)) return "blue";
+        if (color.equals(Color.GREEN)) return "green";
+        if (color.equals(Color.ORANGE)) return "orange";
+        if (color.equals(Color.PINK)) return "pink";
+        if (color.equals(Color.RED)) return "red";
+        if (color.equals(Color.YELLOW)) return "yellow";
+        return "blue";
+    }
+
     @Override
     public void onUpdate(double tpf) {
         final var health = entity.getComponent(HealthIntComponent.class);
         final var percent = health.getValuePercent() / 100;
 
-        final var colorTextures = AssetsPath.Textures.Bricks.COLORS.get(color);
+        // SỬA ĐỔI Ở ĐÂY
+        final var colorKey = getColorName(); // Chuyển Color object thành String key
+        final var colorTextures =
+                AssetsPath.Textures.Bricks.COLORS.get(colorKey); // Dùng key String để tra cứu
+
+        // Đoạn mã còn lại giữ nguyên
         final var texturePath = colorTextures.getTexture(brickType, percent);
 
         final var views = entity.getViewComponent();
@@ -63,5 +78,9 @@ public final class BrickTextureManager extends Property {
                 views.addChild(oldTexture);
             }
         }
+    }
+
+    public Color getColor() {
+        return this.color;
     }
 }

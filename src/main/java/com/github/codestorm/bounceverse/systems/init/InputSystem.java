@@ -1,98 +1,107 @@
 package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.components.behaviors.Attachment;
-import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
-import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
+import com.github.codestorm.bounceverse.components.behaviors.paddle.ReverseControlComponent;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddlePowerComponent;
+import com.github.codestorm.bounceverse.components.properties.powerup.paddle.DuplicatePaddlePowerUp;
+import com.github.codestorm.bounceverse.factory.entities.WallFactory;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.scene.input.KeyCode;
 
-/**
- *
- *
- * <h1>{@link InputSystem}</h1>
- *
- * {@link InitialSystem} quản lý Input trong game. <br>
- *
- * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
- */
+import java.util.List;
+
+/** Quản lý Input cho game. */
 public final class InputSystem extends InitialSystem {
+
+    private static final double MOVE_SPEED = 400.0;
+    private static final double WALL_THICKNESS = WallFactory.DEFAULT_THICKNESS;
+
+    private InputSystem() {}
+
     public static InputSystem getInstance() {
-        return InputSystem.Holder.INSTANCE;
+        return Holder.INSTANCE;
     }
 
-    public static final double NORMAL_SPEED = 10.0;
+    private void movePaddle(double inputDirection) {
+        // TODO: Sửa lỗi chọn reset game khi đang giữ di chuyển di chuyển
+        var mainPaddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+        var leftmostPaddle = mainPaddle;
+        var rightmostPaddle = mainPaddle;
+
+        if (FXGL.getWorldProperties().exists(DuplicatePaddlePowerUp.CLONES_LIST_KEY)) {
+            List<Entity> clones = FXGL.geto(DuplicatePaddlePowerUp.CLONES_LIST_KEY);
+            if (!clones.isEmpty() && clones.get(0).isActive()) {
+                leftmostPaddle = clones.get(0);
+                rightmostPaddle = clones.get(1);
+            }
+        }
+
+        var isReversed = mainPaddle.hasComponent(ReverseControlComponent.class);
+        var actualMoveDirection = isReversed ? -inputDirection : inputDirection;
+
+        if (actualMoveDirection < 0) {
+            if (leftmostPaddle.getX() <= WALL_THICKNESS) {
+                setAllPaddlesVelocity(0);
+                return;
+            }
+        } else {
+            if (rightmostPaddle.getRightX() >= FXGL.getAppWidth() - WALL_THICKNESS) {
+                setAllPaddlesVelocity(0);
+                return;
+            }
+        }
+        setAllPaddlesVelocity(actualMoveDirection * MOVE_SPEED);
+    }
+
+    private void setAllPaddlesVelocity(double velocity) {
+        var mainPaddle = FXGL.getGameWorld().getSingleton(EntityType.PADDLE);
+        mainPaddle.getComponent(PhysicsComponent.class).setVelocityX(velocity);
+
+        if (FXGL.getWorldProperties().exists(DuplicatePaddlePowerUp.CLONES_LIST_KEY)) {
+            List<Entity> clones = FXGL.geto(DuplicatePaddlePowerUp.CLONES_LIST_KEY);
+            for (var clone : clones) {
+                clone.getComponent(PhysicsComponent.class).setVelocityX(velocity);
+            }
+        }
+    }
 
     @Override
     public void apply() {
-        // Load key bindings from settings
-        var settings = UserSettingsManager.getInstance().get();
-        var controls = settings.getControls();
-
-        KeyCode moveLeftKey;
-        KeyCode moveRightKey;
-        KeyCode launchBallKey;
-
-        try {
-            moveLeftKey = KeyCode.valueOf(controls.getMoveLeft().toUpperCase());
-        } catch (Exception e) {
-            moveLeftKey = KeyCode.LEFT;
-        }
-
-        try {
-            moveRightKey = KeyCode.valueOf(controls.getMoveRight().toUpperCase());
-        } catch (Exception e) {
-            moveRightKey = KeyCode.RIGHT;
-        }
-
-        try {
-            launchBallKey = KeyCode.valueOf(controls.getLaunchBall().toUpperCase());
-        } catch (Exception e) {
-            launchBallKey = KeyCode.SPACE;
-        }
-
-        // --- Paddle - Move Left ---
         FXGL.getInput()
                 .addAction(
                         new UserAction("Move Left") {
                             @Override
                             protected void onAction() {
-                                FXGL.getGameWorld()
-                                        .getEntitiesByType(EntityType.PADDLE)
-                                        .forEach(
-                                                paddle -> {
-                                                    paddle.translate(
-                                                            DirectionUnit.LEFT
-                                                                    .getVector()
-                                                                    .mul(NORMAL_SPEED));
-                                                });
+                                movePaddle(-1.0);
+                            }
+
+                            @Override
+                            protected void onActionEnd() {
+                                setAllPaddlesVelocity(0);
                             }
                         },
-                        moveLeftKey);
+                        KeyCode.LEFT);
 
-        // --- Paddle - Move Right ---
         FXGL.getInput()
                 .addAction(
                         new UserAction("Move Right") {
                             @Override
                             protected void onAction() {
-                                FXGL.getGameWorld()
-                                        .getEntitiesByType(EntityType.PADDLE)
-                                        .forEach(
-                                                paddle -> {
-                                                    paddle.translate(
-                                                            DirectionUnit.RIGHT
-                                                                    .getVector()
-                                                                    .mul(NORMAL_SPEED));
-                                                });
+                                movePaddle(1.0);
+                            }
+
+                            @Override
+                            protected void onActionEnd() {
+                                setAllPaddlesVelocity(0);
                             }
                         },
-                        moveRightKey);
+                        KeyCode.RIGHT);
 
-        // --- Ball - Launch ---
         FXGL.getInput()
                 .addAction(
                         new UserAction("Launch Ball") {
@@ -101,60 +110,50 @@ public final class InputSystem extends InitialSystem {
                                 FXGL.getGameWorld()
                                         .getEntitiesByType(EntityType.BALL)
                                         .forEach(
-                                                ball -> {
-                                                    var attachment =
-                                                            ball.getComponentOptional(
-                                                                    Attachment.class);
-                                                    attachment.ifPresent(
-                                                            a -> {
-                                                                if (a.isAttached()) {
-                                                                    a.releaseBall();
-                                                                }
-                                                            });
-                                                });
+                                                ball ->
+                                                        ball.getComponentOptional(Attachment.class)
+                                                                .ifPresent(
+                                                                        a -> {
+                                                                            if (a.isAttached()) {
+                                                                                a.releaseBall();
+                                                                                FXGL.set(
+                                                                                        "ballAttached",
+                                                                                        false);
+                                                                            }
+                                                                        }));
                             }
                         },
-                        launchBallKey);
+                        KeyCode.SPACE);
 
-        // --- Keep Ball Attached to Paddle ---
-        FXGL.getGameTimer()
-                .runAtInterval(
-                        () -> {
-                            if (FXGL.getb("ballAttached")) {
-                                var paddleOpt =
-                                        FXGL.getGameWorld().getSingletonOptional(EntityType.PADDLE);
-                                var ballOpt =
-                                        FXGL.getGameWorld().getSingletonOptional(EntityType.BALL);
-
-                                if (paddleOpt.isPresent() && ballOpt.isPresent()) {
-                                    var paddle = paddleOpt.get();
-                                    var ball = ballOpt.get();
-
-                                    var paddleBBox = paddle.getBoundingBoxComponent();
-                                    var ballBBox = ball.getBoundingBoxComponent();
-
-                                    var x =
-                                            paddleBBox.getCenterWorld().getX()
-                                                    - ballBBox.getWidth() / 2;
-                                    var y = paddleBBox.getMinYWorld() - ballBBox.getHeight() - 4;
-
-                                    ball.setPosition(x, y);
-
-                                    var physics = ball.getComponent(PhysicsComponent.class);
-                                    physics.setLinearVelocity(0, 0);
-                                    physics.getBody().setAwake(false);
-                                }
+        FXGL.getInput()
+                .addAction(
+                        new UserAction("Activate Power") {
+                            @Override
+                            protected void onActionBegin() {
+                                FXGL.getGameWorld()
+                                        .getSingletonOptional(EntityType.PADDLE)
+                                        .flatMap(
+                                                paddle ->
+                                                        paddle.getComponentOptional(
+                                                                PaddlePowerComponent.class))
+                                        .ifPresent(PaddlePowerComponent::activatePower);
                             }
                         },
-                        javafx.util.Duration.millis(16));
+                        KeyCode.S);
+
+        FXGL.getInput()
+                .addAction(
+                        new UserAction("Reset Game") {
+                            @Override
+                            protected void onActionBegin() {
+                                GameSystem.resetGame();
+                            }
+                        },
+                        KeyCode.R);
     }
 
-    /**
-     * Lazy-loaded singleton holder. <a
-     * href="https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
-     * Initialization-on-demand holder idiom</a>.
-     */
     private static final class Holder {
+
         static final InputSystem INSTANCE = new InputSystem();
     }
 }

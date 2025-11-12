@@ -5,26 +5,25 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.github.codestorm.bounceverse.Utilities;
+import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.behaviors.paddle.PaddleShooting;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddlePowerComponent;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddleViewManager;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-/**
- *
- *
- * <h1>{@link PaddleFactory}</h1>
- *
- * Factory để tạo các entity loại {@link EntityType#PADDLE} trong trò chơi.
- *
- * @see EntityFactory
- */
+/** Factory để tạo các entity loại PADDLE trong trò chơi. */
 public final class PaddleFactory extends EntityFactory {
+
     private static final double DEFAULT_WIDTH = 150;
-    private static final double DEFAULT_HEIGHT = 20;
+    private static final double DEFAULT_HEIGHT = 40;
     private static final double DEFAULT_ARC_WIDTH = 14;
     private static final double DEFAULT_ARC_HEIGHT = 14;
     public static final Color DEFAULT_COLOR = Color.LIGHTBLUE;
@@ -39,18 +38,20 @@ public final class PaddleFactory extends EntityFactory {
     public Entity newPaddle(SpawnData data) {
         final double width = Utilities.Typing.getOr(data, "width", DEFAULT_WIDTH);
         final double height = Utilities.Typing.getOr(data, "height", DEFAULT_HEIGHT);
-        final var color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
-        final double arcWidth = Utilities.Typing.getOr(data, "arcWidth", DEFAULT_ARC_WIDTH);
-        final double arcHeight = Utilities.Typing.getOr(data, "arcHeight", DEFAULT_ARC_HEIGHT);
 
-        final var view = new Rectangle(width, height, color);
-        view.setArcWidth(arcWidth);
-        view.setArcHeight(arcHeight);
+        var physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.KINEMATIC);
+        var px = FXGL.getAppWidth() / 2.0 - width / 2.0;
+        var py = FXGL.getAppHeight() - height - 40;
 
         return getBuilder(data)
-                .viewWithBBox(view)
+                .at(px, py)
+                .bbox(new HitBox(BoundingShape.box(width, height)))
+                .with(physics)
                 .with(new PaddleShooting(DEFAULT_SHOOT_COOLDOWN))
+                .with(new Attack())
+                .with(new PaddleViewManager())
+                .with(new PaddlePowerComponent())
                 .build();
-        // TODO: Thêm Dashing
     }
 }

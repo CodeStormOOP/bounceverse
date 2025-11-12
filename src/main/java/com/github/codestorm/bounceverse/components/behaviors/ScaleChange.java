@@ -1,7 +1,5 @@
 package com.github.codestorm.bounceverse.components.behaviors;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.time.TimerAction;
 import com.github.codestorm.bounceverse.components.Behavior;
 import com.github.codestorm.bounceverse.typing.interfaces.Undoable;
@@ -11,19 +9,9 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- *
- * <h1>{@link ScaleChange}</h1>
- *
- * Hành vi ScaleChange. Có thể {@link #executeLogic(List)} nhiều lần nhưng sẽ không thể stack lên
- * nhau (và không làm mới). <br>
- * ScaleChange sẽ áp dụng thông qua {@link Entity#getTransformComponent()} (tức cả view và
- * bounding).
- *
- * @see TransformComponent
- */
+/** Thay đổi kích thước entity tạm thời và có thể hoàn tác (undo). */
 public class ScaleChange extends Behavior implements Undoable {
+
     public static final double DONT_CHANGE = 1;
     private double scaleWidth = DONT_CHANGE;
     private double scaleHeight = DONT_CHANGE;
@@ -65,10 +53,8 @@ public class ScaleChange extends Behavior implements Undoable {
 
     @Override
     public List<Object> executeLogic(List<Object> data) {
-        if (scaleWidth <= 0 || scaleHeight <= 0) {
-            return null;
-        }
-        final var transform = entity.getTransformComponent();
+        if (scaleWidth <= 0 || scaleHeight <= 0) return null;
+        var transform = entity.getTransformComponent();
         transform.setScaleX(transform.getScaleX() * scaleWidth);
         transform.setScaleY(transform.getScaleY() * scaleHeight);
         return new ArrayList<>();
@@ -76,10 +62,8 @@ public class ScaleChange extends Behavior implements Undoable {
 
     @Override
     public boolean undoLogic(List<Object> data) {
-        if (scaleWidth <= 0 || scaleHeight <= 0) {
-            return false;
-        }
-        final var transform = entity.getTransformComponent();
+        if (scaleWidth <= 0 || scaleHeight <= 0) return false;
+        var transform = entity.getTransformComponent();
         transform.setScaleX(transform.getScaleX() / scaleWidth);
         transform.setScaleY(transform.getScaleY() / scaleHeight);
         return true;

@@ -7,16 +7,20 @@ import javafx.scene.paint.Color;
 
 import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  *
  *
  * <h1>{@link AssetsPath}</h1>
  *
- * Nơi lưu trữ các đường dẫn tới assets.
+ * Nơi lưu trữ các đường dẫn tới assets (texture, âm thanh, video, v.v.).
  */
 public final class AssetsPath {
+
     private AssetsPath() {}
 
     private static final String ROOT = "/assets";
@@ -25,8 +29,7 @@ public final class AssetsPath {
         private Video() {}
 
         private static final String ROOT = AssetsPath.ROOT + "/videos";
-
-        public static final String INTRO = "intro.mp4";
+        public static final String INTRO = "/intro.mp4";
     }
 
     public static final class Sounds {
@@ -81,33 +84,31 @@ public final class AssetsPath {
         private Textures() {}
 
         public static final class Bricks {
+
             private Bricks() {}
 
             private static final String ROOT = "bricks";
 
-            public static final Map<Color, ColorAssets> COLORS;
+            public static final Map<String, ColorAssets> COLORS;
 
             static {
                 COLORS =
                         Map.of(
-                                Color.BLUE,
-                                new ColorAssets(Color.BLUE),
-                                Color.GREEN,
-                                new ColorAssets(Color.GREEN),
-                                Color.ORANGE,
-                                new ColorAssets(Color.ORANGE),
-                                Color.PINK,
-                                new ColorAssets(Color.PINK),
-                                Color.RED,
-                                new ColorAssets(Color.RED),
-                                Color.YELLOW,
-                                new ColorAssets(Color.YELLOW));
+                                "blue", new ColorAssets(Color.BLUE),
+                                "green", new ColorAssets(Color.GREEN),
+                                "orange", new ColorAssets(Color.ORANGE),
+                                "pink", new ColorAssets(Color.PINK),
+                                "red", new ColorAssets(Color.RED),
+                                "yellow", new ColorAssets(Color.YELLOW));
             }
 
             public static final class ColorAssets {
+
                 private static final NavigableMap<Double, String> NORMAL = new TreeMap<>();
                 private static final NavigableMap<Double, String> SHIELD = new TreeMap<>();
                 private static final NavigableMap<Double, String> STRONG = new TreeMap<>();
+                private static final NavigableMap<Double, String> KEY = new TreeMap<>();
+                private static final NavigableMap<Double, String> EXPLODING = new TreeMap<>();
 
                 private final Color color;
 
@@ -127,9 +128,16 @@ public final class AssetsPath {
                     SHIELD.put(0.0, "/shield.png");
 
                     // Strong
-                    STRONG.put(2.0 / 3, "/strong.png");
-                    STRONG.put(1.0 / 3, "/strongFirstHit.png");
-                    STRONG.put(0.0, "/strongSecondHit.png");
+                    STRONG.put(1.0, "/strong.png");
+                    STRONG.put(2.0 / 3, "/strongFirstHit.png");
+                    STRONG.put(1.0 / 3, "/strongSecondHit.png");
+                    STRONG.put(0.0, "/strongThirdHit.png");
+
+                    // Key Brick
+                    KEY.put(0.0, "/keybrick.png");
+
+                    // Exploding
+                    EXPLODING.put(0.0, "/explode.png");
                 }
 
                 public String getColorName() {
@@ -159,6 +167,8 @@ public final class AssetsPath {
                                 case NORMAL -> NORMAL;
                                 case SHIELD -> SHIELD;
                                 case STRONG -> STRONG;
+                                case KEY -> KEY;
+                                case EXPLODING -> EXPLODING; // fallback dùng texture thường
                             };
                     return getRoot() + map.floorEntry(hpPercent).getValue();
                 }
@@ -182,7 +192,7 @@ public final class AssetsPath {
 
                 @Override
                 public String toString() {
-                    return "ColorAssets[" + "color=" + color + ']';
+                    return "ColorAssets[color=" + color + ']';
                 }
             }
         }

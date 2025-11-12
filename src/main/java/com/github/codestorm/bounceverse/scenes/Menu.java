@@ -5,14 +5,13 @@
  *
  * Modified by Mai Thành (@thnhmai06), 2025.
  */
-
 package com.github.codestorm.bounceverse.scenes;
 
+// ... (Các import giữ nguyên)
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.MenuItem;
-import com.almasb.fxgl.app.scene.FXGLDefaultMenu;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -81,17 +80,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-/**
- *
- *
- * <h1>{@link Menu}</h1>
- *
- * Menu ở Màn hình chính và trong trò chơi. Được viết lại dựa trên của {@link FXGLDefaultMenu} để
- * phù hợp với trò chơi.
- *
- * @see FXGLDefaultMenu
- */
 public class Menu extends FXGLMenu {
+
+    // ... (Các biến thành viên giữ nguyên)
     private static final Logger log = Logger.get(Menu.class);
 
     private final ParticleSystem particleSystem = new ParticleSystem();
@@ -143,6 +134,7 @@ public class Menu extends FXGLMenu {
                         menuContentRoot);
     }
 
+    // ... (Các phương thức khác giữ nguyên cho đến createMenuBodyMainMenu)
     private void initParticles() {
         // particle smoke
         var t = FXGL.texture("particles/smoke.png", 128.0, 128.0).brighter().brighter();
@@ -252,14 +244,15 @@ public class Menu extends FXGLMenu {
         emitter.setEmissionRate(0.2);
         emitter.setVelocityFunction(
                 i -> {
-                    if (i % 2 == 0) return new Point2D(FXGL.random(-10.0, 0.0), 0.0);
-                    else return new Point2D(FXGL.random(0.0, 10.0), 0.0);
+                    if (i % 2 == 0) {
+                        return new Point2D(FXGL.random(-10.0, 0.0), 0.0);
+                    } else {
+                        return new Point2D(FXGL.random(0.0, 10.0), 0.0);
+                    }
                 });
         emitter.setExpireFunction((v) -> Duration.seconds(FXGL.random(4.0, 6.0)));
         emitter.setScaleFunction((v) -> new Point2D(-0.03, -0.03));
         emitter.setSpawnPointFunction((v) -> new Point2D(0, 0));
-        emitter.setAccelerationFunction(
-                () -> new Point2D(FXGL.random(-1.0, 1.0), FXGL.random(0.0, 0.0)));
 
         var box = new HBox(text, text2);
         box.setAlignment(Pos.CENTER);
@@ -268,11 +261,12 @@ public class Menu extends FXGLMenu {
         titleRoot.setTranslateX(getAppWidth() / 2.0 - (textWidth + 30) / 2.0);
         titleRoot.setTranslateY(50.0);
 
-        if (!FXGL.getSettings().isNative())
+        if (!FXGL.getSettings().isNative()) {
             particleSystem.addParticleEmitter(
                     emitter,
                     getAppWidth() / 2.0 - 30,
                     titleRoot.getTranslateY() + border.getHeight() - 16);
+        }
 
         return titleRoot;
     }
@@ -293,6 +287,13 @@ public class Menu extends FXGLMenu {
         var itemNewGame = new MenuButton("menu.newGame");
         itemNewGame.setOnAction(e -> fireNewGame());
         box.add(itemNewGame);
+
+        // << --- THÊM NÚT LOAD GAME --- >>
+        if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
+            var itemLoad = new MenuButton("menu.load");
+            itemLoad.setMenuContent(this::createContentLoad, false);
+            box.add(itemLoad);
+        }
 
         var itemOptions = new MenuButton("menu.options");
         itemOptions.setChild(createOptionsMenu());
@@ -361,7 +362,6 @@ public class Menu extends FXGLMenu {
 
         // var itemGameplay = new MenuButton("menu.gameplay");
         // itemGameplay.setMenuContent(this::createContentGameplay);
-
         var itemControls = new MenuButton("menu.controls");
         itemControls.setMenuContent(this::createContentControls);
 
@@ -371,7 +371,6 @@ public class Menu extends FXGLMenu {
         itemAudio.setMenuContent(this::createContentAudio);
 
         // var btnRestore = createRestoreButton();
-
         return new MenuBox(itemControls, itemVideo, itemAudio);
     }
 
@@ -397,7 +396,6 @@ public class Menu extends FXGLMenu {
 
         // var itemAchievements = new MenuButton("menu.trophies");
         // itemAchievements.setMenuContent(this::createContentAchievements);
-
         var itemLeaderboard = new MenuButton("temp.key");
         itemLeaderboard.btn.textProperty().unbind();
         itemLeaderboard.btn.setText("LEADERBOARD");
@@ -560,7 +558,9 @@ public class Menu extends FXGLMenu {
 
         triggerView.setOnMouseClicked(
                 e -> {
-                    if (pressAnyKeyState.isActive) return;
+                    if (pressAnyKeyState.isActive) {
+                        return;
+                    }
 
                     pressAnyKeyState.isActive = true;
                     pressAnyKeyState.actionContext = action;
@@ -775,7 +775,7 @@ public class Menu extends FXGLMenu {
                 FXGL.getUIFactoryService().newText("Level", Color.NAVAJOWHITE, FontType.MONO, 18.0),
                 FXGL.getUIFactoryService().newText("Date", Color.NAVAJOWHITE, FontType.MONO, 18.0));
 
-        int rank = 1;
+        var rank = 1;
         if (endlessScores.isEmpty()) {
             var noDataText =
                     FXGL.getUIFactoryService()
@@ -859,6 +859,7 @@ public class Menu extends FXGLMenu {
     }
 
     private static class MenuBox extends VBox {
+
         public MenuBox(MenuButton... items) {
             super();
             for (var item : items) {
@@ -890,7 +891,9 @@ public class Menu extends FXGLMenu {
 
                 for (var n : items) {
                     var w = (int) n.getLayoutBounds().getWidth();
-                    if (w > maxW) maxW = w;
+                    if (w > maxW) {
+                        maxW = w;
+                    }
                 }
 
                 for (var item : items) {
@@ -918,15 +921,20 @@ public class Menu extends FXGLMenu {
         }
 
         private void onOpen() {
-            if (onOpen != null) onOpen.run();
+            if (onOpen != null) {
+                onOpen.run();
+            }
         }
 
         private void onClose() {
-            if (onClose != null) onClose.run();
+            if (onClose != null) {
+                onClose.run();
+            }
         }
     }
 
     private class MenuButton extends Pane {
+
         public final Button btn;
         private MenuBox parent;
         private MenuContent cachedContent;
@@ -1005,8 +1013,9 @@ public class Menu extends FXGLMenu {
             btn.addEventHandler(
                     ActionEvent.ACTION,
                     e -> {
-                        if (cachedContent == null || !isCached)
+                        if (cachedContent == null || !isCached) {
                             cachedContent = contentSupplier.get();
+                        }
 
                         switchMenuContentTo(cachedContent);
                     });
@@ -1033,7 +1042,9 @@ public class Menu extends FXGLMenu {
                     .addEventFilter(
                             KeyEvent.KEY_PRESSED,
                             e -> {
-                                if (Input.isIllegal(e.getCode())) return;
+                                if (Input.isIllegal(e.getCode())) {
+                                    return;
+                                }
 
                                 var rebound =
                                         FXGL.getInput()

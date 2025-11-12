@@ -17,25 +17,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-/**
- *
- *
- * <h1>{@link BallFactory}</h1>
- *
- * <p>This class defines and spawns a new {@link EntityType#BALL} entity in the game world.
- *
- * <p>By default, the spawned ball has:
- *
- * <ul>
- *   <li>Radius = {@link #DEFAULT_RADIUS}
- *   <li>Position: {@link #DEFAULT_POS}
- *   <li>Color: {@link #DEFAULT_COLOR}
- * </ul>
- *
- * @author minngoc1213
- */
+/** Factory tạo bóng trong trò chơi. Hỗ trợ spawn bóng gắn (attached) hoặc tự do (free). */
 public final class BallFactory extends EntityFactory {
-    public static final Point2D DEFAULT_POS = new Point2D(400, 500);
+
     public static final double DEFAULT_RADIUS = 10;
     public static final Color DEFAULT_COLOR = Color.RED;
 
@@ -44,12 +28,10 @@ public final class BallFactory extends EntityFactory {
         final boolean attached = Utilities.Typing.getOr(data, "attached", false);
 
         var physics = new PhysicsComponent();
-
         var fixture = new FixtureDef();
         fixture.setDensity(1.0f);
         fixture.setFriction(0.0f);
         fixture.setRestitution(1.0f);
-
         physics.setFixtureDef(fixture);
         physics.setBodyType(BodyType.DYNAMIC);
 
@@ -59,27 +41,60 @@ public final class BallFactory extends EntityFactory {
                     physics.getBody().setFixedRotation(true);
                     physics.getBody().setLinearDamping(0f);
                     physics.getBody().setAngularDamping(0f);
+                    physics.getBody().setBullet(true);
 
                     if (attached) {
                         physics.setLinearVelocity(Point2D.ZERO);
                     } else {
-                        physics.setLinearVelocity(200, -200);
+                        var initialSpeed = FXGL.getd("ballSpeed");
+                        var initialVelocity = new Point2D(1, -1).normalize().multiply(initialSpeed);
+                        physics.setLinearVelocity(initialVelocity);
                     }
                 });
 
-        return FXGL.entityBuilder(data)
-                .type(EntityType.BALL)
-                .collidable()
-                .with(physics, new Attack(), new Attachment());
+        var builder =
+                FXGL.entityBuilder(data)
+                        .type(EntityType.BALL)
+                        .viewWithBBox(new Circle(DEFAULT_RADIUS, DEFAULT_COLOR))
+                        .collidable()
+                        .with(physics, new Attack());
+
+        if (attached) {
+            builder.with(new Attachment());
+        }
+
+        return builder;
     }
 
     @Spawns("ball")
     public Entity spawnBall(SpawnData data) {
-        final var pos = Utilities.Typing.getOr(data, "pos", DEFAULT_POS);
-        final double radius = Utilities.Typing.getOr(data, "radius", DEFAULT_RADIUS);
-        final var color = Utilities.Typing.getOr(data, "color", DEFAULT_COLOR);
+        final var attached = data.hasKey("attached") && Boolean.TRUE.equals(data.get("attached"));
 
-        final var bbox = new Circle(radius, color);
-        return getBuilder(data).at(pos).viewWithBBox(bbox).buildAndAttach();
+        Point2D pos = null;
+        if (data.hasKey("x") && data.hasKey("y")) {
+            pos = new Point2D(data.getX(), data.getY());
+        } else if (data.hasKey("position")) {
+            pos = data.get("position");
+        }
+
+        if (pos == null) {
+            var paddleOpt =
+                    FXGL.getGameWorld().getEntitiesByType(EntityType.PADDLE).stream().findFirst();
+            if (paddleOpt.isPresent()) {
+                var paddle = paddleOpt.get();
+                pos =
+                        new Point2D(
+                                paddle.getCenter().getX() - DEFAULT_RADIUS,
+                                paddle.getY() - DEFAULT_RADIUS * 2);
+            } else {
+                // Fallback an toàn nếu không tìm thấy paddle
+                pos = new Point2D(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0);
+            }
+        }
+
+        data.put("attached", attached);
+        data.put("x", pos.getX());
+        data.put("y", pos.getY());
+        return getBuilder(data).buildAndAttach();
     }
 }

@@ -21,5 +21,6 @@ public enum EntityType {
     BALL,
     POWER_UP,
     BULLET,
-    WALL
+    WALL,
+    PADDLE_CLONE
 }

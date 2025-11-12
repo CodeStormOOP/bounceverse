@@ -2,6 +2,8 @@ package com.github.codestorm.bounceverse;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.FXGL;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
 import com.github.codestorm.bounceverse.systems.init.AppEventSystem;
 import com.github.codestorm.bounceverse.systems.init.GameSystem;
 import com.github.codestorm.bounceverse.systems.init.InputSystem;
@@ -12,6 +14,8 @@ import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsMa
 import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
 
+import javafx.util.Duration;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -20,13 +24,10 @@ import java.util.Map;
  *
  * <h1>{@link Bounceverse}</h1>
  *
- * Phần Hệ thống Chương trình chính của game, nơi mà mọi thứ bắt đầu từ {@link #main(String[])}...
- * <br>
- * <i>Game {@link Bounceverse} được lấy cảm hứng từ game Arkanoid nổi tiếng, nơi người chơi điều
- * khiển một thanh để đỡ bóng và phá vỡ các viên gạch. Mục tiêu của game là phá vỡ tất cả các viên
- * gạch và dành được điểm số cao nhất. Nhưng liệu mọi thứ chỉ đơn giản như vậy?</i>
+ * Game chính — quản lý vòng đời khởi tạo và vòng lặp của trò chơi.
  */
 public final class Bounceverse extends GameApplication {
+
     public static void main(String[] args) {
         LaunchOptionsManager.getInstance().load(args);
         launch(args);
@@ -54,12 +55,14 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        GameSystem.Variables.loadDefault(vars);
+        GameSystem.Variables.loadDefault(FXGL.getWorldProperties());
     }
 
     @Override
     protected void initGame() {
-        GameSystem.getInstance().apply();
+        GameSystem.UI.getInstance().dispose();
+        UISystem.getInstance().dispose();
+        FXGL.runOnce(() -> GameSystem.getInstance().apply(), Duration.seconds(0.1));
     }
 
     @Override
@@ -69,6 +72,14 @@ public final class Bounceverse extends GameApplication {
 
     @Override
     protected void initUI() {
+        FXGL.getGameScene().setBackgroundColor(javafx.scene.paint.Color.web("#0d0b1a"));
         UISystem.getInstance().apply();
+        FXGL.getGameScene().getRoot().getStylesheets().add("assets/ui/powerup.css");
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        PowerUpManager.getInstance().onUpdate(tpf);
+        GameSystem.UI.getInstance().onUpdate();
     }
 }

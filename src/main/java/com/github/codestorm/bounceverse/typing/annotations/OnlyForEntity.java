@@ -1,7 +1,7 @@
 package com.github.codestorm.bounceverse.typing.annotations;
 
+import com.almasb.fxgl.entity.component.Component;
 import com.github.codestorm.bounceverse.Utilities;
-import com.github.codestorm.bounceverse.components.Component;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
 
 import java.lang.annotation.ElementType;

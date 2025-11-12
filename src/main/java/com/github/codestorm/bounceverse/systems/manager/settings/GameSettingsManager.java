@@ -59,6 +59,7 @@ public final class GameSettingsManager extends SettingsManager {
         // ? Game
         settings.setSceneFactory(new SceneFactory());
         settings.setMainMenuEnabled(true);
+        // QUAN TRỌNG: Đảm bảo dòng này là 'true'
         settings.setIntroEnabled(true);
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA, MenuItem.SAVE_LOAD));
     }

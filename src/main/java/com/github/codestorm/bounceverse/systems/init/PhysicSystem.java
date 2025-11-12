@@ -2,27 +2,36 @@ package com.github.codestorm.bounceverse.systems.init;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.github.codestorm.bounceverse.Utilities;
+import com.github.codestorm.bounceverse.components.behaviors.Attack;
 import com.github.codestorm.bounceverse.components.properties.Shield;
+import com.github.codestorm.bounceverse.components.properties.paddle.PaddleViewManager;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUp;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpContainer;
+import com.github.codestorm.bounceverse.components.properties.powerup.PowerUpManager;
+import com.github.codestorm.bounceverse.factory.entities.BallFactory;
 import com.github.codestorm.bounceverse.typing.enums.DirectionUnit;
 import com.github.codestorm.bounceverse.typing.enums.EntityType;
+import com.github.codestorm.bounceverse.typing.enums.PowerUpType;
 import com.github.codestorm.bounceverse.typing.structures.HealthIntValue;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Side;
+
+import java.util.List;
 
 /**
  *
  *
- * <h1>{@link PhysicSystem}</h1>
+ * <h1>PhysicSystem</h1>
  *
- * {@link InitialSystem} quản lý Vật lý trong game. <br>
- *
- * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
- * @see InitialSystem
+ * Quản lý toàn bộ logic va chạm vật lý trong game (ball, paddle, wall, power-up...).
  */
 public final class PhysicSystem extends InitialSystem {
+
     private PhysicSystem() {}
 
     public static PhysicSystem getInstance() {
@@ -31,197 +40,280 @@ public final class PhysicSystem extends InitialSystem {
 
     @Override
     public void apply() {
-        final var physicWorld = FXGL.getPhysicsWorld();
-        physicWorld.setGravity(0, 0);
+        var world = FXGL.getPhysicsWorld();
+        world.setGravity(0, 0);
 
         // Bullet vs Brick
-        physicWorld.addCollisionHandler(
+        world.addCollisionHandler(
                 new CollisionHandler(EntityType.BULLET, EntityType.BRICK) {
                     @Override
                     protected void onCollisionBegin(Entity bullet, Entity brick) {
-                        final var atk =
-                                bullet.getComponentOptional(
-                                        com.github.codestorm.bounceverse.components.behaviors.Attack
-                                                .class);
-                        atk.ifPresent(a -> a.execute(java.util.List.of(brick)));
+                        var bulletPhysics = bullet.getComponent(PhysicsComponent.class);
+                        var velocity = bulletPhysics.getLinearVelocity();
+
+                        Side hitSide;
+
+                        if (Math.abs(velocity.getY()) > Math.abs(velocity.getX())) {
+                            if (velocity.getY() < 0) {
+                                hitSide = Side.BOTTOM;
+                            } else {
+                                hitSide = Side.TOP;
+                            }
+                        } else {
+                            if (velocity.getX() < 0) {
+                                hitSide = Side.RIGHT;
+                            } else {
+                                hitSide = Side.LEFT;
+                            }
+                        }
+
+                        var shieldOpt = brick.getComponentOptional(Shield.class);
+
+                        // Kiểm tra xem mặt vừa bị va chạm có được bảo vệ không
+                        if (shieldOpt.isPresent() && shieldOpt.get().hasSide(hitSide)) {
+                            // Có khiên bảo vệ, không gây sát thương
+                        } else {
+                            // Không có khiên, gây sát thương
+                            bullet.getComponentOptional(Attack.class)
+                                    .ifPresent(a -> a.execute(List.of(brick)));
+                        }
+
+                        // Viên đạn luôn tự hủy sau va chạm
+                        bullet.removeFromWorld();
+                    }
+                });
+
+        // Bullet vs Wall
+        world.addCollisionHandler(
+                new CollisionHandler(EntityType.BULLET, EntityType.WALL) {
+                    @Override
+                    protected void onCollisionBegin(Entity bullet, Entity wall) {
+                        // Đơn giản là xóa viên đạn khi nó chạm vào bất kỳ bức tường nào
+                        bullet.removeFromWorld();
                     }
                 });
 
         // Ball vs Brick
-        physicWorld.addCollisionHandler(
+        world.addCollisionHandler(
                 new CollisionHandler(EntityType.BALL, EntityType.BRICK) {
                     @Override
                     protected void onCollisionBegin(Entity ball, Entity brick) {
-                        final var physicsOpt = ball.getComponentOptional(PhysicsComponent.class);
-                        if (physicsOpt.isEmpty()) {
+                        var physics = ball.getComponent(PhysicsComponent.class);
+                        var dir = Utilities.Collision.getCollisionDirection(ball, brick);
+
+                        var shieldOpt = brick.getComponentOptional(Shield.class);
+                        if (shieldOpt.isPresent() && shieldOpt.get().hasSide(dir.toSide())) {
+                            bounce(physics, dir);
                             return;
                         }
-                        final var physics = physicsOpt.get();
 
-                        final var dir = Utilities.Collision.getCollisionDirection(ball, brick);
-
-                        // Kiểm tra shield (nếu có)
-                        var shieldOpt = brick.getComponentOptional(Shield.class);
-                        if (shieldOpt.isPresent()) {
-                            var shield = shieldOpt.get();
-                            // TODO: Check here
-                            var isProtected =
-                                    (dir == DirectionUnit.UP
-                                                    && shield.hasSide(javafx.geometry.Side.TOP))
-                                            || (dir == DirectionUnit.DOWN
-                                                    && shield.hasSide(javafx.geometry.Side.BOTTOM))
-                                            || (dir == DirectionUnit.LEFT
-                                                    && shield.hasSide(javafx.geometry.Side.LEFT))
-                                            || (dir == DirectionUnit.RIGHT
-                                                    && shield.hasSide(javafx.geometry.Side.RIGHT));
-
-                            if (isProtected) {
-                                // Nếu bị chắn, chỉ phản nảy mà không gây damage
-                                switch (dir) {
-                                    case UP, DOWN -> physics.setLinearVelocity(
-                                            physics.getVelocityX(), -physics.getVelocityY());
-                                    case LEFT, RIGHT -> physics.setLinearVelocity(
-                                            -physics.getVelocityX(), physics.getVelocityY());
-                                    default -> {}
-                                }
-                                return;
-                            }
-                        }
-
-                        // Nếu không bị chắn → phản nảy + gây damage
-                        switch (dir) {
-                            case UP, DOWN -> physics.setLinearVelocity(
-                                    physics.getVelocityX(), -physics.getVelocityY());
-                            case LEFT, RIGHT -> physics.setLinearVelocity(
-                                    -physics.getVelocityX(), physics.getVelocityY());
-                            default -> {}
-                        }
-
-                        // Thực thi attack (gây damage)
-                        final var atkOpt =
-                                ball.getComponentOptional(
+                        bounce(physics, dir);
+                        ball.getComponentOptional(
                                         com.github.codestorm.bounceverse.components.behaviors.Attack
-                                                .class);
-                        atkOpt.ifPresent(a -> a.execute(java.util.List.of(brick)));
+                                                .class)
+                                .ifPresent(a -> a.execute(java.util.List.of(brick)));
                     }
                 });
 
         // Ball vs Paddle
-        physicWorld.addCollisionHandler(
+        world.addCollisionHandler(
                 new CollisionHandler(EntityType.BALL, EntityType.PADDLE) {
                     @Override
                     protected void onCollisionBegin(Entity ball, Entity paddle) {
                         var physics = ball.getComponent(PhysicsComponent.class);
-
-                        var paddleCenterX = paddle.getCenter().getX();
-                        var ballX = ball.getCenter().getX();
-                        var offset = (ballX - paddleCenterX) / (paddle.getWidth() / 2.0);
+                        var offset =
+                                (ball.getCenter().getX() - paddle.getCenter().getX())
+                                        / (paddle.getWidth() / 2.0);
                         offset = Math.max(-1.0, Math.min(1.0, offset));
-
                         var angle = Math.toRadians(90 - 45 * offset);
-                        double speed = 300;
+                        var speed = FXGL.getd("ballSpeed");
+                        physics.setLinearVelocity(
+                                speed * Math.cos(angle), -speed * Math.sin(angle));
+                    }
+                });
 
-                        var vx = speed * Math.cos(angle);
-                        var vy = -speed * Math.sin(angle);
-
-                        physics.setLinearVelocity(vx, vy);
+        // Ball vs Shield (bottom shield power-up)
+        world.addCollisionHandler(
+                new CollisionHandler(EntityType.BALL, PowerUpType.SHIELD) {
+                    @Override
+                    protected void onCollisionBegin(Entity ball, Entity shield) {
+                        ball.getComponentOptional(PhysicsComponent.class)
+                                .ifPresent(
+                                        phys -> {
+                                            var velocity = phys.getLinearVelocity();
+                                            phys.setLinearVelocity(
+                                                    new Point2D(
+                                                            velocity.getX(),
+                                                            -Math.abs(velocity.getY())));
+                                        });
                     }
                 });
 
         // Ball vs Wall
-        physicWorld.addCollisionHandler(
+        world.addCollisionHandler(
                 new CollisionHandler(EntityType.BALL, EntityType.WALL) {
                     @Override
                     protected void onCollisionBegin(Entity ball, Entity wall) {
-                        final var physics = ball.getComponent(PhysicsComponent.class);
+                        var phys = ball.getComponent(PhysicsComponent.class);
+                        var v = phys.getLinearVelocity();
                         Side side = wall.getObject("side");
+                        var eps = 0.5; // khoảng đệm nhỏ
 
                         switch (side) {
-                            case Side.LEFT, Side.RIGHT -> physics.setLinearVelocity(
-                                    -physics.getVelocityX(), physics.getVelocityY());
-                            case Side.TOP -> physics.setLinearVelocity(
-                                    physics.getVelocityX(), -physics.getVelocityY());
-                            case Side.BOTTOM -> {
-                                FXGL.getGameWorld()
-                                        .getEntitiesByType(EntityType.BALL)
-                                        .forEach(Entity::removeFromWorld);
-
-                                HealthIntValue lives = FXGL.getWorldProperties().getObject("lives");
-                                lives.damage(1);
-
-                                FXGL.getGameTimer()
-                                        .runOnceAfter(
-                                                () -> {
-                                                    var paddle =
-                                                            FXGL.getGameWorld()
-                                                                    .getSingleton(
-                                                                            EntityType.PADDLE);
-                                                    var x =
-                                                            paddle.getCenter().getX()
-                                                                    - com.github.codestorm
-                                                                            .bounceverse.factory
-                                                                            .entities.BallFactory
-                                                                            .DEFAULT_RADIUS;
-                                                    var y =
-                                                            paddle.getY()
-                                                                    - com.github.codestorm
-                                                                                    .bounceverse
-                                                                                    .factory
-                                                                                    .entities
-                                                                                    .BallFactory
-                                                                                    .DEFAULT_RADIUS
-                                                                            * 2;
-
-                                                    FXGL.spawn(
-                                                            "ball",
-                                                            new com.almasb.fxgl.entity.SpawnData(
-                                                                            x, y)
-                                                                    .put("attached", true));
-                                                    FXGL.set("ballAttached", true);
-                                                },
-                                                javafx.util.Duration.millis(100));
-                            }
-                            default -> {
-                                final var dir =
-                                        com.github.codestorm.bounceverse.Utilities.Collision
-                                                .getCollisionDirection(ball, wall);
-                                switch (dir) {
-                                    case UP, DOWN -> physics.setLinearVelocity(
-                                            physics.getVelocityX(), -physics.getVelocityY());
-                                    case LEFT, RIGHT -> physics.setLinearVelocity(
-                                            -physics.getVelocityX(), physics.getVelocityY());
-                                    default -> {}
+                            case LEFT:
+                                {
+                                    ball.setX(wall.getRightX() + eps);
+                                    phys.setLinearVelocity(Math.abs(v.getX()), v.getY());
+                                    break;
                                 }
-                            }
+                            case RIGHT:
+                                {
+                                    ball.setX(wall.getX() - ball.getWidth() - eps);
+                                    phys.setLinearVelocity(-Math.abs(v.getX()), v.getY());
+                                    break;
+                                }
+                            case TOP:
+                                {
+                                    ball.setY(wall.getBottomY() + eps);
+                                    phys.setLinearVelocity(v.getX(), Math.abs(v.getY()));
+                                    break;
+                                }
+                            case BOTTOM:
+                                {
+                                    // KIỂM TRA: Có tấm khiên nào đang hoạt động trên màn hình
+                                    // không?
+                                    if (FXGL.getGameWorld()
+                                            .getEntitiesByType(PowerUpType.SHIELD)
+                                            .isEmpty()) {
+
+                                        // --- LOGIC CŨ: KHÔNG CÓ KHIÊN ---
+                                        // Tường đáy là "tường chết", hủy bóng và trừ mạng.
+                                        ball.removeFromWorld();
+
+                                        if (FXGL.getGameWorld()
+                                                .getEntitiesByType(EntityType.BALL)
+                                                .isEmpty()) {
+                                            HealthIntValue lives =
+                                                    FXGL.getWorldProperties().getObject("lives");
+                                            lives.damage(1);
+
+                                            FXGL.getGameTimer()
+                                                    .runOnceAfter(
+                                                            () -> {
+                                                                if (lives.getValue() > 0) {
+                                                                    var paddle =
+                                                                            FXGL.getGameWorld()
+                                                                                    .getSingleton(
+                                                                                            EntityType
+                                                                                                    .PADDLE);
+                                                                    paddle.getComponent(
+                                                                                    PaddleViewManager
+                                                                                            .class)
+                                                                            .reset();
+                                                                    PowerUpManager.getInstance()
+                                                                            .clearAll();
+                                                                    var x =
+                                                                            paddle.getCenter()
+                                                                                            .getX()
+                                                                                    - BallFactory
+                                                                                            .DEFAULT_RADIUS;
+                                                                    var y =
+                                                                            paddle.getY()
+                                                                                    - BallFactory
+                                                                                                    .DEFAULT_RADIUS
+                                                                                            * 2;
+                                                                    FXGL.spawn(
+                                                                            "ball",
+                                                                            new SpawnData(x, y)
+                                                                                    .put(
+                                                                                            "attached",
+                                                                                            true));
+                                                                    FXGL.set("ballAttached", true);
+                                                                }
+                                                            },
+                                                            javafx.util.Duration.millis(100));
+                                        }
+
+                                    } else {
+                                        // Đảo ngược vận tốc Y để bóng nảy lên
+                                        var vel = phys.getLinearVelocity();
+                                        phys.setLinearVelocity(vel.getX(), -Math.abs(vel.getY()));
+                                    }
+                                    break;
+                                }
                         }
 
-                        final var eps = 0.5;
-                        switch (side) {
-                            case Side.LEFT -> ball.translateX(eps);
-                            case Side.RIGHT -> ball.translateX(-eps);
-                            case Side.TOP -> ball.translateY(eps);
+                        var currentVelocity = phys.getLinearVelocity();
+                        var currentSpeed = currentVelocity.magnitude();
+                        var targetSpeed = FXGL.getd("ballSpeed");
+
+                        // Đặt một khoảng an toàn để tránh điều chỉnh liên tục do sai số vật lý
+                        var minAllowedSpeed = targetSpeed * 0.95;
+                        var maxAllowedSpeed = targetSpeed * 1.05;
+
+                        var newSpeed = currentSpeed;
+
+                        if (currentSpeed < minAllowedSpeed) {
+                            newSpeed = minAllowedSpeed;
+                        } else if (currentSpeed > maxAllowedSpeed) {
+                            newSpeed = maxAllowedSpeed;
+                        }
+
+                        // Chỉ cập nhật lại vận tốc nếu tốc độ thực sự bị thay đổi
+                        if (Math.abs(newSpeed - currentSpeed) > 1e-3) {
+                            phys.setLinearVelocity(currentVelocity.normalize().multiply(newSpeed));
                         }
                     }
                 });
 
-        // Paddle vs Wall
-        physicWorld.addCollisionHandler(
-                new CollisionHandler(EntityType.PADDLE, EntityType.WALL) {
+        world.addCollisionHandler(
+                new CollisionHandler(EntityType.PADDLE, EntityType.POWER_UP) {
                     @Override
-                    protected void onCollision(Entity paddle, Entity wall) {
-                        final Side side = wall.getObject("side");
-                        final var thickness = wall.getDouble("thickness");
-
-                        switch (side) {
-                            case Side.LEFT -> paddle.setX(wall.getRightX() + thickness);
-                            case Side.RIGHT -> paddle.setX(
-                                    wall.getX() - paddle.getWidth() - thickness);
+                    protected void onCollisionBegin(Entity paddle, Entity powerUp) {
+                        if (paddle.isActive() && powerUp.isActive()) {
+                            powerUp.getComponentOptional(PowerUpContainer.class)
+                                    .ifPresent(
+                                            container -> {
+                                                container.addTo(paddle);
+                                                container
+                                                        .getContainer()
+                                                        .values()
+                                                        .forEach(
+                                                                c -> {
+                                                                    if (c instanceof PowerUp p) {
+                                                                        p.apply(paddle);
+                                                                    }
+                                                                });
+                                            });
+                            powerUp.removeFromWorld();
                         }
                     }
                 });
     }
 
-    /** Lazy-loaded singleton holder. */
+    /**
+     * Đảo hướng vận tốc theo hướng va chạm.
+     *
+     * @param phys a {@link PhysicsComponent}
+     * @param dir a {@link DirectionUnit}
+     */
+    private static void bounce(PhysicsComponent phys, DirectionUnit dir) {
+        if (dir == null) {
+            return;
+        }
+
+        switch (dir) {
+            case UP, DOWN:
+                phys.setLinearVelocity(phys.getVelocityX(), -phys.getVelocityY());
+                break;
+            case LEFT, RIGHT:
+                phys.setLinearVelocity(-phys.getVelocityX(), phys.getVelocityY());
+                break;
+            default:
+                break;
+        }
+    }
+
     private static final class Holder {
 
         static final PhysicSystem INSTANCE = new PhysicSystem();

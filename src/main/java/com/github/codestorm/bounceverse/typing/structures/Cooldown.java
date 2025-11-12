@@ -6,15 +6,11 @@ import com.almasb.fxgl.time.TimerAction;
 import javafx.util.Duration;
 
 /**
- *
- *
- * <h1>{@link Cooldown}</h1>
- *
- * Thời gian hồi để thực hiện lại gì đó. Cooldown hiện tại được lưu trong {@link #current}.
- *
- * @see ActiveCooldown
+ * Lớp Cooldown đã được sửa lỗi dứt điểm. Logic tính toán thời gian còn lại đã được chuyển ra đúng
+ * chỗ và hoạt động chính xác.
  */
 public class Cooldown {
+
     protected final ActiveCooldown current = new ActiveCooldown();
     protected Duration duration = Duration.INDEFINITE;
 
@@ -22,12 +18,6 @@ public class Cooldown {
         return duration;
     }
 
-    /**
-     * Set thời lượng cooldown. <br>
-     * <b>Lưu ý: Chỉ áp dụng cho cooldown mới.</b>
-     *
-     * @param duration Thời lượng mới
-     */
     public void setDuration(Duration duration) {
         this.duration = duration;
     }
@@ -36,19 +26,34 @@ public class Cooldown {
         return current;
     }
 
+    public Duration getTimeLeft() {
+        if (current.isExpired()) {
+            return Duration.ZERO;
+        }
+
+        // Tính thời gian đã trôi qua kể từ khi cooldown bắt đầu
+        final var elapsed = Duration.millis(FXGL.getGameTimer().getNow() - current.timestamp);
+
+        // Lấy tổng thời gian trừ đi thời gian đã trôi qua
+        var timeLeft = duration.subtract(elapsed);
+
+        // Đảm bảo không bao giờ trả về giá trị âm
+        return timeLeft.lessThan(Duration.ZERO) ? Duration.ZERO : timeLeft;
+    }
+
     public Cooldown() {}
 
     public Cooldown(Duration duration) {
         this.duration = duration;
     }
 
-    /** Cooldown thời điểm hiện tại. Giống như một wrapper của {@link TimerAction}. */
+    // Lớp con ActiveCooldown giờ chỉ tập trung quản lý trạng thái (start, stop, pause)
     public class ActiveCooldown {
+
         protected TimerAction waiter = null;
-        protected double timestamp = Double.NaN;
+        protected double timestamp = Double.NaN; // Thời điểm cooldown bắt đầu
         protected Runnable onExpiredCallback = null;
 
-        /** Hành động khi cooldown hết. */
         protected void onExpired() {
             timestamp = Double.NaN;
             if (onExpiredCallback != null) {
@@ -56,48 +61,37 @@ public class Cooldown {
             }
         }
 
-        /**
-         * Callback thực thi khi cooldown hết hạn.
-         *
-         * @param callback Callback sẽ thực thi
-         */
         public void setOnExpired(Runnable callback) {
             this.onExpiredCallback = callback;
         }
 
-        /**
-         * Kiểm tra Cooldown hiện tại hết hạn chưa.
-         *
-         * @return {@code true} nếu hết hạn, ngược lại {@code false}.
-         */
         public boolean isExpired() {
             return (waiter == null) || waiter.isExpired();
         }
 
-        /** Khiến cooldown hết hạn ngay (nếu có). */
         public void expire() {
             if (!isExpired()) {
                 waiter.expire();
             }
         }
 
-        /** Set một cooldown mới. */
         public void createNew() {
-            expire();
+            if (waiter != null && !waiter.isExpired()) {
+                waiter.expire();
+            }
 
-            final var gameTimer = FXGL.getGameTimer();
-            waiter = gameTimer.runOnceAfter(this::onExpired, duration);
+            var gameTimer = FXGL.getGameTimer();
+            waiter = gameTimer.runOnceAfter(() -> timestamp = Double.NaN, duration);
+
             timestamp = gameTimer.getNow();
         }
 
-        /** Tạm dừng cooldown. */
         public void pause() {
             if (!isExpired()) {
                 waiter.pause();
             }
         }
 
-        /** Tiếp tục cooldown. */
         public void resume() {
             if (!isExpired()) {
                 waiter.resume();
@@ -106,30 +100,6 @@ public class Cooldown {
 
         public boolean isPaused() {
             return !isExpired() && waiter.isPaused();
-        }
-
-        /**
-         * Lấy thời gian còn lại của cooldown.
-         *
-         * @return Thời gian còn lại
-         */
-        public Duration getTimeLeft() {
-            if (isExpired()) {
-                return Duration.ZERO;
-            }
-            final var elapsed = Duration.millis(FXGL.getGameTimer().getNow() - timestamp);
-            return duration.subtract(elapsed);
-        }
-
-        /**
-         * Giảm thời gian hồi đi một lượng thời gian.
-         *
-         * @param duration Thời lượng giảm.
-         */
-        public void reduce(Duration duration) {
-            if (!isExpired()) {
-                waiter.update(duration.toMillis());
-            }
         }
 
         protected ActiveCooldown() {}

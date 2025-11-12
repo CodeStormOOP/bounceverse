@@ -10,32 +10,34 @@ import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsMan
  *
  * <h1>{@link AppEventSystem}</h1>
  *
- * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication} <br>
+ * {@link InitialSystem} quản lý các sự kiện trên {@link GameApplication}. <br>
  * <b>Đừng nhầm lẫn với {@link GameSystem}.</b>
  *
  * @apiNote Đây là một Singleton, cần lấy instance thông qua {@link #getInstance()}.
  */
 public final class AppEventSystem extends InitialSystem {
+
     private AppEventSystem() {}
 
     public static AppEventSystem getInstance() {
         return Holder.INSTANCE;
     }
 
+    /** Sự kiện khởi động game. */
     private void onStart() {
-        // User Settings
+        // Áp dụng cài đặt người dùng
         UserSettingsManager.getInstance().apply();
 
-        // Save load
+        // Đăng ký Save/Load handler
         FXGL.getSaveLoadService().addHandler(GameSystem.Variables.SAVE_LOAD_HANDLER);
     }
 
+    /** Sự kiện thoát game. */
     private void onExit() {
-        // Settings
-        UserSettingsManager.getInstance().sync();
+        // Lưu cài đặt
         UserSettingsManager.getInstance().save();
 
-        // Leaderboard
+        // Lưu bảng xếp hạng
         LeaderboardManager.getInstance().save();
     }
 
@@ -46,7 +48,7 @@ public final class AppEventSystem extends InitialSystem {
     }
 
     /**
-     * Lazy-loaded singleton holder. <br>
+     * Lazy-loaded singleton holder.<br>
      * Follow <a href= "https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom">
      * Initialization-on-demand holder idiom</a>.
      */
