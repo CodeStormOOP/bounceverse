@@ -1,8 +1,5 @@
 package com.github.codestorm.bounceverse;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.github.codestorm.bounceverse.systems.init.AppEventSystem;
@@ -14,6 +11,9 @@ import com.github.codestorm.bounceverse.systems.manager.settings.GameSettingsMan
 import com.github.codestorm.bounceverse.systems.manager.settings.LaunchOptionsManager;
 import com.github.codestorm.bounceverse.systems.manager.settings.UserSettingsManager;
 import com.github.codestorm.bounceverse.typing.exceptions.BounceverseException;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  *
